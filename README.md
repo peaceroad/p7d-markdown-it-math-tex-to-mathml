@@ -1,7 +1,6 @@
 # p7d-markdown-it-math-tex-to-mathml
 
-p7d-markdown-it-math-tex-to-mathml is a markdown-it plugin that converts TeX-formatted math expressions (inline `$`...`$` and b
-lock `$$`...`$$`) in Markdown to MathML.
+p7d-markdown-it-math-tex-to-mathml is a markdown-it plugin that converts TeX-formatted math expressions (inline `$`...`$` and block `$$`...`$$`) in Markdown to MathML.
 
 ## Install
 
