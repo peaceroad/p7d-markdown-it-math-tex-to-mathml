@@ -1,0 +1,60 @@
+@font-face {
+  font-family: math;
+  src: local('STIX Two Math'),
+  /*url('https://example.com/assets/fonts/math/STIXTwoMath-Regular.woff2') format('woff2');*/
+}
+math {
+  font-family: math;
+  letter-spacing: 0.1em
+}
+
+math:not([display="block"]) {
+  margin: 0 0.15em;
+}
+
+math[display="block"] {
+  margin: 2em auto;
+  /* Centering Multiple Expressions */
+  mtable > :is(mtr, mlabeledtr) > mtd {
+    padding: 0.5em 0;
+  }
+  mtable[columnalign="right left"] > mtr > mtd {
+    &:nth-child(1) {
+      text-align: -webkit-right; /* for chrome */
+    }
+    &:not(:nth-child(1)) {
+      text-align: -webkit-left; /* for chrome */
+    }
+  }
+  &:has(mlabeledtr) {
+    width: 100%;
+    margin-inline: 0;
+    mtable {
+      width: inherit;
+      > mlabeledtr {
+        position: relative;
+        display: flex;
+        flex-direction: row-reverse;
+        align-items: center;
+        > mtd {
+          display: math;
+          &:nth-child(1) {
+            position: absolute;
+            right: 0;
+            width: 3em;
+          }
+          &:nth-child(2) {
+            margin-inline: auto;
+          }
+        }
+      }
+    }
+  }
+  &:has(mtr + mlabeledtr, mlabeledtr + mtr) {
+    background: red;
+    width: fit-content;
+    table > mlabeledtr {
+      display: none; /* can't render it properly yet. */
+    }
+  }
+}

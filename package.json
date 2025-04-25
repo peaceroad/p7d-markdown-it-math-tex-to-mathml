@@ -1,0 +1,26 @@
+{
+  "name": "p7d-markdown-it-math-tex-to-mathml",
+  "version": "0.1.0",
+  "description": "convert TeX-formatted math expressions (inline $...$ and block $$...$$) in Markdown to MathML.",
+  "homepage": "https://github.com/peaceroad/p7d-markdown-it-math-tex-to-mathml#readme",
+  "bugs": {
+    "url": "https://github.com/peaceroad/p7d-markdown-it-math-tex-to-mathml/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/peaceroad/p7d-markdown-it-math-tex-to-mathml.git"
+  },
+  "license": "MIT",
+  "author": "peaceroad <peaceroad@gmail.com>",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "node test/test.js"
+  },
+  "dependencies": {
+    "mathjax-full": "^3.2.2"
+  },
+  "devDependencies": {
+    "markdown-it": "^14.1.0"
+  }
+}
