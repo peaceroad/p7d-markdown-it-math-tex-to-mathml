@@ -3,9 +3,9 @@ import fs from 'fs'
 import path from 'path'
 import mdit from 'markdown-it'
 
-import mditMathTexToMML from '../index.js'
+import mditMathTexToMathML from '../index.js'
 
-const md = mdit({ html: true }).use(mditMathTexToMML, {
+const md = mdit({ html: true }).use(mditMathTexToMathML, {
         /* loader: {
             //load: ["input/tex", "output/chtml"] // for SVG
             load: ["input/tex", "output/mathml"]

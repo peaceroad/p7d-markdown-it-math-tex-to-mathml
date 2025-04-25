@@ -1,20 +1,22 @@
 # p7d-markdown-it-math-tex-to-mathml
 
-p7d-markdown-it-math-tex-to-mathml is a markdown-it plugin that converts TeX-formatted math expressions (inline `$`...`$` and block `$$`...`$$`) in Markdown to MathML.
+p7d-markdown-it-math-tex-to-mathml is a markdown-it plugin that converts TeX-formatted math expressions (inline `$`...`$` and b
+lock `$$`...`$$`) in Markdown to MathML.
 
 ## Install
 
 ```
-npm install p7d-markdown-it-math-tex-to-mathml mathjax-full
+npm install @peaceroad/markdown-it-math-tex-to-mathml
+npm install mathjax-full
 ```
 
 ## Use
 
 ```js
 import mdit from 'markdown-it'
-import mditMathTexToMathml from 'p7d-markdown-it-math-tex-to-mathml'
+import mditMathTexToMathml from '@peaceroad/markdown-it-math-tex-to-mathml'
 
-const md = mdit({ html: true }).use(mditMathTexToMathml)
+const md = mdit({ html: true }).use(mditMathTexToMathML)
 let html
 html = md.render('Here is an example of an inline formula $E=mc^2$.')
 /* Output:

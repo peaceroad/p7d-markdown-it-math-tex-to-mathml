@@ -70,7 +70,7 @@ const convertMathToMathML = (texCont, display) => {
   }
 }
 
-const mditMathTexToMML = (md) => {
+const mditMathTexToMathML = (md) => {
 
   md.block.ruler.after('blockquote', 'math_block', (state, startLine, endLine, silent) => {
     if (silent) { return false; }
@@ -152,4 +152,4 @@ const mditMathTexToMML = (md) => {
   }
 }
 
-export default mditMathTexToMML
+export default mditMathTexToMathML
