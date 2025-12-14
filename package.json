@@ -18,7 +18,7 @@
     "test": "node test/test.js"
   },
   "dependencies": {
-    "mathjax-full": "^3.2.2"
+    "@mathjax/src": "^4.0.0"
   },
   "devDependencies": {
     "markdown-it": "^14.1.0"
