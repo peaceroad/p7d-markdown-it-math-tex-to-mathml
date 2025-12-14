@@ -1,0 +1,1247 @@
+[Markdown]
+数式はSVGに変換されます。$x$段落。段$x=ab$落$z+c$。段落。
+[HTML]
+<p>数式はSVGに変換されます。<math xmlns="http://www.w3.org/1998/Math/MathML" data-latex="x">
+  <mi data-latex="x">x</mi>
+</math>段落。段<math xmlns="http://www.w3.org/1998/Math/MathML" data-latex="x=ab">
+  <mi data-latex="x">x</mi>
+  <mo data-latex="=">=</mo>
+  <mi data-latex="a">a</mi>
+  <mi data-latex="b">b</mi>
+</math>落<math xmlns="http://www.w3.org/1998/Math/MathML" data-latex="z+c">
+  <mi data-latex="z">z</mi>
+  <mo data-latex="+">+</mo>
+  <mi data-latex="c">c</mi>
+</math>。段落。</p>
+
+
+[Markdown]
+$$
+x^2+y^2=z^2
+$$
+[HTML]
+<math xmlns="http://www.w3.org/1998/Math/MathML" data-latex="x^2+y^2=z^2" display="block">
+  <msup data-latex="x^2">
+    <mi data-latex="x">x</mi>
+    <mn data-latex="2">2</mn>
+  </msup>
+  <mo data-latex="+">+</mo>
+  <msup data-latex="y^2">
+    <mi data-latex="y">y</mi>
+    <mn data-latex="2">2</mn>
+  </msup>
+  <mo data-latex="=">=</mo>
+  <msup data-latex="z^2">
+    <mi data-latex="z">z</mi>
+    <mn data-latex="2">2</mn>
+  </msup>
+</math>
+
+
+[Markdown]
+$$
+\int f(g(x)) g'(x) \, dx = \int f(u) \, du
+$$
+[HTML]
+<math xmlns="http://www.w3.org/1998/Math/MathML" data-latex="\int f(g(x)) g'(x) \, dx = \int f(u) \, du" display="block">
+  <mo data-latex="\int">&#x222B;</mo>
+  <mi data-latex="f">f</mi>
+  <mo data-latex="(" stretchy="false">(</mo>
+  <mi data-latex="g">g</mi>
+  <mo data-latex="(" stretchy="false">(</mo>
+  <mi data-latex="x">x</mi>
+  <mo data-latex=")" stretchy="false">)</mo>
+  <mo data-latex=")" stretchy="false">)</mo>
+  <msup>
+    <mi data-latex="g">g</mi>
+    <mo data-mjx-alternate="1" data-latex="'">&#x2032;</mo>
+  </msup>
+  <mo data-latex="(" stretchy="false">(</mo>
+  <mi data-latex="x">x</mi>
+  <mo data-latex=")" stretchy="false">)</mo>
+  <mspace width="0.167em" data-latex="\,"></mspace>
+  <mi data-latex="d">d</mi>
+  <mi data-latex="x">x</mi>
+  <mo data-latex="=">=</mo>
+  <mo data-latex="\int">&#x222B;</mo>
+  <mi data-latex="f">f</mi>
+  <mo data-latex="(" stretchy="false">(</mo>
+  <mi data-latex="u">u</mi>
+  <mo data-latex=")" stretchy="false">)</mo>
+  <mspace width="0.167em" data-latex="\,"></mspace>
+  <mi data-latex="d">d</mi>
+  <mi data-latex="u">u</mi>
+</math>
+
+
+[Markdown]
+$$
+e^x = 1 + x + \frac{x^2}{2!} + \frac{x^3}{3!} + \cdots = \sum_{n=0}^{\infty} \frac{x^n}{n!}
+$$
+[HTML]
+<math xmlns="http://www.w3.org/1998/Math/MathML" data-latex="e^x = 1 + x + \frac{x^2}{2!} + \frac{x^3}{3!} + \cdots = \sum_{n=0}^{\infty} \frac{x^n}{n!}" display="block">
+  <msup data-latex="e^x">
+    <mi data-latex="e">e</mi>
+    <mi data-latex="x">x</mi>
+  </msup>
+  <mo data-latex="=">=</mo>
+  <mn data-latex="1">1</mn>
+  <mo data-latex="+">+</mo>
+  <mi data-latex="x">x</mi>
+  <mo data-latex="+">+</mo>
+  <mfrac data-latex="\frac{x^2}{2!}">
+    <msup data-latex="x^2 ">
+      <mi data-latex="x">x</mi>
+      <mn data-latex="2">2</mn>
+    </msup>
+    <mrow data-latex="2!">
+      <mn data-latex="2">2</mn>
+      <mo data-latex="!">!</mo>
+    </mrow>
+  </mfrac>
+  <mo data-latex="+">+</mo>
+  <mfrac data-latex="\frac{x^3}{3!}">
+    <msup data-latex="x^3 ">
+      <mi data-latex="x">x</mi>
+      <mn data-latex="3">3</mn>
+    </msup>
+    <mrow data-latex="3!">
+      <mn data-latex="3">3</mn>
+      <mo data-latex="!">!</mo>
+    </mrow>
+  </mfrac>
+  <mo data-latex="+">+</mo>
+  <mo data-latex="\cdots">&#x22EF;</mo>
+  <mo data-latex="=">=</mo>
+  <munderover data-latex="\sum_{n=0}^{\infty}">
+    <mo data-latex="\sum">&#x2211;</mo>
+    <mrow data-mjx-texclass="ORD" data-latex="{n=0}">
+      <mi data-latex="n">n</mi>
+      <mo data-latex="=">=</mo>
+      <mn data-latex="0">0</mn>
+    </mrow>
+    <mrow data-mjx-texclass="ORD" data-latex="{\infty}">
+      <mi mathvariant="normal" data-latex="\infty">&#x221E;</mi>
+    </mrow>
+  </munderover>
+  <mfrac data-latex="\frac{x^n}{n!}">
+    <msup data-latex="x^n">
+      <mi data-latex="x">x</mi>
+      <mi data-latex="n">n</mi>
+    </msup>
+    <mrow data-latex="n!">
+      <mi data-latex="n">n</mi>
+      <mo data-latex="!">!</mo>
+    </mrow>
+  </mfrac>
+</math>
+
+
+[Markdown]
+$$
+f(x) = f(a) + f'(a)(x - a) + \frac{f''(a)}{2!}(x - a)^2 + \frac{f'''(a)}{3!}(x - a)^3 + \cdots
+$$
+[HTML]
+<math xmlns="http://www.w3.org/1998/Math/MathML" data-latex="f(x) = f(a) + f'(a)(x - a) + \frac{f''(a)}{2!}(x - a)^2 + \frac{f'''(a)}{3!}(x - a)^3 + \cdots" display="block">
+  <mi data-latex="f">f</mi>
+  <mo data-latex="(" stretchy="false">(</mo>
+  <mi data-latex="x">x</mi>
+  <mo data-latex=")" stretchy="false">)</mo>
+  <mo data-latex="=">=</mo>
+  <mi data-latex="f">f</mi>
+  <mo data-latex="(" stretchy="false">(</mo>
+  <mi data-latex="a">a</mi>
+  <mo data-latex=")" stretchy="false">)</mo>
+  <mo data-latex="+">+</mo>
+  <msup>
+    <mi data-latex="f">f</mi>
+    <mo data-mjx-alternate="1" data-latex="'">&#x2032;</mo>
+  </msup>
+  <mo data-latex="(" stretchy="false">(</mo>
+  <mi data-latex="a">a</mi>
+  <mo data-latex=")" stretchy="false">)</mo>
+  <mo data-latex="(" stretchy="false">(</mo>
+  <mi data-latex="x">x</mi>
+  <mo data-latex="-">&#x2212;</mo>
+  <mi data-latex="a">a</mi>
+  <mo data-latex=")" stretchy="false">)</mo>
+  <mo data-latex="+">+</mo>
+  <mfrac data-latex="\frac{f''(a)}{2!}">
+    <mrow data-latex="f''(a)">
+      <msup>
+        <mi data-latex="f">f</mi>
+        <mo data-mjx-alternate="1" data-latex="'">&#x2033;</mo>
+      </msup>
+      <mo data-latex="(" stretchy="false">(</mo>
+      <mi data-latex="a">a</mi>
+      <mo data-latex=")" stretchy="false">)</mo>
+    </mrow>
+    <mrow data-latex="2!">
+      <mn data-latex="2">2</mn>
+      <mo data-latex="!">!</mo>
+    </mrow>
+  </mfrac>
+  <mo data-latex="(" stretchy="false">(</mo>
+  <mi data-latex="x">x</mi>
+  <mo data-latex="-">&#x2212;</mo>
+  <mi data-latex="a">a</mi>
+  <msup data-latex=")^2">
+    <mo data-latex=")" stretchy="false">)</mo>
+    <mn data-latex="2">2</mn>
+  </msup>
+  <mo data-latex="+">+</mo>
+  <mfrac data-latex="\frac{f'''(a)}{3!}">
+    <mrow data-latex="f'''(a)">
+      <msup>
+        <mi data-latex="f">f</mi>
+        <mo data-mjx-alternate="1" data-latex="''">&#x2034;</mo>
+      </msup>
+      <mo data-latex="(" stretchy="false">(</mo>
+      <mi data-latex="a">a</mi>
+      <mo data-latex=")" stretchy="false">)</mo>
+    </mrow>
+    <mrow data-latex="3!">
+      <mn data-latex="3">3</mn>
+      <mo data-latex="!">!</mo>
+    </mrow>
+  </mfrac>
+  <mo data-latex="(" stretchy="false">(</mo>
+  <mi data-latex="x">x</mi>
+  <mo data-latex="-">&#x2212;</mo>
+  <mi data-latex="a">a</mi>
+  <msup data-latex=")^3">
+    <mo data-latex=")" stretchy="false">)</mo>
+    <mn data-latex="3">3</mn>
+  </msup>
+  <mo data-latex="+">+</mo>
+  <mo data-latex="\cdots">&#x22EF;</mo>
+</math>
+
+
+[Markdown]
+$$
+f(x) = \sum_{n=0}^{\infty} \frac{f^{(n)}(a)}{n!} (x - a)^n
+$$
+[HTML]
+<math xmlns="http://www.w3.org/1998/Math/MathML" data-latex="f(x) = \sum_{n=0}^{\infty} \frac{f^{(n)}(a)}{n!} (x - a)^n" display="block">
+  <mi data-latex="f">f</mi>
+  <mo data-latex="(" stretchy="false">(</mo>
+  <mi data-latex="x">x</mi>
+  <mo data-latex=")" stretchy="false">)</mo>
+  <mo data-latex="=">=</mo>
+  <munderover data-latex="\sum_{n=0}^{\infty}">
+    <mo data-latex="\sum">&#x2211;</mo>
+    <mrow data-mjx-texclass="ORD" data-latex="{n=0}">
+      <mi data-latex="n">n</mi>
+      <mo data-latex="=">=</mo>
+      <mn data-latex="0">0</mn>
+    </mrow>
+    <mrow data-mjx-texclass="ORD" data-latex="{\infty}">
+      <mi mathvariant="normal" data-latex="\infty">&#x221E;</mi>
+    </mrow>
+  </munderover>
+  <mfrac data-latex="\frac{f^{(n)}(a)}{n!}">
+    <mrow data-latex="f^{(n)}(a)">
+      <msup data-latex="f^{(n)}">
+        <mi data-latex="f">f</mi>
+        <mrow data-mjx-texclass="ORD" data-latex="{(n)}">
+          <mo data-latex="(" stretchy="false">(</mo>
+          <mi data-latex="n">n</mi>
+          <mo data-latex=")" stretchy="false">)</mo>
+        </mrow>
+      </msup>
+      <mo data-latex="(" stretchy="false">(</mo>
+      <mi data-latex="a">a</mi>
+      <mo data-latex=")" stretchy="false">)</mo>
+    </mrow>
+    <mrow data-latex="n!">
+      <mi data-latex="n">n</mi>
+      <mo data-latex="!">!</mo>
+    </mrow>
+  </mfrac>
+  <mo data-latex="(" stretchy="false">(</mo>
+  <mi data-latex="x">x</mi>
+  <mo data-latex="-">&#x2212;</mo>
+  <mi data-latex="a">a</mi>
+  <msup data-latex=")^n">
+    <mo data-latex=")" stretchy="false">)</mo>
+    <mi data-latex="n">n</mi>
+  </msup>
+</math>
+
+
+[Markdown]
+マクスウェル方程式。複数行の数式の中央揃え。
+
+$$
+\begin{align}
+\nabla \cdot \mathbf{E} &= \frac{\rho}{\epsilon_0} \\
+\nabla \cdot \mathbf{B} &= 0 \\
+\nabla \times \mathbf{E} &= -\frac{\partial \mathbf{B}}{\partial t} \\
+\nabla \times \mathbf{B} &= \mu_0 \mathbf{J} + \mu_0 \epsilon_0 \frac{\partial \mathbf{E}}{\partial t} \\
+\end{align}
+$$
+[HTML]
+<p>マクスウェル方程式。複数行の数式の中央揃え。</p>
+<math xmlns="http://www.w3.org/1998/Math/MathML" data-latex="\begin{align}
+\nabla \cdot \mathbf{E} &amp;= \frac{\rho}{\epsilon_0} \\
+\nabla \cdot \mathbf{B} &amp;= 0 \\
+\nabla \times \mathbf{E} &amp;= -\frac{\partial \mathbf{B}}{\partial t} \\
+\nabla \times \mathbf{B} &amp;= \mu_0 \mathbf{J} + \mu_0 \epsilon_0 \frac{\partial \mathbf{E}}{\partial t} \\
+\end{align}" display="block">
+  <mtable displaystyle="true" columnalign="right left" columnspacing="0em" rowspacing="3pt" data-break-align="bottom top" data-latex-item="{align}" data-latex="\begin{align}
+\nabla \cdot \mathbf{E} &amp;= \frac{\rho}{\epsilon_0} \\
+\nabla \cdot \mathbf{B} &amp;= 0 \\
+\nabla \times \mathbf{E} &amp;= -\frac{\partial \mathbf{B}}{\partial t} \\
+\nabla \times \mathbf{B} &amp;= \mu_0  \mathbf{J} + \mu_0  \epsilon_0  \frac{\partial \mathbf{E}}{\partial t} \\
+\end{align}">
+    <mtr>
+      <mtd>
+        <mi mathvariant="normal" data-latex="\nabla">&#x2207;</mi>
+        <mo data-latex="\cdot">&#x22C5;</mo>
+        <mrow data-mjx-texclass="ORD" data-latex="\mathbf{E}">
+          <mi mathvariant="bold" data-latex="E">E</mi>
+        </mrow>
+      </mtd>
+      <mtd>
+        <mstyle indentshift="2em">
+          <mi></mi>
+          <mo data-latex="=">=</mo>
+          <mfrac data-latex="\frac{\rho}{\epsilon_0}">
+            <mi data-latex="\rho">&#x3C1;</mi>
+            <msub data-latex="\epsilon_0 ">
+              <mi data-latex="\epsilon">&#x3F5;</mi>
+              <mn data-latex="0">0</mn>
+            </msub>
+          </mfrac>
+        </mstyle>
+      </mtd>
+    </mtr>
+    <mtr>
+      <mtd>
+        <mi mathvariant="normal" data-latex="\nabla">&#x2207;</mi>
+        <mo data-latex="\cdot">&#x22C5;</mo>
+        <mrow data-mjx-texclass="ORD" data-latex="\mathbf{B}">
+          <mi mathvariant="bold" data-latex="B">B</mi>
+        </mrow>
+      </mtd>
+      <mtd>
+        <mstyle indentshift="2em">
+          <mi></mi>
+          <mo data-latex="=">=</mo>
+          <mn data-latex="0">0</mn>
+        </mstyle>
+      </mtd>
+    </mtr>
+    <mtr>
+      <mtd>
+        <mi mathvariant="normal" data-latex="\nabla">&#x2207;</mi>
+        <mo data-latex="\times">&#xD7;</mo>
+        <mrow data-mjx-texclass="ORD" data-latex="\mathbf{E}">
+          <mi mathvariant="bold" data-latex="E">E</mi>
+        </mrow>
+      </mtd>
+      <mtd>
+        <mstyle indentshift="2em">
+          <mi></mi>
+          <mo data-latex="=">=</mo>
+          <mo data-latex="-">&#x2212;</mo>
+          <mfrac data-latex="\frac{\partial \mathbf{B}}{\partial t}">
+            <mrow data-latex="\partial \mathbf{B}">
+              <mi data-latex="\partial">&#x2202;</mi>
+              <mrow data-mjx-texclass="ORD" data-latex="\mathbf{B}">
+                <mi mathvariant="bold" data-latex="B">B</mi>
+              </mrow>
+            </mrow>
+            <mrow data-latex="\partial t">
+              <mi data-latex="\partial">&#x2202;</mi>
+              <mi data-latex="t">t</mi>
+            </mrow>
+          </mfrac>
+        </mstyle>
+      </mtd>
+    </mtr>
+    <mtr>
+      <mtd>
+        <mi mathvariant="normal" data-latex="\nabla">&#x2207;</mi>
+        <mo data-latex="\times">&#xD7;</mo>
+        <mrow data-mjx-texclass="ORD" data-latex="\mathbf{B}">
+          <mi mathvariant="bold" data-latex="B">B</mi>
+        </mrow>
+      </mtd>
+      <mtd>
+        <mstyle indentshift="2em">
+          <mi></mi>
+          <mo data-latex="=">=</mo>
+          <msub data-latex="\mu_0">
+            <mi data-latex="\mu">&#x3BC;</mi>
+            <mn data-latex="0">0</mn>
+          </msub>
+          <mrow data-mjx-texclass="ORD" data-latex="\mathbf{J}">
+            <mi mathvariant="bold" data-latex="J">J</mi>
+          </mrow>
+          <mo data-latex="+">+</mo>
+          <msub data-latex="\mu_0">
+            <mi data-latex="\mu">&#x3BC;</mi>
+            <mn data-latex="0">0</mn>
+          </msub>
+          <msub data-latex="\epsilon_0">
+            <mi data-latex="\epsilon">&#x3F5;</mi>
+            <mn data-latex="0">0</mn>
+          </msub>
+          <mfrac data-latex="\frac{\partial \mathbf{E}}{\partial t}">
+            <mrow data-latex="\partial \mathbf{E}">
+              <mi data-latex="\partial">&#x2202;</mi>
+              <mrow data-mjx-texclass="ORD" data-latex="\mathbf{E}">
+                <mi mathvariant="bold" data-latex="E">E</mi>
+              </mrow>
+            </mrow>
+            <mrow data-latex="\partial t">
+              <mi data-latex="\partial">&#x2202;</mi>
+              <mi data-latex="t">t</mi>
+            </mrow>
+          </mfrac>
+        </mstyle>
+      </mtd>
+    </mtr>
+  </mtable>
+</math>
+
+
+[Markdown]
+2×2行列の積。
+
+$$
+C = AB = \begin{pmatrix}
+a & b \\
+c & d
+\end{pmatrix}
+\begin{pmatrix}
+e & f \\
+g & h
+\end{pmatrix} = \begin{pmatrix}
+ae + bg & af + bh \\
+ce + dg & cf + dh
+\end{pmatrix}
+$$
+[HTML]
+<p>2×2行列の積。</p>
+<math xmlns="http://www.w3.org/1998/Math/MathML" data-latex="C = AB = \begin{pmatrix}
+a &amp; b \\
+c &amp; d
+\end{pmatrix}
+\begin{pmatrix}
+e &amp; f \\
+g &amp; h
+\end{pmatrix} = \begin{pmatrix}
+ae + bg &amp; af + bh \\
+ce + dg &amp; cf + dh
+\end{pmatrix}" display="block">
+  <mi data-latex="C">C</mi>
+  <mo data-latex="=">=</mo>
+  <mi data-latex="A">A</mi>
+  <mi data-latex="B">B</mi>
+  <mo data-latex="=">=</mo>
+  <mrow data-mjx-texclass="INNER" data-latex-item="{pmatrix}" data-latex="{pmatrix}">
+    <mo data-mjx-texclass="OPEN">(</mo>
+    <mtable columnspacing="1em" rowspacing="4pt">
+      <mtr>
+        <mtd>
+          <mi data-latex="a">a</mi>
+        </mtd>
+        <mtd>
+          <mi data-latex="b">b</mi>
+        </mtd>
+      </mtr>
+      <mtr>
+        <mtd>
+          <mi data-latex="c">c</mi>
+        </mtd>
+        <mtd>
+          <mi data-latex="d">d</mi>
+        </mtd>
+      </mtr>
+    </mtable>
+    <mo data-mjx-texclass="CLOSE">)</mo>
+  </mrow>
+  <mrow data-mjx-texclass="INNER" data-latex-item="{pmatrix}" data-latex="{pmatrix}">
+    <mo data-mjx-texclass="OPEN">(</mo>
+    <mtable columnspacing="1em" rowspacing="4pt">
+      <mtr>
+        <mtd>
+          <mi data-latex="e">e</mi>
+        </mtd>
+        <mtd>
+          <mi data-latex="f">f</mi>
+        </mtd>
+      </mtr>
+      <mtr>
+        <mtd>
+          <mi data-latex="g">g</mi>
+        </mtd>
+        <mtd>
+          <mi data-latex="h">h</mi>
+        </mtd>
+      </mtr>
+    </mtable>
+    <mo data-mjx-texclass="CLOSE">)</mo>
+  </mrow>
+  <mo data-latex="=">=</mo>
+  <mrow data-mjx-texclass="INNER" data-latex-item="{pmatrix}" data-latex="{pmatrix}">
+    <mo data-mjx-texclass="OPEN">(</mo>
+    <mtable columnspacing="1em" rowspacing="4pt">
+      <mtr>
+        <mtd>
+          <mi data-latex="a">a</mi>
+          <mi data-latex="e">e</mi>
+          <mo data-latex="+">+</mo>
+          <mi data-latex="b">b</mi>
+          <mi data-latex="g">g</mi>
+        </mtd>
+        <mtd>
+          <mi data-latex="a">a</mi>
+          <mi data-latex="f">f</mi>
+          <mo data-latex="+">+</mo>
+          <mi data-latex="b">b</mi>
+          <mi data-latex="h">h</mi>
+        </mtd>
+      </mtr>
+      <mtr>
+        <mtd>
+          <mi data-latex="c">c</mi>
+          <mi data-latex="e">e</mi>
+          <mo data-latex="+">+</mo>
+          <mi data-latex="d">d</mi>
+          <mi data-latex="g">g</mi>
+        </mtd>
+        <mtd>
+          <mi data-latex="c">c</mi>
+          <mi data-latex="f">f</mi>
+          <mo data-latex="+">+</mo>
+          <mi data-latex="d">d</mi>
+          <mi data-latex="h">h</mi>
+        </mtd>
+      </mtr>
+    </mtable>
+    <mo data-mjx-texclass="CLOSE">)</mo>
+  </mrow>
+</math>
+
+
+[Markdown]
+リーマンゼータ関数の定義からオイラー積表示。
+
+$$
+\begin{align}
+\zeta(s) &= \sum_{n=1}^{\infty} \frac{1}{n^s} \\
+n &= p_1^{k_1} p_2^{k_2} \cdots p_m^{k_m} \\
+\zeta(s) &= \sum_{n=1}^{\infty} \frac{1}{n^s} = \prod_{p \, \text{prime}} \left( \sum_{k=0}^{\infty} \frac{1}{p^{ks}} \right) \\
+\sum_{k=0}^{\infty} \frac{1}{p^{ks}} &= \frac{1}{1 - \frac{1}{p^s}} \\
+\zeta(s) &= \prod_{p \, \text{prime}} \left( 1 - \frac{1}{p^s} \right)^{-1}
+\end{align}
+$$
+[HTML]
+<p>リーマンゼータ関数の定義からオイラー積表示。</p>
+<math xmlns="http://www.w3.org/1998/Math/MathML" data-latex="\begin{align}
+\zeta(s) &amp;= \sum_{n=1}^{\infty} \frac{1}{n^s} \\
+n &amp;= p_1^{k_1} p_2^{k_2} \cdots p_m^{k_m} \\
+\zeta(s) &amp;= \sum_{n=1}^{\infty} \frac{1}{n^s} = \prod_{p \, \text{prime}} \left( \sum_{k=0}^{\infty} \frac{1}{p^{ks}} \right) \\
+\sum_{k=0}^{\infty} \frac{1}{p^{ks}} &amp;= \frac{1}{1 - \frac{1}{p^s}} \\
+\zeta(s) &amp;= \prod_{p \, \text{prime}} \left( 1 - \frac{1}{p^s} \right)^{-1}
+\end{align}" display="block">
+  <mtable displaystyle="true" columnalign="right left" columnspacing="0em" rowspacing="3pt" data-break-align="bottom top" data-latex-item="{align}" data-latex="\begin{align}
+\zeta(s) &amp;= \sum_{n=1}^{\infty} \frac{1}{n^s} \\
+n &amp;= p_1 ^{k_1 } p_2 ^{k_2 } \cdots p_m^{k_m} \\
+\zeta(s) &amp;= \sum_{n=1}^{\infty} \frac{1}{n^s} = \prod_{p \, \text{prime}} \left( \sum_{k=0}^{\infty} \frac{1}{p^{ks}} \right) \\
+\sum_{k=0}^{\infty} \frac{1}{p^{ks}} &amp;= \frac{1}{1 - \frac{1}{p^s}} \\
+\zeta(s) &amp;= \prod_{p \, \text{prime}} \left( 1 - \frac{1}{p^s} \right)^{-1}
+\end{align}">
+    <mtr>
+      <mtd>
+        <mi data-latex="\zeta">&#x3B6;</mi>
+        <mo data-latex="(" stretchy="false">(</mo>
+        <mi data-latex="s">s</mi>
+        <mo data-latex=")" stretchy="false">)</mo>
+      </mtd>
+      <mtd>
+        <mstyle indentshift="2em">
+          <mi></mi>
+          <mo data-latex="=">=</mo>
+          <munderover data-latex="\sum_{n=1}^{\infty}">
+            <mo data-latex="\sum">&#x2211;</mo>
+            <mrow data-mjx-texclass="ORD" data-latex="{n=1}">
+              <mi data-latex="n">n</mi>
+              <mo data-latex="=">=</mo>
+              <mn data-latex="1">1</mn>
+            </mrow>
+            <mrow data-mjx-texclass="ORD" data-latex="{\infty}">
+              <mi mathvariant="normal" data-latex="\infty">&#x221E;</mi>
+            </mrow>
+          </munderover>
+          <mfrac data-latex="\frac{1}{n^s}">
+            <mn data-latex="1">1</mn>
+            <msup data-latex="n^s">
+              <mi data-latex="n">n</mi>
+              <mi data-latex="s">s</mi>
+            </msup>
+          </mfrac>
+        </mstyle>
+      </mtd>
+    </mtr>
+    <mtr>
+      <mtd>
+        <mi data-latex="n">n</mi>
+      </mtd>
+      <mtd>
+        <mstyle indentshift="2em">
+          <mi></mi>
+          <mo data-latex="=">=</mo>
+          <msubsup data-latex="p_1^{k_1}">
+            <mi data-latex="p">p</mi>
+            <mn data-latex="1">1</mn>
+            <mrow data-mjx-texclass="ORD" data-latex="{k_1}">
+              <msub data-latex="k_1">
+                <mi data-latex="k">k</mi>
+                <mn data-latex="1">1</mn>
+              </msub>
+            </mrow>
+          </msubsup>
+          <msubsup data-latex="p_2^{k_2}">
+            <mi data-latex="p">p</mi>
+            <mn data-latex="2">2</mn>
+            <mrow data-mjx-texclass="ORD" data-latex="{k_2}">
+              <msub data-latex="k_2">
+                <mi data-latex="k">k</mi>
+                <mn data-latex="2">2</mn>
+              </msub>
+            </mrow>
+          </msubsup>
+          <mo data-latex="\cdots">&#x22EF;</mo>
+          <msubsup data-latex="p_m^{k_m}">
+            <mi data-latex="p">p</mi>
+            <mi data-latex="m">m</mi>
+            <mrow data-mjx-texclass="ORD" data-latex="{k_m}">
+              <msub data-latex="k_m">
+                <mi data-latex="k">k</mi>
+                <mi data-latex="m">m</mi>
+              </msub>
+            </mrow>
+          </msubsup>
+        </mstyle>
+      </mtd>
+    </mtr>
+    <mtr>
+      <mtd>
+        <mi data-latex="\zeta">&#x3B6;</mi>
+        <mo data-latex="(" stretchy="false">(</mo>
+        <mi data-latex="s">s</mi>
+        <mo data-latex=")" stretchy="false">)</mo>
+      </mtd>
+      <mtd>
+        <mstyle indentshift="2em">
+          <mi></mi>
+          <mo data-latex="=">=</mo>
+          <munderover data-latex="\sum_{n=1}^{\infty}">
+            <mo data-latex="\sum">&#x2211;</mo>
+            <mrow data-mjx-texclass="ORD" data-latex="{n=1}">
+              <mi data-latex="n">n</mi>
+              <mo data-latex="=">=</mo>
+              <mn data-latex="1">1</mn>
+            </mrow>
+            <mrow data-mjx-texclass="ORD" data-latex="{\infty}">
+              <mi mathvariant="normal" data-latex="\infty">&#x221E;</mi>
+            </mrow>
+          </munderover>
+          <mfrac data-latex="\frac{1}{n^s}">
+            <mn data-latex="1">1</mn>
+            <msup data-latex="n^s">
+              <mi data-latex="n">n</mi>
+              <mi data-latex="s">s</mi>
+            </msup>
+          </mfrac>
+          <mo data-latex="=">=</mo>
+          <munder data-latex="\prod_{p\,\text{prime}}">
+            <mo data-latex="\prod">&#x220F;</mo>
+            <mrow data-mjx-texclass="ORD" data-latex="{p\,\text{prime}}">
+              <mi data-latex="p">p</mi>
+              <mstyle scriptlevel="0" data-latex="\,">
+                <mspace width="0.167em"></mspace>
+              </mstyle>
+              <mtext data-latex="\text{prime}">prime</mtext>
+            </mrow>
+          </munder>
+          <mrow data-mjx-texclass="INNER" data-latex-item="\left( \sum_{k=0}^{\infty} \frac{1}{p^{ks}} \right)" data-latex="\left( \sum_{k=0}^{\infty} \frac{1}{p^{ks}} \right)">
+            <mo data-mjx-texclass="OPEN" data-latex-item="\left(" data-latex="\left(">(</mo>
+            <munderover data-latex="\sum_{k=0}^{\infty}">
+              <mo data-latex="\sum">&#x2211;</mo>
+              <mrow data-mjx-texclass="ORD" data-latex="{k=0}">
+                <mi data-latex="k">k</mi>
+                <mo data-latex="=">=</mo>
+                <mn data-latex="0">0</mn>
+              </mrow>
+              <mrow data-mjx-texclass="ORD" data-latex="{\infty}">
+                <mi mathvariant="normal" data-latex="\infty">&#x221E;</mi>
+              </mrow>
+            </munderover>
+            <mfrac data-latex="\frac{1}{p^{ks}}">
+              <mn data-latex="1">1</mn>
+              <msup data-latex="p^{ks}">
+                <mi data-latex="p">p</mi>
+                <mrow data-mjx-texclass="ORD" data-latex="{k s}">
+                  <mi data-latex="k">k</mi>
+                  <mi data-latex="s">s</mi>
+                </mrow>
+              </msup>
+            </mfrac>
+            <mo data-mjx-texclass="CLOSE" data-latex-item="\right)" data-latex="\right)">)</mo>
+          </mrow>
+        </mstyle>
+      </mtd>
+    </mtr>
+    <mtr>
+      <mtd>
+        <munderover data-latex="\sum_{k=0}^{\infty}">
+          <mo data-latex="\sum">&#x2211;</mo>
+          <mrow data-mjx-texclass="ORD" data-latex="{k=0}">
+            <mi data-latex="k">k</mi>
+            <mo data-latex="=">=</mo>
+            <mn data-latex="0">0</mn>
+          </mrow>
+          <mrow data-mjx-texclass="ORD" data-latex="{\infty}">
+            <mi mathvariant="normal" data-latex="\infty">&#x221E;</mi>
+          </mrow>
+        </munderover>
+        <mfrac data-latex="\frac{1}{p^{ks}}">
+          <mn data-latex="1">1</mn>
+          <msup data-latex="p^{ks}">
+            <mi data-latex="p">p</mi>
+            <mrow data-mjx-texclass="ORD" data-latex="{k s}">
+              <mi data-latex="k">k</mi>
+              <mi data-latex="s">s</mi>
+            </mrow>
+          </msup>
+        </mfrac>
+      </mtd>
+      <mtd>
+        <mstyle indentshift="2em">
+          <mi></mi>
+          <mo data-latex="=">=</mo>
+          <mfrac data-latex="\frac{1}{1 - \frac{1}{p^s}}">
+            <mn data-latex="1">1</mn>
+            <mrow data-latex="1 - \frac{1}{p^s}">
+              <mn data-latex="1">1</mn>
+              <mo data-latex="-">&#x2212;</mo>
+              <mfrac data-latex="\frac{1}{p^s}">
+                <mn data-latex="1">1</mn>
+                <msup data-latex="p^s">
+                  <mi data-latex="p">p</mi>
+                  <mi data-latex="s">s</mi>
+                </msup>
+              </mfrac>
+            </mrow>
+          </mfrac>
+        </mstyle>
+      </mtd>
+    </mtr>
+    <mtr>
+      <mtd>
+        <mi data-latex="\zeta">&#x3B6;</mi>
+        <mo data-latex="(" stretchy="false">(</mo>
+        <mi data-latex="s">s</mi>
+        <mo data-latex=")" stretchy="false">)</mo>
+      </mtd>
+      <mtd>
+        <mstyle indentshift="2em">
+          <mi></mi>
+          <mo data-latex="=">=</mo>
+          <munder data-latex="\prod_{p\,\text{prime}}">
+            <mo data-latex="\prod">&#x220F;</mo>
+            <mrow data-mjx-texclass="ORD" data-latex="{p\,\text{prime}}">
+              <mi data-latex="p">p</mi>
+              <mstyle scriptlevel="0" data-latex="\,">
+                <mspace width="0.167em"></mspace>
+              </mstyle>
+              <mtext data-latex="\text{prime}">prime</mtext>
+            </mrow>
+          </munder>
+          <msup data-latex="\left( 1 - \frac{1}{p^s} \right)^{-1}">
+            <mrow data-mjx-texclass="INNER" data-latex-item="\left( 1 - \frac{1}{p^s} \right)" data-latex="\left( 1 - \frac{1}{p^s} \right)">
+              <mo data-mjx-texclass="OPEN" data-latex-item="\left(" data-latex="\left(">(</mo>
+              <mn data-latex="1">1</mn>
+              <mo data-latex="-">&#x2212;</mo>
+              <mfrac data-latex="\frac{1}{p^s}">
+                <mn data-latex="1">1</mn>
+                <msup data-latex="p^s">
+                  <mi data-latex="p">p</mi>
+                  <mi data-latex="s">s</mi>
+                </msup>
+              </mfrac>
+              <mo data-mjx-texclass="CLOSE" data-latex-item="\right)" data-latex="\right)">)</mo>
+            </mrow>
+            <mrow data-mjx-texclass="ORD" data-latex="{-1}">
+              <mo data-latex="-">&#x2212;</mo>
+              <mn data-latex="1">1</mn>
+            </mrow>
+          </msup>
+        </mstyle>
+      </mtd>
+    </mtr>
+  </mtable>
+</math>
+
+
+[Markdown]
+波動関数
+
+$$
+\int_{-\infty}^{\infty} |\Psi(\mathbf{r}, t)|^2 \, d\mathbf{r} = 1 \tag{1}
+$$
+[HTML]
+<p>波動関数</p>
+<math xmlns="http://www.w3.org/1998/Math/MathML" data-latex="\int_{-\infty}^{\infty} |\Psi(\mathbf{r}, t)|^2 \, d\mathbf{r} = 1 \tag{1}" display="block">
+  <mtable displaystyle="true" data-latex="\int_{-\infty}^{\infty} |\Psi(\mathbf{r}, t)|^2  \, d\mathbf{r} = 1 \tag{1}">
+    <mlabeledtr>
+      <mtd id="mjx-eqn:1">
+        <mtext data-latex="\text{(1)}">(1)</mtext>
+      </mtd>
+      <mtd>
+        <msubsup data-latex="\int_{-\infty}^{\infty}">
+          <mo data-latex="\int">&#x222B;</mo>
+          <mrow data-mjx-texclass="ORD" data-latex="{-\infty}">
+            <mo data-latex="-">&#x2212;</mo>
+            <mi mathvariant="normal" data-latex="\infty">&#x221E;</mi>
+          </mrow>
+          <mrow data-mjx-texclass="ORD" data-latex="{\infty}">
+            <mi mathvariant="normal" data-latex="\infty">&#x221E;</mi>
+          </mrow>
+        </msubsup>
+        <mo data-mjx-texclass="ORD" stretchy="false" data-latex="|">|</mo>
+        <mi mathvariant="normal" data-latex="\Psi">&#x3A8;</mi>
+        <mo data-latex="(" stretchy="false">(</mo>
+        <mrow data-mjx-texclass="ORD" data-latex="\mathbf{r}">
+          <mi mathvariant="bold" data-latex="r">r</mi>
+        </mrow>
+        <mo data-latex=",">,</mo>
+        <mi data-latex="t">t</mi>
+        <mo data-latex=")" stretchy="false">)</mo>
+        <msup data-latex="|^2">
+          <mo data-mjx-texclass="ORD" stretchy="false" data-latex="|">|</mo>
+          <mn data-latex="2">2</mn>
+        </msup>
+        <mspace width="0.167em" data-latex="\,"></mspace>
+        <mi data-latex="d">d</mi>
+        <mrow data-mjx-texclass="ORD" data-latex="\mathbf{r}">
+          <mi mathvariant="bold" data-latex="r">r</mi>
+        </mrow>
+        <mo data-latex="=">=</mo>
+        <mn data-latex="\tag{1}">1</mn>
+      </mtd>
+    </mlabeledtr>
+  </mtable>
+</math>
+
+
+[Markdown]
+確率密度
+
+$$
+P(\mathbf{r}, t) = |\Psi(\mathbf{r}, t)|^2 \tag{2}
+$$
+[HTML]
+<p>確率密度</p>
+<math xmlns="http://www.w3.org/1998/Math/MathML" data-latex="P(\mathbf{r}, t) = |\Psi(\mathbf{r}, t)|^2 \tag{2}" display="block">
+  <mtable displaystyle="true" data-latex="P(\mathbf{r}, t) = |\Psi(\mathbf{r}, t)|^2  \tag{2}">
+    <mlabeledtr>
+      <mtd id="mjx-eqn:2">
+        <mtext data-latex="\text{(2)}">(2)</mtext>
+      </mtd>
+      <mtd>
+        <mi data-latex="P">P</mi>
+        <mo data-latex="(" stretchy="false">(</mo>
+        <mrow data-mjx-texclass="ORD" data-latex="\mathbf{r}">
+          <mi mathvariant="bold" data-latex="r">r</mi>
+        </mrow>
+        <mo data-latex=",">,</mo>
+        <mi data-latex="t">t</mi>
+        <mo data-latex=")" stretchy="false">)</mo>
+        <mo data-latex="=">=</mo>
+        <mo data-mjx-texclass="ORD" stretchy="false" data-latex="|">|</mo>
+        <mi mathvariant="normal" data-latex="\Psi">&#x3A8;</mi>
+        <mo data-latex="(" stretchy="false">(</mo>
+        <mrow data-mjx-texclass="ORD" data-latex="\mathbf{r}">
+          <mi mathvariant="bold" data-latex="r">r</mi>
+        </mrow>
+        <mo data-latex=",">,</mo>
+        <mi data-latex="t">t</mi>
+        <mo data-latex=")" stretchy="false">)</mo>
+        <msup data-latex="\tag{2}">
+          <mo data-mjx-texclass="ORD" stretchy="false" data-latex="|">|</mo>
+          <mn data-latex="2">2</mn>
+        </msup>
+      </mtd>
+    </mlabeledtr>
+  </mtable>
+</math>
+
+
+[Markdown]
+規格化条件
+
+$$
+\int_{-\infty}^{\infty} P(\mathbf{r}, t) \, d\mathbf{r} = 1 \tag{3}
+$$
+
+$$
+\int_{-\infty}^{\infty} |\Psi(\mathbf{r}, t)|^2 \, d\mathbf{r} = 1 \tag{4}
+$$
+[HTML]
+<p>規格化条件</p>
+<math xmlns="http://www.w3.org/1998/Math/MathML" data-latex="\int_{-\infty}^{\infty} P(\mathbf{r}, t) \, d\mathbf{r} = 1 \tag{3}" display="block">
+  <mtable displaystyle="true" data-latex="\int_{-\infty}^{\infty} P(\mathbf{r}, t) \, d\mathbf{r} = 1 \tag{3}">
+    <mlabeledtr>
+      <mtd id="mjx-eqn:3">
+        <mtext data-latex="\text{(3)}">(3)</mtext>
+      </mtd>
+      <mtd>
+        <msubsup data-latex="\int_{-\infty}^{\infty}">
+          <mo data-latex="\int">&#x222B;</mo>
+          <mrow data-mjx-texclass="ORD" data-latex="{-\infty}">
+            <mo data-latex="-">&#x2212;</mo>
+            <mi mathvariant="normal" data-latex="\infty">&#x221E;</mi>
+          </mrow>
+          <mrow data-mjx-texclass="ORD" data-latex="{\infty}">
+            <mi mathvariant="normal" data-latex="\infty">&#x221E;</mi>
+          </mrow>
+        </msubsup>
+        <mi data-latex="P">P</mi>
+        <mo data-latex="(" stretchy="false">(</mo>
+        <mrow data-mjx-texclass="ORD" data-latex="\mathbf{r}">
+          <mi mathvariant="bold" data-latex="r">r</mi>
+        </mrow>
+        <mo data-latex=",">,</mo>
+        <mi data-latex="t">t</mi>
+        <mo data-latex=")" stretchy="false">)</mo>
+        <mspace width="0.167em" data-latex="\,"></mspace>
+        <mi data-latex="d">d</mi>
+        <mrow data-mjx-texclass="ORD" data-latex="\mathbf{r}">
+          <mi mathvariant="bold" data-latex="r">r</mi>
+        </mrow>
+        <mo data-latex="=">=</mo>
+        <mn data-latex="\tag{3}">1</mn>
+      </mtd>
+    </mlabeledtr>
+  </mtable>
+</math>
+<math xmlns="http://www.w3.org/1998/Math/MathML" data-latex="\int_{-\infty}^{\infty} |\Psi(\mathbf{r}, t)|^2 \, d\mathbf{r} = 1 \tag{4}" display="block">
+  <mtable displaystyle="true" data-latex="\int_{-\infty}^{\infty} |\Psi(\mathbf{r}, t)|^2  \, d\mathbf{r} = 1 \tag{4}">
+    <mlabeledtr>
+      <mtd id="mjx-eqn:4">
+        <mtext data-latex="\text{(4)}">(4)</mtext>
+      </mtd>
+      <mtd>
+        <msubsup data-latex="\int_{-\infty}^{\infty}">
+          <mo data-latex="\int">&#x222B;</mo>
+          <mrow data-mjx-texclass="ORD" data-latex="{-\infty}">
+            <mo data-latex="-">&#x2212;</mo>
+            <mi mathvariant="normal" data-latex="\infty">&#x221E;</mi>
+          </mrow>
+          <mrow data-mjx-texclass="ORD" data-latex="{\infty}">
+            <mi mathvariant="normal" data-latex="\infty">&#x221E;</mi>
+          </mrow>
+        </msubsup>
+        <mo data-mjx-texclass="ORD" stretchy="false" data-latex="|">|</mo>
+        <mi mathvariant="normal" data-latex="\Psi">&#x3A8;</mi>
+        <mo data-latex="(" stretchy="false">(</mo>
+        <mrow data-mjx-texclass="ORD" data-latex="\mathbf{r}">
+          <mi mathvariant="bold" data-latex="r">r</mi>
+        </mrow>
+        <mo data-latex=",">,</mo>
+        <mi data-latex="t">t</mi>
+        <mo data-latex=")" stretchy="false">)</mo>
+        <msup data-latex="|^2">
+          <mo data-mjx-texclass="ORD" stretchy="false" data-latex="|">|</mo>
+          <mn data-latex="2">2</mn>
+        </msup>
+        <mspace width="0.167em" data-latex="\,"></mspace>
+        <mi data-latex="d">d</mi>
+        <mrow data-mjx-texclass="ORD" data-latex="\mathbf{r}">
+          <mi mathvariant="bold" data-latex="r">r</mi>
+        </mrow>
+        <mo data-latex="=">=</mo>
+        <mn data-latex="\tag{4}">1</mn>
+      </mtd>
+    </mlabeledtr>
+  </mtable>
+</math>
+
+
+[Markdown]
+状態の内積
+
+$$
+\langle \psi | \phi \rangle = \int \psi^*(\mathbf{r}) \phi(\mathbf{r}) \, d\mathbf{r} \tag{5}
+$$
+[HTML]
+<p>状態の内積</p>
+<math xmlns="http://www.w3.org/1998/Math/MathML" data-latex="\langle \psi | \phi \rangle = \int \psi^*(\mathbf{r}) \phi(\mathbf{r}) \, d\mathbf{r} \tag{5}" display="block">
+  <mtable displaystyle="true" data-latex="\langle \psi | \phi \rangle = \int \psi^*(\mathbf{r}) \phi(\mathbf{r}) \, d\mathbf{r} \tag{5}">
+    <mlabeledtr>
+      <mtd id="mjx-eqn:5">
+        <mtext data-latex="\text{(5)}">(5)</mtext>
+      </mtd>
+      <mtd>
+        <mo fence="false" stretchy="false" data-latex="\langle">&#x27E8;</mo>
+        <mi data-latex="\psi">&#x3C8;</mi>
+        <mo data-mjx-texclass="ORD" stretchy="false" data-latex="|">|</mo>
+        <mi data-latex="\phi">&#x3D5;</mi>
+        <mo fence="false" stretchy="false" data-latex="\rangle">&#x27E9;</mo>
+        <mo data-latex="=">=</mo>
+        <mo data-latex="\int">&#x222B;</mo>
+        <msup data-latex="\psi^*">
+          <mi data-latex="\psi">&#x3C8;</mi>
+          <mo data-latex="*">&#x2217;</mo>
+        </msup>
+        <mo data-latex="(" stretchy="false">(</mo>
+        <mrow data-mjx-texclass="ORD" data-latex="\mathbf{r}">
+          <mi mathvariant="bold" data-latex="r">r</mi>
+        </mrow>
+        <mo data-latex=")" stretchy="false">)</mo>
+        <mi data-latex="\phi">&#x3D5;</mi>
+        <mo data-latex="(" stretchy="false">(</mo>
+        <mrow data-mjx-texclass="ORD" data-latex="\mathbf{r}">
+          <mi mathvariant="bold" data-latex="r">r</mi>
+        </mrow>
+        <mo data-latex=")" stretchy="false">)</mo>
+        <mspace width="0.167em" data-latex="\,"></mspace>
+        <mi data-latex="d">d</mi>
+        <mrow data-mjx-texclass="ORD" data-latex="\tag{5}">
+          <mi mathvariant="bold" data-latex="r">r</mi>
+        </mrow>
+      </mtd>
+    </mlabeledtr>
+  </mtable>
+</math>
+
+
+[Markdown]
+確率解釈
+
+$$
+P(\phi) = |\langle \phi | \psi \rangle|^2 = \left| \int \phi^*(\mathbf{r}) \psi(\mathbf{r}) \, d\mathbf{r} \right|^2 \tag{6}
+$$
+
+$$
+\begin{align}
+a\tag{1}\\
+b\tag{2}
+\end{align}
+$$
+[HTML]
+<p>確率解釈</p>
+<math xmlns="http://www.w3.org/1998/Math/MathML" data-latex="P(\phi) = |\langle \phi | \psi \rangle|^2 = \left| \int \phi^*(\mathbf{r}) \psi(\mathbf{r}) \, d\mathbf{r} \right|^2 \tag{6}" display="block">
+  <mtable displaystyle="true" data-latex="P(\phi) = |\langle \phi | \psi \rangle|^2  = \left| \int \phi^*(\mathbf{r}) \psi(\mathbf{r}) \, d\mathbf{r} \right|^2  \tag{6}">
+    <mlabeledtr>
+      <mtd id="mjx-eqn:6">
+        <mtext data-latex="\text{(6)}">(6)</mtext>
+      </mtd>
+      <mtd>
+        <mi data-latex="P">P</mi>
+        <mo data-latex="(" stretchy="false">(</mo>
+        <mi data-latex="\phi">&#x3D5;</mi>
+        <mo data-latex=")" stretchy="false">)</mo>
+        <mo data-latex="=">=</mo>
+        <mo data-mjx-texclass="ORD" stretchy="false" data-latex="|">|</mo>
+        <mo fence="false" stretchy="false" data-latex="\langle">&#x27E8;</mo>
+        <mi data-latex="\phi">&#x3D5;</mi>
+        <mo data-mjx-texclass="ORD" stretchy="false" data-latex="|">|</mo>
+        <mi data-latex="\psi">&#x3C8;</mi>
+        <mo fence="false" stretchy="false" data-latex="\rangle">&#x27E9;</mo>
+        <msup data-latex="|^2">
+          <mo data-mjx-texclass="ORD" stretchy="false" data-latex="|">|</mo>
+          <mn data-latex="2">2</mn>
+        </msup>
+        <mo data-latex="=">=</mo>
+        <msup data-latex="\tag{6}">
+          <mrow data-mjx-texclass="INNER" data-latex-item="\left| \int \phi^*(\mathbf{r}) \psi(\mathbf{r}) \, d\mathbf{r} \right|" data-latex="\left| \int \phi^*(\mathbf{r}) \psi(\mathbf{r}) \, d\mathbf{r} \right|">
+            <mo data-mjx-texclass="OPEN" data-latex-item="\left|" data-latex="\left|">|</mo>
+            <mo data-latex="\int">&#x222B;</mo>
+            <msup data-latex="\phi^*">
+              <mi data-latex="\phi">&#x3D5;</mi>
+              <mo data-latex="*">&#x2217;</mo>
+            </msup>
+            <mo data-latex="(" stretchy="false">(</mo>
+            <mrow data-mjx-texclass="ORD" data-latex="\mathbf{r}">
+              <mi mathvariant="bold" data-latex="r">r</mi>
+            </mrow>
+            <mo data-latex=")" stretchy="false">)</mo>
+            <mi data-latex="\psi">&#x3C8;</mi>
+            <mo data-latex="(" stretchy="false">(</mo>
+            <mrow data-mjx-texclass="ORD" data-latex="\mathbf{r}">
+              <mi mathvariant="bold" data-latex="r">r</mi>
+            </mrow>
+            <mo data-latex=")" stretchy="false">)</mo>
+            <mspace width="0.167em" data-latex="\,"></mspace>
+            <mi data-latex="d">d</mi>
+            <mrow data-mjx-texclass="ORD" data-latex="\mathbf{r}">
+              <mi mathvariant="bold" data-latex="r">r</mi>
+            </mrow>
+            <mo data-mjx-texclass="CLOSE" data-latex-item="\right|" data-latex="\right|">|</mo>
+          </mrow>
+          <mn data-latex="2">2</mn>
+        </msup>
+      </mtd>
+    </mlabeledtr>
+  </mtable>
+</math>
+<math xmlns="http://www.w3.org/1998/Math/MathML" data-latex="\begin{align}
+a\tag{1}\\
+b\tag{2}
+\end{align}" display="block">
+  <mtable displaystyle="true" columnalign="right" columnspacing="" rowspacing="3pt" data-break-align="bottom" data-latex-item="{align}" data-latex="\begin{align}
+a\tag{1}\\
+b\tag{2}
+\end{align}">
+    <mlabeledtr>
+      <mtd id="mjx-eqn:1">
+        <mtext data-latex="\text{(1)}">(1)</mtext>
+      </mtd>
+      <mtd>
+        <mi data-latex="\tag{1}">a</mi>
+      </mtd>
+    </mlabeledtr>
+    <mlabeledtr>
+      <mtd id="mjx-eqn:2">
+        <mtext data-latex="\text{(2)}">(2)</mtext>
+      </mtd>
+      <mtd>
+        <mi data-latex="\tag{2}">b</mi>
+      </mtd>
+    </mlabeledtr>
+  </mtable>
+</math>
+
+
+[Markdown]
+因数分解
+
+$$
+\begin{align}
+f(x) &= x^3 - 3x^2 + 4 \\
+  &= (x - 2)(x^2 - x - 2) \\
+  &= (x - 2)(x - 2)(x + 1) \\
+  &= (x - 2)^2(x + 1)
+\end{align}
+$$
+[HTML]
+<p>因数分解</p>
+<math xmlns="http://www.w3.org/1998/Math/MathML" data-latex="\begin{align}
+f(x) &amp;= x^3 - 3x^2 + 4 \\
+  &amp;= (x - 2)(x^2 - x - 2) \\
+  &amp;= (x - 2)(x - 2)(x + 1) \\
+  &amp;= (x - 2)^2(x + 1)
+\end{align}" display="block">
+  <mtable displaystyle="true" columnalign="right left" columnspacing="0em" rowspacing="3pt" data-break-align="bottom top" data-latex-item="{align}" data-latex="\begin{align}
+f(x) &amp;= x^3  - 3x^2  + 4 \\
+  &amp;= (x - 2)(x^2  - x - 2) \\
+  &amp;= (x - 2)(x - 2)(x + 1) \\
+  &amp;= (x - 2)^2 (x + 1)
+\end{align}">
+    <mtr>
+      <mtd>
+        <mi data-latex="f">f</mi>
+        <mo data-latex="(" stretchy="false">(</mo>
+        <mi data-latex="x">x</mi>
+        <mo data-latex=")" stretchy="false">)</mo>
+      </mtd>
+      <mtd>
+        <mstyle indentshift="2em">
+          <mi></mi>
+          <mo data-latex="=">=</mo>
+          <msup data-latex="x^3">
+            <mi data-latex="x">x</mi>
+            <mn data-latex="3">3</mn>
+          </msup>
+          <mo data-latex="-">&#x2212;</mo>
+          <mn data-latex="3">3</mn>
+          <msup data-latex="x^2">
+            <mi data-latex="x">x</mi>
+            <mn data-latex="2">2</mn>
+          </msup>
+          <mo data-latex="+">+</mo>
+          <mn data-latex="4">4</mn>
+        </mstyle>
+      </mtd>
+    </mtr>
+    <mtr>
+      <mtd></mtd>
+      <mtd>
+        <mstyle indentshift="2em">
+          <mi></mi>
+          <mo data-latex="=">=</mo>
+          <mo data-latex="(" stretchy="false">(</mo>
+          <mi data-latex="x">x</mi>
+          <mo data-latex="-">&#x2212;</mo>
+          <mn data-latex="2">2</mn>
+          <mo data-latex=")" stretchy="false">)</mo>
+          <mo data-latex="(" stretchy="false">(</mo>
+          <msup data-latex="x^2">
+            <mi data-latex="x">x</mi>
+            <mn data-latex="2">2</mn>
+          </msup>
+          <mo data-latex="-">&#x2212;</mo>
+          <mi data-latex="x">x</mi>
+          <mo data-latex="-">&#x2212;</mo>
+          <mn data-latex="2">2</mn>
+          <mo data-latex=")" stretchy="false">)</mo>
+        </mstyle>
+      </mtd>
+    </mtr>
+    <mtr>
+      <mtd></mtd>
+      <mtd>
+        <mstyle indentshift="2em">
+          <mi></mi>
+          <mo data-latex="=">=</mo>
+          <mo data-latex="(" stretchy="false">(</mo>
+          <mi data-latex="x">x</mi>
+          <mo data-latex="-">&#x2212;</mo>
+          <mn data-latex="2">2</mn>
+          <mo data-latex=")" stretchy="false">)</mo>
+          <mo data-latex="(" stretchy="false">(</mo>
+          <mi data-latex="x">x</mi>
+          <mo data-latex="-">&#x2212;</mo>
+          <mn data-latex="2">2</mn>
+          <mo data-latex=")" stretchy="false">)</mo>
+          <mo data-latex="(" stretchy="false">(</mo>
+          <mi data-latex="x">x</mi>
+          <mo data-latex="+">+</mo>
+          <mn data-latex="1">1</mn>
+          <mo data-latex=")" stretchy="false">)</mo>
+        </mstyle>
+      </mtd>
+    </mtr>
+    <mtr>
+      <mtd></mtd>
+      <mtd>
+        <mstyle indentshift="2em">
+          <mi></mi>
+          <mo data-latex="=">=</mo>
+          <mo data-latex="(" stretchy="false">(</mo>
+          <mi data-latex="x">x</mi>
+          <mo data-latex="-">&#x2212;</mo>
+          <mn data-latex="2">2</mn>
+          <msup data-latex=")^2">
+            <mo data-latex=")" stretchy="false">)</mo>
+            <mn data-latex="2">2</mn>
+          </msup>
+          <mo data-latex="(" stretchy="false">(</mo>
+          <mi data-latex="x">x</mi>
+          <mo data-latex="+">+</mo>
+          <mn data-latex="1">1</mn>
+          <mo data-latex=")" stretchy="false">)</mo>
+        </mstyle>
+      </mtd>
+    </mtr>
+  </mtable>
+</math>
+

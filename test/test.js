@@ -5,18 +5,29 @@ import mdit from 'markdown-it'
 
 import mditMathTexToMathML from '../index.js'
 
-const md = mdit({ html: true }).use(mditMathTexToMathML, {
-        /* loader: {
-            //load: ["input/tex", "output/chtml"] // for SVG
-            load: ["input/tex", "output/mathml"]
-          },
-          svg: {
-            scale: 0.9,
-          },
-          startup: {
-            scale: 0.9  // for MathML
-          }*/
-       })
+// Ignore trailing whitespace differences when fixtures are hand-formatted.
+const normalizeTrailing = (s) => `${s.replace(/[ \t]+$/gm, '').trimEnd()}\n`
+
+const configs = [
+  {
+    name: 'removeMathJaxData=true',
+    option: { removeMathJaxData: true },
+    file: 'examples.txt',
+    normalize: normalizeTrailing,
+  },
+  {
+    name: 'removeMathJaxData=false',
+    option: { removeMathJaxData: false },
+    file: 'examples-with-data.txt',
+    normalize: normalizeTrailing,
+  },
+  {
+    name: 'useSvg',
+    option: { useSvg: true, removeMathJaxData: true, linebreaks: { width: '6em', inline: true } },
+    file: 'examples-svg.txt',
+    normalize: normalizeTrailing,
+  },
+]
 
 let __dirname = path.dirname(new URL(import.meta.url).pathname)
 const isWindows = (process.platform === 'win32')
@@ -24,9 +35,11 @@ if (isWindows) {
   __dirname = __dirname.replace(/^\/+/, '').replace(/\//g, '\\')
 }
 
-const testData = {
-  noOption: __dirname + path.sep +  'examples.txt',
-}
+const testData = configs.map((cfg) => ({
+  name: cfg.name,
+  path: __dirname + path.sep + cfg.file,
+  option: cfg.option,
+}))
 
 const getTestData = (pat) => {
   let ms = [];
@@ -58,7 +71,7 @@ const getTestData = (pat) => {
   return ms
 }
 
-const runTest = (process, pat, pass, testId) => {
+const runTest = (process, pat, pass, testId, normalize = normalizeTrailing) => {
   console.log('===========================================================')
   console.log(pat)
   let ms = getTestData(pat)
@@ -83,10 +96,10 @@ const runTest = (process, pat, pass, testId) => {
     }
 
     const m = ms[n].markdown;
-    const h = process.render(m)
+    const h = normalize(process.render(m))
     console.log('Test: ' + n + ' >>>');
     try {
-      assert.strictEqual(h, ms[n].html);
+      assert.strictEqual(h, normalize(ms[n].html));
     } catch(e) {
       pass = false
       //console.log('Test: ' + n + ' >>>');
@@ -101,6 +114,10 @@ const runTest = (process, pat, pass, testId) => {
 }
 
 let pass = true
-pass = runTest(md, testData.noOption, pass)
+for (const td of testData) {
+  console.log('Running:', td.name)
+  const md = mdit({ html: true }).use(mditMathTexToMathML, td.option)
+  pass = runTest(md, td.path, pass, undefined, td.normalize)
+}
 
 if (pass) console.log('Passed all test.')

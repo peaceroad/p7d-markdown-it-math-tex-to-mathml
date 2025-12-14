@@ -1,76 +1,100 @@
-import { mathjax } from 'mathjax-full/js/mathjax.js'
+import { mathjax } from '@mathjax/src/mjs/mathjax.js'
+import { TeX } from '@mathjax/src/mjs/input/tex.js'
+import { HTMLDocument } from '@mathjax/src/mjs/handlers/html/HTMLDocument.js'
+import { liteAdaptor } from '@mathjax/src/mjs/adaptors/liteAdaptor.js'
+import { STATE } from '@mathjax/src/mjs/core/MathItem.js'
+import { SerializedMmlVisitor } from '@mathjax/src/mjs/core/MmlTree/SerializedMmlVisitor.js'
 
-/* // MathJax@4
-import { TeX } from 'mathjax-full/mjs/input/tex.js'
-import { HTMLDocument } from 'mathjax-full/mjs/handlers/html/HTMLDocument.js'
-import { liteAdaptor } from 'mathjax-full/mjs/adaptors/liteAdaptor.js'
-import { STATE } from 'mathjax-full/mjs/core/MathItem.js'
-import { SerializedMmlVisitor } from 'mathjax-full/mjs/core/MmlTree/SerializedMmlVisitor.js'
+import { SVG } from '@mathjax/src/mjs/output/svg.js'
+import { RegisterHTMLHandler } from '@mathjax/src/mjs/handlers/html.js'
+//import {AssistiveMmlHandler} from '@mathjax/src/mjs/a11y/assistive-mml.js'
+import { source } from '@mathjax/src/components/mjs/source.js'
 
-import {source} from 'mathjax-full/components/mjs/source.js';
-const convertMathToMathML = (texCont, display) => {
-  const load = Object.keys(source).filter((name) => name.substring(0,6) === '[tex]/').sort();
-  console.log(load)
-  const packages = ['base'].concat(load.map((name) => name.substring(6)));
-  console.log(packages)
-  const tex = new TeX({ packages: [...packages]})
-  const html = new HTMLDocument('', liteAdaptor(), { InputJax: tex });
-  const visitor = new SerializedMmlVisitor();
-  const toMathML = (node) => visitor.visitTree(node, html);
-  let mathML = toMathML(html.convert(texCont || '', {display: display, end: STATE.CONVERT }))
-  return mathML
+const STRIP_DATA_ATTRS_RE = /\sdata-(?:latex(?:-item)?|mjx-[a-z0-9_-]+|semantic-[a-z0-9_-]+|break-align|mml-node|c)="[^"]*"/gi
+
+const texExtensionNames = Object.keys(source)
+  .filter((name) => name.startsWith('[tex]/'))
+  .map((name) => name.substring(6))
+  .filter((name) => name !== 'bussproofs')
+
+const texPackages = ['base', ...texExtensionNames]
+
+const texPackageImports = texExtensionNames.map(
+  (name) => `@mathjax/src/components/mjs/input/tex/extensions/${name}/${name}.js`
+)
+
+// Load MathJax v4 TeX extensions so synchronous conversion works the same way
+// it did with the bundled v3 list.
+await Promise.all(texPackageImports.map((specifier) => import(specifier)))
+
+// Shared converters to avoid recreating adaptors and visitors on every call.
+const mathmlContext = (() => {
+  const adaptor = liteAdaptor()
+  const tex = new TeX({ packages: texPackages })
+  const html = new HTMLDocument('', adaptor, { InputJax: tex })
+  const visitor = new SerializedMmlVisitor()
+  return { html, visitor }
+})()
+
+const svgContext = (() => {
+  const adaptor = liteAdaptor()
+  RegisterHTMLHandler(adaptor)
+  const tex = new TeX({ packages: texPackages })
+  return { adaptor, tex }
+})()
+
+const createSvgDocument = (options) => {
+  const { adaptor, tex } = svgContext
+  const svgOptions = {
+    fontCache: options.fontCache || 'local',
+    scale: 1,
+  }
+  if (options.linebreaks) {
+    svgOptions.linebreaks = options.linebreaks
+  }
+  if (options.fontPath) {
+    svgOptions.fontPath = options.fontPath
+  }
+  const svg = new SVG(svgOptions)
+  const html = mathjax.document('', { InputJax: tex, OutputJax: svg })
+  return { adaptor, html }
 }
-*/
-// MathJax@3
-import { TeX } from 'mathjax-full/js/input/tex.js'
-import { HTMLDocument } from 'mathjax-full/js/handlers/html/HTMLDocument.js'
-import { liteAdaptor } from 'mathjax-full/js/adaptors/liteAdaptor.js'
-import { STATE } from 'mathjax-full/js/core/MathItem.js'
-import { AllPackages } from 'mathjax-full/js/input/tex/AllPackages.js'
-import { SerializedMmlVisitor } from 'mathjax-full/js/core/MmlTree/SerializedMmlVisitor.js'
 
-import { SVG } from 'mathjax-full/js/output/svg.js'
-import {RegisterHTMLHandler} from 'mathjax-full/js/handlers/html.js'
-import {AssistiveMmlHandler} from 'mathjax-full/js/a11y/assistive-mml.js'
+const removeMathJaxData = (markup, shouldRemove) => {
+  if (!shouldRemove) return markup
+  // Drop MathJax-generated metadata (data-latex/latex-item/mjx-*/semantic-*/break-align/mml-node/c),
+  // while leaving unrelated data-* attributes intact.
+  return markup.replace(STRIP_DATA_ATTRS_RE, '')
+}
 
-const useMathSvg  = false
-
-const convertMathToMathML = (texCont, display) => {
-  if (useMathSvg) {
-    const adaptor = liteAdaptor();
-    const handler = RegisterHTMLHandler(adaptor);
-    //AssistiveMmlHandler(handler);
-    const packages = AllPackages.filter((name) => name !== 'bussproofs')
-    const tex = new TeX({ packages: [...packages]})
-    const svg = new SVG({fontCache: 'local', scale: 1});
-    const html = mathjax.document('', {InputJax: tex, OutputJax: svg});
+const convertMathToMathML = (texCont, display, options = {}, svgDocument) => {
+  // Back-compat: accept legacy stripMathJaxData/stripDataAttributes; prefer removeMathJaxData.
+  const removeAttrs =
+    (options.removeMathJaxData ?? options.stripMathJaxData ?? options.stripDataAttributes) === true
+  const useSvg = options.useSvg === true
+  if (useSvg) {
+    const { adaptor, html } = svgDocument || createSvgDocument(options)
     const node = html.convert(texCont || '', {
       display: display,
       em: 16,
       ex: 8,
       containerWidth: 680,
     })
-    let svgCont = adaptor.outerHTML(node)
-    if (display) svgCont += '\n'
-    //console.log(svgCont)
-    return svgCont
+    html.clear()
+    const svgCont = adaptor.outerHTML(node)
+    return removeMathJaxData(svgCont, removeAttrs)
   } else {
-    const packages = AllPackages.filter((name) => name !== 'bussproofs');
-    //const tex = new TeX({ packages: [...packages], tags: 'ams'})
-    //console.log(packages)
-    const tex = new TeX({ packages: [...packages]})
-    const html = new HTMLDocument('', liteAdaptor(), { InputJax: tex });
-    const visitor = new SerializedMmlVisitor();
-    const toMathML = (node) => visitor.visitTree(node, html);
+    const { html, visitor } = mathmlContext
+    const toMathML = (node) => visitor.visitTree(node, html)
     let mathML = toMathML(html.convert(texCont || '', { display: display, end: STATE.CONVERT }))
-    //const hasMlabeledtr = mathMLCont.match(/(<math[^>]*?)>\s*?<mtable[^>]*?>\s*?<mlabeledtr[^>]*?>\s*?<mtd[^>]*?>\s*?<mtext>(.*?)<\/mtext>\s*?<\/mtd>\s*?<mtd>\s*?(\S[\S\s]*?)\s*?<\/mtd>\s*?<\/mlabeledtr>\s*?<\/mtable>\s*?<\/math>/)
-    //if (!hasMlabeledtr) return mathML
-    //mathML = hasMlabeledtr[1] + ' aria-label="' + hasMlabeledtr[2] + '">\n' + hasMlabeledtr[3] + '\n</math>'
-    return mathML
+    html.clear()
+    return removeMathJaxData(mathML, removeAttrs)
   }
 }
 
-const mditMathTexToMathML = (md) => {
+const mditMathTexToMathML = (md, options = {}) => {
+  const svgDocument = options.useSvg ? createSvgDocument(options) : null
+  const convert = (texContent, display) => convertMathToMathML(texContent, display, options, svgDocument)
 
   md.block.ruler.after('blockquote', 'math_block', (state, startLine, endLine, silent) => {
     if (silent) { return false; }
@@ -95,7 +119,7 @@ const mditMathTexToMathML = (md) => {
       }
       if (nextLine >= endLine) return false
       const content = state.getLines(startLine + 1, nextLine, state.tShift[startLine], false)
-      const mathML = convertMathToMathML(content, true) + '\n'
+      const mathML = convert(content, true) + '\n'
       state.line = nextLine + 1
       state.tokens.push({
         type: 'html_block',
@@ -108,7 +132,7 @@ const mditMathTexToMathML = (md) => {
 
     if (isOneLineMathBlock) {
       const content = firstLine.slice(2, -2).trim()
-      const mathML = convertMathToMathML(content, true) + '\n'
+      const mathML = convert(content, true) + '\n'
       state.line = startLine + 1
         state.tokens.push({
         type: 'html_block',
@@ -140,7 +164,7 @@ const mditMathTexToMathML = (md) => {
     if (!silent) {
         const content = state.src.slice(start + 1, end);
         const token = state.push('math_inline', 'math', 0);
-        token.content = convertMathToMathML(content, false);
+        token.content = convert(content, false);
         token.markup = '$';
     }
     state.pos = end + 1;
