@@ -5,13 +5,14 @@
 }
 math {
   font-family: math;
-  letter-spacing: 0.1em
+  letter-spacing: 0.075em;
+  @supports (-moz-appearance: none) {
+    letter-spacing: initial;
+  }
 }
-
 math:not([display="block"]) {
   margin: 0 0.15em;
 }
-
 math[display="block"] {
   margin: 2em auto;
   /* Centering Multiple Expressions */
@@ -26,32 +27,37 @@ math[display="block"] {
       text-align: -webkit-left; /* for chrome */
     }
   }
-  &:has(mlabeledtr) {
-    width: 100%;
+  /* formula number by \tag{} */
+  &:has(mlabeledtr > mtd[id^="mjx-eqn"]) {
+    inline-size: 100%;
     margin-inline: 0;
     mtable {
-      width: inherit;
+      inline-size: inherit;
       > mlabeledtr {
-        position: relative;
         display: flex;
         flex-direction: row-reverse;
         align-items: center;
         > mtd {
           display: math;
-          &:nth-child(1) {
-            position: absolute;
-            right: 0;
-            width: 3em;
+          @supports (-moz-appearance: none) {
+            display: block;
+            &:nth-child(1) {
+              padding-inline-end: 0.5em;
+            }
           }
           &:nth-child(2) {
             margin-inline: auto;
+            @media (min-width: 600px) {
+              padding-inline-start: 1.5em;
+            }
           }
         }
       }
     }
   }
+  /* When displaying a multi-line formula, it is currently not possible to display the formula number on the right side using \tag{}. */
   &:has(mtr + mlabeledtr, mlabeledtr + mtr) {
-    background: red;
+    background: lightpink;
     width: fit-content;
     table > mlabeledtr {
       display: none; /* can't render it properly yet. */
