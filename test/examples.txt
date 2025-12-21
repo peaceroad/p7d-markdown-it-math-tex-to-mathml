@@ -770,7 +770,9 @@ $$
   <mtable displaystyle="true">
     <mlabeledtr>
       <mtd id="mjx-eqn:1">
-        <mtext>(1)</mtext>
+        <mtext>(</mtext>
+        <mtext>1</mtext>
+        <mtext>)</mtext>
       </mtd>
       <mtd>
         <msubsup>
@@ -783,7 +785,7 @@ $$
             <mi mathvariant="normal">&#x221E;</mi>
           </mrow>
         </msubsup>
-        <mo stretchy="false">|</mo>
+        <mo>|</mo>
         <mi mathvariant="normal">&#x3A8;</mi>
         <mo stretchy="false">(</mo>
         <mrow>
@@ -793,7 +795,7 @@ $$
         <mi>t</mi>
         <mo stretchy="false">)</mo>
         <msup>
-          <mo stretchy="false">|</mo>
+          <mo>|</mo>
           <mn>2</mn>
         </msup>
         <mspace width="0.167em"></mspace>
@@ -821,7 +823,9 @@ $$
   <mtable displaystyle="true">
     <mlabeledtr>
       <mtd id="mjx-eqn:2">
-        <mtext>(2)</mtext>
+        <mtext>(</mtext>
+        <mtext>2</mtext>
+        <mtext>)</mtext>
       </mtd>
       <mtd>
         <mi>P</mi>
@@ -833,7 +837,7 @@ $$
         <mi>t</mi>
         <mo stretchy="false">)</mo>
         <mo>=</mo>
-        <mo stretchy="false">|</mo>
+        <mo>|</mo>
         <mi mathvariant="normal">&#x3A8;</mi>
         <mo stretchy="false">(</mo>
         <mrow>
@@ -868,7 +872,9 @@ $$
   <mtable displaystyle="true">
     <mlabeledtr>
       <mtd id="mjx-eqn:3">
-        <mtext>(3)</mtext>
+        <mtext>(</mtext>
+        <mtext>3</mtext>
+        <mtext>)</mtext>
       </mtd>
       <mtd>
         <msubsup>
@@ -904,7 +910,9 @@ $$
   <mtable displaystyle="true">
     <mlabeledtr>
       <mtd id="mjx-eqn:4">
-        <mtext>(4)</mtext>
+        <mtext>(</mtext>
+        <mtext>4</mtext>
+        <mtext>)</mtext>
       </mtd>
       <mtd>
         <msubsup>
@@ -917,7 +925,7 @@ $$
             <mi mathvariant="normal">&#x221E;</mi>
           </mrow>
         </msubsup>
-        <mo stretchy="false">|</mo>
+        <mo>|</mo>
         <mi mathvariant="normal">&#x3A8;</mi>
         <mo stretchy="false">(</mo>
         <mrow>
@@ -927,7 +935,7 @@ $$
         <mi>t</mi>
         <mo stretchy="false">)</mo>
         <msup>
-          <mo stretchy="false">|</mo>
+          <mo>|</mo>
           <mn>2</mn>
         </msup>
         <mspace width="0.167em"></mspace>
@@ -955,12 +963,14 @@ $$
   <mtable displaystyle="true">
     <mlabeledtr>
       <mtd id="mjx-eqn:5">
-        <mtext>(5)</mtext>
+        <mtext>(</mtext>
+        <mtext>5</mtext>
+        <mtext>)</mtext>
       </mtd>
       <mtd>
         <mo fence="false" stretchy="false">&#x27E8;</mo>
         <mi>&#x3C8;</mi>
-        <mo stretchy="false">|</mo>
+        <mo>|</mo>
         <mi>&#x3D5;</mi>
         <mo fence="false" stretchy="false">&#x27E9;</mo>
         <mo>=</mo>
@@ -1010,7 +1020,9 @@ $$
   <mtable displaystyle="true">
     <mlabeledtr>
       <mtd id="mjx-eqn:6">
-        <mtext>(6)</mtext>
+        <mtext>(</mtext>
+        <mtext>6</mtext>
+        <mtext>)</mtext>
       </mtd>
       <mtd>
         <mi>P</mi>
@@ -1018,14 +1030,14 @@ $$
         <mi>&#x3D5;</mi>
         <mo stretchy="false">)</mo>
         <mo>=</mo>
-        <mo stretchy="false">|</mo>
+        <mo>|</mo>
         <mo fence="false" stretchy="false">&#x27E8;</mo>
         <mi>&#x3D5;</mi>
-        <mo stretchy="false">|</mo>
+        <mo>|</mo>
         <mi>&#x3C8;</mi>
         <mo fence="false" stretchy="false">&#x27E9;</mo>
         <msup>
-          <mo stretchy="false">|</mo>
+          <mo>|</mo>
           <mn>2</mn>
         </msup>
         <mo>=</mo>
@@ -1065,7 +1077,9 @@ $$
   <mtable displaystyle="true" columnalign="right" columnspacing="" rowspacing="3pt">
     <mlabeledtr>
       <mtd id="mjx-eqn:1">
-        <mtext>(1)</mtext>
+        <mtext>(</mtext>
+        <mtext>1</mtext>
+        <mtext>)</mtext>
       </mtd>
       <mtd>
         <mi>a</mi>
@@ -1073,7 +1087,9 @@ $$
     </mlabeledtr>
     <mlabeledtr>
       <mtd id="mjx-eqn:2">
-        <mtext>(2)</mtext>
+        <mtext>(</mtext>
+        <mtext>2</mtext>
+        <mtext>)</mtext>
       </mtd>
       <mtd>
         <mi>b</mi>
@@ -1196,6 +1212,7 @@ $$
     </mtr>
   </mtable>
 </math>
+
 
 [Markdown]
 Inline one $a+b$ and inline two $c+d$.

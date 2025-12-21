@@ -90,7 +90,7 @@ $$
   <mi data-latex="x">x</mi>
   <mo data-latex="+">+</mo>
   <mfrac data-latex="\frac{x^2}{2!}">
-    <msup data-latex="x^2 ">
+    <msup data-latex="x^2">
       <mi data-latex="x">x</mi>
       <mn data-latex="2">2</mn>
     </msup>
@@ -101,7 +101,7 @@ $$
   </mfrac>
   <mo data-latex="+">+</mo>
   <mfrac data-latex="\frac{x^3}{3!}">
-    <msup data-latex="x^3 ">
+    <msup data-latex="x^3">
       <mi data-latex="x">x</mi>
       <mn data-latex="3">3</mn>
     </msup>
@@ -170,7 +170,7 @@ $$
     <mrow data-latex="f''(a)">
       <msup>
         <mi data-latex="f">f</mi>
-        <mo data-mjx-alternate="1" data-latex="'">&#x2033;</mo>
+        <mo data-mjx-alternate="1" data-latex="''">&#x2033;</mo>
       </msup>
       <mo data-latex="(" stretchy="false">(</mo>
       <mi data-latex="a">a</mi>
@@ -194,7 +194,7 @@ $$
     <mrow data-latex="f'''(a)">
       <msup>
         <mi data-latex="f">f</mi>
-        <mo data-mjx-alternate="1" data-latex="''">&#x2034;</mo>
+        <mo data-mjx-alternate="1" data-latex="'''">&#x2034;</mo>
       </msup>
       <mo data-latex="(" stretchy="false">(</mo>
       <mi data-latex="a">a</mi>
@@ -289,7 +289,7 @@ $$
 \nabla \times \mathbf{E} &amp;= -\frac{\partial \mathbf{B}}{\partial t} \\
 \nabla \times \mathbf{B} &amp;= \mu_0 \mathbf{J} + \mu_0 \epsilon_0 \frac{\partial \mathbf{E}}{\partial t} \\
 \end{align}" display="block">
-  <mtable displaystyle="true" columnalign="right left" columnspacing="0em" rowspacing="3pt" data-break-align="bottom top" data-latex-item="{align}" data-latex="\begin{align}
+  <mtable displaystyle="true" columnalign="right left" columnspacing="0em" rowspacing="3pt" data-break-align="bottom top" data-latex="\begin{align}
 \nabla \cdot \mathbf{E} &amp;= \frac{\rho}{\epsilon_0} \\
 \nabla \cdot \mathbf{B} &amp;= 0 \\
 \nabla \times \mathbf{E} &amp;= -\frac{\partial \mathbf{B}}{\partial t} \\
@@ -309,7 +309,7 @@ $$
           <mo data-latex="=">=</mo>
           <mfrac data-latex="\frac{\rho}{\epsilon_0}">
             <mi data-latex="\rho">&#x3C1;</mi>
-            <msub data-latex="\epsilon_0 ">
+            <msub data-latex="\epsilon_0">
               <mi data-latex="\epsilon">&#x3F5;</mi>
               <mn data-latex="0">0</mn>
             </msub>
@@ -442,7 +442,7 @@ ce + dg &amp; cf + dh
   <mi data-latex="A">A</mi>
   <mi data-latex="B">B</mi>
   <mo data-latex="=">=</mo>
-  <mrow data-mjx-texclass="INNER" data-latex-item="{pmatrix}" data-latex="{pmatrix}">
+  <mrow data-mjx-texclass="INNER" data-latex="{pmatrix}">
     <mo data-mjx-texclass="OPEN">(</mo>
     <mtable columnspacing="1em" rowspacing="4pt">
       <mtr>
@@ -464,7 +464,7 @@ ce + dg &amp; cf + dh
     </mtable>
     <mo data-mjx-texclass="CLOSE">)</mo>
   </mrow>
-  <mrow data-mjx-texclass="INNER" data-latex-item="{pmatrix}" data-latex="{pmatrix}">
+  <mrow data-mjx-texclass="INNER" data-latex="{pmatrix}">
     <mo data-mjx-texclass="OPEN">(</mo>
     <mtable columnspacing="1em" rowspacing="4pt">
       <mtr>
@@ -487,7 +487,7 @@ ce + dg &amp; cf + dh
     <mo data-mjx-texclass="CLOSE">)</mo>
   </mrow>
   <mo data-latex="=">=</mo>
-  <mrow data-mjx-texclass="INNER" data-latex-item="{pmatrix}" data-latex="{pmatrix}">
+  <mrow data-mjx-texclass="INNER" data-latex="{pmatrix}">
     <mo data-mjx-texclass="OPEN">(</mo>
     <mtable columnspacing="1em" rowspacing="4pt">
       <mtr>
@@ -549,7 +549,7 @@ n &amp;= p_1^{k_1} p_2^{k_2} \cdots p_m^{k_m} \\
 \sum_{k=0}^{\infty} \frac{1}{p^{ks}} &amp;= \frac{1}{1 - \frac{1}{p^s}} \\
 \zeta(s) &amp;= \prod_{p \, \text{prime}} \left( 1 - \frac{1}{p^s} \right)^{-1}
 \end{align}" display="block">
-  <mtable displaystyle="true" columnalign="right left" columnspacing="0em" rowspacing="3pt" data-break-align="bottom top" data-latex-item="{align}" data-latex="\begin{align}
+  <mtable displaystyle="true" columnalign="right left" columnspacing="0em" rowspacing="3pt" data-break-align="bottom top" data-latex="\begin{align}
 \zeta(s) &amp;= \sum_{n=1}^{\infty} \frac{1}{n^s} \\
 n &amp;= p_1 ^{k_1 } p_2 ^{k_2 } \cdots p_m^{k_m} \\
 \zeta(s) &amp;= \sum_{n=1}^{\infty} \frac{1}{n^s} = \prod_{p \, \text{prime}} \left( \sum_{k=0}^{\infty} \frac{1}{p^{ks}} \right) \\
@@ -670,8 +670,8 @@ n &amp;= p_1 ^{k_1 } p_2 ^{k_2 } \cdots p_m^{k_m} \\
               <mtext data-latex="\text{prime}">prime</mtext>
             </mrow>
           </munder>
-          <mrow data-mjx-texclass="INNER" data-latex-item="\left( \sum_{k=0}^{\infty} \frac{1}{p^{ks}} \right)" data-latex="\left( \sum_{k=0}^{\infty} \frac{1}{p^{ks}} \right)">
-            <mo data-mjx-texclass="OPEN" data-latex-item="\left(" data-latex="\left(">(</mo>
+          <mrow data-mjx-texclass="INNER" data-latex="\left( \sum_{k=0}^{\infty} \frac{1}{p^{ks}} \right)">
+            <mo data-mjx-texclass="OPEN" data-latex="\left(">(</mo>
             <munderover data-latex="\sum_{k=0}^{\infty}">
               <mo data-latex="\sum">&#x2211;</mo>
               <mrow data-mjx-texclass="ORD" data-latex="{k=0}">
@@ -693,7 +693,7 @@ n &amp;= p_1 ^{k_1 } p_2 ^{k_2 } \cdots p_m^{k_m} \\
                 </mrow>
               </msup>
             </mfrac>
-            <mo data-mjx-texclass="CLOSE" data-latex-item="\right)" data-latex="\right)">)</mo>
+            <mo data-mjx-texclass="CLOSE" data-latex="\right)">)</mo>
           </mrow>
         </mstyle>
       </mtd>
@@ -765,8 +765,8 @@ n &amp;= p_1 ^{k_1 } p_2 ^{k_2 } \cdots p_m^{k_m} \\
             </mrow>
           </munder>
           <msup data-latex="\left( 1 - \frac{1}{p^s} \right)^{-1}">
-            <mrow data-mjx-texclass="INNER" data-latex-item="\left( 1 - \frac{1}{p^s} \right)" data-latex="\left( 1 - \frac{1}{p^s} \right)">
-              <mo data-mjx-texclass="OPEN" data-latex-item="\left(" data-latex="\left(">(</mo>
+            <mrow data-mjx-texclass="INNER" data-latex="\left( 1 - \frac{1}{p^s} \right)">
+              <mo data-mjx-texclass="OPEN" data-latex="\left(">(</mo>
               <mn data-latex="1">1</mn>
               <mo data-latex="-">&#x2212;</mo>
               <mfrac data-latex="\frac{1}{p^s}">
@@ -776,7 +776,7 @@ n &amp;= p_1 ^{k_1 } p_2 ^{k_2 } \cdots p_m^{k_m} \\
                   <mi data-latex="s">s</mi>
                 </msup>
               </mfrac>
-              <mo data-mjx-texclass="CLOSE" data-latex-item="\right)" data-latex="\right)">)</mo>
+              <mo data-mjx-texclass="CLOSE" data-latex="\right)">)</mo>
             </mrow>
             <mrow data-mjx-texclass="ORD" data-latex="{-1}">
               <mo data-latex="-">&#x2212;</mo>
@@ -802,7 +802,9 @@ $$
   <mtable displaystyle="true" data-latex="\int_{-\infty}^{\infty} |\Psi(\mathbf{r}, t)|^2  \, d\mathbf{r} = 1 \tag{1}">
     <mlabeledtr>
       <mtd id="mjx-eqn:1">
-        <mtext data-latex="\text{(1)}">(1)</mtext>
+        <mtext data-latex="\text{(}">(</mtext>
+        <mtext data-latex="\text{1}">1</mtext>
+        <mtext data-latex="\text{)}">)</mtext>
       </mtd>
       <mtd>
         <msubsup data-latex="\int_{-\infty}^{\infty}">
@@ -815,7 +817,7 @@ $$
             <mi mathvariant="normal" data-latex="\infty">&#x221E;</mi>
           </mrow>
         </msubsup>
-        <mo data-mjx-texclass="ORD" stretchy="false" data-latex="|">|</mo>
+        <mo data-mjx-texclass="ORD" data-latex="|">|</mo>
         <mi mathvariant="normal" data-latex="\Psi">&#x3A8;</mi>
         <mo data-latex="(" stretchy="false">(</mo>
         <mrow data-mjx-texclass="ORD" data-latex="\mathbf{r}">
@@ -825,7 +827,7 @@ $$
         <mi data-latex="t">t</mi>
         <mo data-latex=")" stretchy="false">)</mo>
         <msup data-latex="|^2">
-          <mo data-mjx-texclass="ORD" stretchy="false" data-latex="|">|</mo>
+          <mo data-mjx-texclass="ORD" data-latex="|">|</mo>
           <mn data-latex="2">2</mn>
         </msup>
         <mspace width="0.167em" data-latex="\,"></mspace>
@@ -853,7 +855,9 @@ $$
   <mtable displaystyle="true" data-latex="P(\mathbf{r}, t) = |\Psi(\mathbf{r}, t)|^2  \tag{2}">
     <mlabeledtr>
       <mtd id="mjx-eqn:2">
-        <mtext data-latex="\text{(2)}">(2)</mtext>
+        <mtext data-latex="\text{(}">(</mtext>
+        <mtext data-latex="\text{2}">2</mtext>
+        <mtext data-latex="\text{)}">)</mtext>
       </mtd>
       <mtd>
         <mi data-latex="P">P</mi>
@@ -865,7 +869,7 @@ $$
         <mi data-latex="t">t</mi>
         <mo data-latex=")" stretchy="false">)</mo>
         <mo data-latex="=">=</mo>
-        <mo data-mjx-texclass="ORD" stretchy="false" data-latex="|">|</mo>
+        <mo data-mjx-texclass="ORD" data-latex="|">|</mo>
         <mi mathvariant="normal" data-latex="\Psi">&#x3A8;</mi>
         <mo data-latex="(" stretchy="false">(</mo>
         <mrow data-mjx-texclass="ORD" data-latex="\mathbf{r}">
@@ -874,7 +878,7 @@ $$
         <mo data-latex=",">,</mo>
         <mi data-latex="t">t</mi>
         <mo data-latex=")" stretchy="false">)</mo>
-        <msup data-latex="\tag{2}">
+        <msup data-latex="|^2">
           <mo data-mjx-texclass="ORD" stretchy="false" data-latex="|">|</mo>
           <mn data-latex="2">2</mn>
         </msup>
@@ -900,7 +904,9 @@ $$
   <mtable displaystyle="true" data-latex="\int_{-\infty}^{\infty} P(\mathbf{r}, t) \, d\mathbf{r} = 1 \tag{3}">
     <mlabeledtr>
       <mtd id="mjx-eqn:3">
-        <mtext data-latex="\text{(3)}">(3)</mtext>
+        <mtext data-latex="\text{(}">(</mtext>
+        <mtext data-latex="\text{3}">3</mtext>
+        <mtext data-latex="\text{)}">)</mtext>
       </mtd>
       <mtd>
         <msubsup data-latex="\int_{-\infty}^{\infty}">
@@ -936,7 +942,9 @@ $$
   <mtable displaystyle="true" data-latex="\int_{-\infty}^{\infty} |\Psi(\mathbf{r}, t)|^2  \, d\mathbf{r} = 1 \tag{4}">
     <mlabeledtr>
       <mtd id="mjx-eqn:4">
-        <mtext data-latex="\text{(4)}">(4)</mtext>
+        <mtext data-latex="\text{(}">(</mtext>
+        <mtext data-latex="\text{4}">4</mtext>
+        <mtext data-latex="\text{)}">)</mtext>
       </mtd>
       <mtd>
         <msubsup data-latex="\int_{-\infty}^{\infty}">
@@ -949,7 +957,7 @@ $$
             <mi mathvariant="normal" data-latex="\infty">&#x221E;</mi>
           </mrow>
         </msubsup>
-        <mo data-mjx-texclass="ORD" stretchy="false" data-latex="|">|</mo>
+        <mo data-mjx-texclass="ORD" data-latex="|">|</mo>
         <mi mathvariant="normal" data-latex="\Psi">&#x3A8;</mi>
         <mo data-latex="(" stretchy="false">(</mo>
         <mrow data-mjx-texclass="ORD" data-latex="\mathbf{r}">
@@ -959,7 +967,7 @@ $$
         <mi data-latex="t">t</mi>
         <mo data-latex=")" stretchy="false">)</mo>
         <msup data-latex="|^2">
-          <mo data-mjx-texclass="ORD" stretchy="false" data-latex="|">|</mo>
+          <mo data-mjx-texclass="ORD" data-latex="|">|</mo>
           <mn data-latex="2">2</mn>
         </msup>
         <mspace width="0.167em" data-latex="\,"></mspace>
@@ -987,12 +995,14 @@ $$
   <mtable displaystyle="true" data-latex="\langle \psi | \phi \rangle = \int \psi^*(\mathbf{r}) \phi(\mathbf{r}) \, d\mathbf{r} \tag{5}">
     <mlabeledtr>
       <mtd id="mjx-eqn:5">
-        <mtext data-latex="\text{(5)}">(5)</mtext>
+        <mtext data-latex="\text{(}">(</mtext>
+        <mtext data-latex="\text{5}">5</mtext>
+        <mtext data-latex="\text{)}">)</mtext>
       </mtd>
       <mtd>
         <mo fence="false" stretchy="false" data-latex="\langle">&#x27E8;</mo>
         <mi data-latex="\psi">&#x3C8;</mi>
-        <mo data-mjx-texclass="ORD" stretchy="false" data-latex="|">|</mo>
+        <mo data-mjx-texclass="ORD" data-latex="|">|</mo>
         <mi data-latex="\phi">&#x3D5;</mi>
         <mo fence="false" stretchy="false" data-latex="\rangle">&#x27E9;</mo>
         <mo data-latex="=">=</mo>
@@ -1042,7 +1052,9 @@ $$
   <mtable displaystyle="true" data-latex="P(\phi) = |\langle \phi | \psi \rangle|^2  = \left| \int \phi^*(\mathbf{r}) \psi(\mathbf{r}) \, d\mathbf{r} \right|^2  \tag{6}">
     <mlabeledtr>
       <mtd id="mjx-eqn:6">
-        <mtext data-latex="\text{(6)}">(6)</mtext>
+        <mtext data-latex="\text{(}">(</mtext>
+        <mtext data-latex="\text{6}">6</mtext>
+        <mtext data-latex="\text{)}">)</mtext>
       </mtd>
       <mtd>
         <mi data-latex="P">P</mi>
@@ -1050,20 +1062,20 @@ $$
         <mi data-latex="\phi">&#x3D5;</mi>
         <mo data-latex=")" stretchy="false">)</mo>
         <mo data-latex="=">=</mo>
-        <mo data-mjx-texclass="ORD" stretchy="false" data-latex="|">|</mo>
+        <mo data-mjx-texclass="ORD" data-latex="|">|</mo>
         <mo fence="false" stretchy="false" data-latex="\langle">&#x27E8;</mo>
         <mi data-latex="\phi">&#x3D5;</mi>
-        <mo data-mjx-texclass="ORD" stretchy="false" data-latex="|">|</mo>
+        <mo data-mjx-texclass="ORD" data-latex="|">|</mo>
         <mi data-latex="\psi">&#x3C8;</mi>
         <mo fence="false" stretchy="false" data-latex="\rangle">&#x27E9;</mo>
         <msup data-latex="|^2">
-          <mo data-mjx-texclass="ORD" stretchy="false" data-latex="|">|</mo>
+          <mo data-mjx-texclass="ORD" data-latex="|">|</mo>
           <mn data-latex="2">2</mn>
         </msup>
         <mo data-latex="=">=</mo>
-        <msup data-latex="\tag{6}">
-          <mrow data-mjx-texclass="INNER" data-latex-item="\left| \int \phi^*(\mathbf{r}) \psi(\mathbf{r}) \, d\mathbf{r} \right|" data-latex="\left| \int \phi^*(\mathbf{r}) \psi(\mathbf{r}) \, d\mathbf{r} \right|">
-            <mo data-mjx-texclass="OPEN" data-latex-item="\left|" data-latex="\left|">|</mo>
+        <msup data-latex="\left| \int \phi^*(\mathbf{r}) \psi(\mathbf{r}) \, d\mathbf{r} \right|^2">
+          <mrow data-mjx-texclass="INNER" data-latex="\left| \int \phi^*(\mathbf{r}) \psi(\mathbf{r}) \, d\mathbf{r} \right|">
+            <mo data-mjx-texclass="OPEN" data-latex="\left|">|</mo>
             <mo data-latex="\int">&#x222B;</mo>
             <msup data-latex="\phi^*">
               <mi data-latex="\phi">&#x3D5;</mi>
@@ -1085,7 +1097,7 @@ $$
             <mrow data-mjx-texclass="ORD" data-latex="\mathbf{r}">
               <mi mathvariant="bold" data-latex="r">r</mi>
             </mrow>
-            <mo data-mjx-texclass="CLOSE" data-latex-item="\right|" data-latex="\right|">|</mo>
+            <mo data-mjx-texclass="CLOSE" data-latex="\right|">|</mo>
           </mrow>
           <mn data-latex="2">2</mn>
         </msup>
@@ -1097,13 +1109,15 @@ $$
 a\tag{1}\\
 b\tag{2}
 \end{align}" display="block">
-  <mtable displaystyle="true" columnalign="right" columnspacing="" rowspacing="3pt" data-break-align="bottom" data-latex-item="{align}" data-latex="\begin{align}
+  <mtable displaystyle="true" columnalign="right" columnspacing="" rowspacing="3pt" data-break-align="bottom" data-latex="\begin{align}
 a\tag{1}\\
 b\tag{2}
 \end{align}">
     <mlabeledtr>
       <mtd id="mjx-eqn:1">
-        <mtext data-latex="\text{(1)}">(1)</mtext>
+        <mtext data-latex="\text{(}">(</mtext>
+        <mtext data-latex="\text{1}">1</mtext>
+        <mtext data-latex="\text{)}">)</mtext>
       </mtd>
       <mtd>
         <mi data-latex="\tag{1}">a</mi>
@@ -1111,7 +1125,9 @@ b\tag{2}
     </mlabeledtr>
     <mlabeledtr>
       <mtd id="mjx-eqn:2">
-        <mtext data-latex="\text{(2)}">(2)</mtext>
+        <mtext data-latex="\text{(}">(</mtext>
+        <mtext data-latex="\text{2}">2</mtext>
+        <mtext data-latex="\text{)}">)</mtext>
       </mtd>
       <mtd>
         <mi data-latex="\tag{2}">b</mi>
@@ -1140,7 +1156,7 @@ f(x) &amp;= x^3 - 3x^2 + 4 \\
   &amp;= (x - 2)(x - 2)(x + 1) \\
   &amp;= (x - 2)^2(x + 1)
 \end{align}" display="block">
-  <mtable displaystyle="true" columnalign="right left" columnspacing="0em" rowspacing="3pt" data-break-align="bottom top" data-latex-item="{align}" data-latex="\begin{align}
+  <mtable displaystyle="true" columnalign="right left" columnspacing="0em" rowspacing="3pt" data-break-align="bottom top" data-latex="\begin{align}
 f(x) &amp;= x^3  - 3x^2  + 4 \\
   &amp;= (x - 2)(x^2  - x - 2) \\
   &amp;= (x - 2)(x - 2)(x + 1) \\
@@ -1244,4 +1260,3 @@ f(x) &amp;= x^3  - 3x^2  + 4 \\
     </mtr>
   </mtable>
 </math>
-

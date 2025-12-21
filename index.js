@@ -7,7 +7,6 @@ import { SerializedMmlVisitor } from '@mathjax/src/mjs/core/MmlTree/SerializedMm
 
 import { SVG } from '@mathjax/src/mjs/output/svg.js'
 import { RegisterHTMLHandler } from '@mathjax/src/mjs/handlers/html.js'
-//import {AssistiveMmlHandler} from '@mathjax/src/mjs/a11y/assistive-mml.js'
 import { source } from '@mathjax/src/components/mjs/source.js'
 
 const STRIP_DATA_ATTRS_RE = /\sdata-(?:latex(?:-item)?|mjx-[a-z0-9_-]+|semantic-[a-z0-9_-]+|break-align|mml-node|c)="[^"]*"/gi
@@ -49,6 +48,9 @@ const createSvgDocument = (options) => {
     fontCache: options.fontCache || 'local',
     scale: 1,
   }
+  if (options.svgFont) {
+    svgOptions.fontData = options.svgFont
+  }
   if (options.linebreaks) {
     svgOptions.linebreaks = options.linebreaks
   }
@@ -61,52 +63,65 @@ const createSvgDocument = (options) => {
 }
 
 const removeMathJaxData = (markup, shouldRemove) => {
-  if (!shouldRemove) return markup
+  if (!shouldRemove || !markup.includes('data-')) return markup
   // Drop MathJax-generated metadata (data-latex/latex-item/mjx-*/semantic-*/break-align/mml-node/c),
   // while leaving unrelated data-* attributes intact.
   return markup.replace(STRIP_DATA_ATTRS_RE, '')
 }
 
-const convertMathToMathML = (texCont, display, options = {}, svgDocument) => {
+const compactMathML = (markup) => markup.replace(/>\s+</g, '><').trim()
+
+const mditMathTexToMathML = (md, options = {}) => {
   // Back-compat: accept legacy stripMathJaxData/stripDataAttributes; prefer removeMathJaxData.
   const removeAttrs =
     (options.removeMathJaxData ?? options.stripMathJaxData ?? options.stripDataAttributes) === true
+  const compact = options.compactMathML === true
   const useSvg = options.useSvg === true
+  const em = Number.isFinite(options.em) ? options.em : 16
+  const ex = Number.isFinite(options.ex) ? options.ex : 8
+  const containerWidth = Number.isFinite(options.containerWidth) ? options.containerWidth : 680
+  const svgInlineOptions = { display: false, em, ex, containerWidth }
+  const svgBlockOptions = { display: true, em, ex, containerWidth }
+  const mathmlInlineOptions = { display: false, end: STATE.CONVERT, em, ex, containerWidth }
+  const mathmlBlockOptions = { display: true, end: STATE.CONVERT, em, ex, containerWidth }
+
+  let convertInline
+  let convertBlock
   if (useSvg) {
-    const { adaptor, html } = svgDocument || createSvgDocument(options)
-    const node = html.convert(texCont || '', {
-      display: display,
-      em: 16,
-      ex: 8,
-      containerWidth: 680,
-    })
-    html.clear()
-    const svgCont = adaptor.outerHTML(node)
-    return removeMathJaxData(svgCont, removeAttrs)
+    const svgDocument = createSvgDocument(options)
+    const convertSvg = (texContent, convertOptions) => {
+      const { adaptor, html } = svgDocument
+      const node = html.convert(texContent || '', convertOptions)
+      html.clear()
+      const svgCont = adaptor.outerHTML(node)
+      return removeMathJaxData(svgCont, removeAttrs)
+    }
+    convertInline = (texContent) => convertSvg(texContent, svgInlineOptions)
+    convertBlock = (texContent) => convertSvg(texContent, svgBlockOptions)
   } else {
     const { html, visitor } = mathmlContext
-    const toMathML = (node) => visitor.visitTree(node, html)
-    let mathML = toMathML(html.convert(texCont || '', { display: display, end: STATE.CONVERT }))
-    html.clear()
-    return removeMathJaxData(mathML, removeAttrs)
+    const convertMathML = (texContent, convertOptions) => {
+      const mathML = visitor.visitTree(
+        html.convert(texContent || '', convertOptions),
+        html
+      )
+      html.clear()
+      const stripped = removeMathJaxData(mathML, removeAttrs)
+      return compact ? compactMathML(stripped) : stripped
+    }
+    convertInline = (texContent) => convertMathML(texContent, mathmlInlineOptions)
+    convertBlock = (texContent) => convertMathML(texContent, mathmlBlockOptions)
   }
-}
-
-const mditMathTexToMathML = (md, options = {}) => {
-  const svgDocument = options.useSvg ? createSvgDocument(options) : null
-  const convert = (texContent, display) => convertMathToMathML(texContent, display, options, svgDocument)
 
   md.block.ruler.after('blockquote', 'math_block', (state, startLine, endLine, silent) => {
-    if (silent) { return false; }
-    let nextLine = startLine + 1;
-    const startPos = state.bMarks[startLine] + state.tShift[startLine];
-    const endPos = state.eMarks[startLine];
-    const firstLine = state.src.slice(startPos, endPos).trim();
+    if (silent) return false
+    let nextLine = startLine + 1
+    const startPos = state.bMarks[startLine] + state.tShift[startLine]
+    const endPos = state.eMarks[startLine]
+    const firstLine = state.src.slice(startPos, endPos).trim()
 
-    //console.log('firstLine: ' + firstLine)
-    let hasStartMathMark = firstLine === '$$'
-    let isOneLineMathBlock = firstLine.length > 4 && firstLine.startsWith('$$') && firstLine.endsWith('$$')
-    //console.log('hasStartMathMark: ' + hasStartMathMark + ' isOneLineMathBlock: ' + isOneLineMathBlock)
+    const hasStartMathMark = firstLine === '$$'
+    const isOneLineMathBlock = firstLine.length > 4 && firstLine.startsWith('$$') && firstLine.endsWith('$$')
 
     if (!hasStartMathMark && !isOneLineMathBlock) return false
 
@@ -119,7 +134,7 @@ const mditMathTexToMathML = (md, options = {}) => {
       }
       if (nextLine >= endLine) return false
       const content = state.getLines(startLine + 1, nextLine, state.tShift[startLine], false)
-      const mathML = convert(content, true) + '\n'
+      const mathML = convertBlock(content) + '\n'
       state.line = nextLine + 1
       state.tokens.push({
         type: 'html_block',
@@ -132,9 +147,9 @@ const mditMathTexToMathML = (md, options = {}) => {
 
     if (isOneLineMathBlock) {
       const content = firstLine.slice(2, -2).trim()
-      const mathML = convert(content, true) + '\n'
+      const mathML = convertBlock(content) + '\n'
       state.line = startLine + 1
-        state.tokens.push({
+      state.tokens.push({
         type: 'html_block',
         content: mathML,
         block: true,
@@ -146,29 +161,20 @@ const mditMathTexToMathML = (md, options = {}) => {
 
 
   md.inline.ruler.push('math_inline', (state, silent) => {
-    const start = state.pos;
+    const start = state.pos
     if (state.src.charAt(start) !== '$' || state.src.length < 3) return false
     if (state.src.charAt(start + 1) === '$') return false
-    /*if (state.src.charAt(start + 1) === '$') {
-      if (!silent) {
-        const token = state.push('text', '', 0)
-        token.content = '$$'
-      }
-      state.pos = start + 2
-      return true
-    }*/
-
-    const end = state.src.indexOf('$', start + 1);
-    if (end === -1) return false;
+    const end = state.src.indexOf('$', start + 1)
+    if (end === -1) return false
 
     if (!silent) {
-        const content = state.src.slice(start + 1, end);
-        const token = state.push('math_inline', 'math', 0);
-        token.content = convert(content, false);
-        token.markup = '$';
+      const content = state.src.slice(start + 1, end)
+      const token = state.push('math_inline', 'math', 0)
+      token.content = convertInline(content)
+      token.markup = '$'
     }
-    state.pos = end + 1;
-    return true;
+    state.pos = end + 1
+    return true
   })
 
   md.renderer.rules.math_inline = (tokens, idx) => {

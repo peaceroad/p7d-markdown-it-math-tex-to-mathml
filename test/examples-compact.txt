@@ -1,0 +1,12 @@
+[Markdown]
+Inline $a+b$ and $c+d$.
+[HTML]
+<p>Inline <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>a</mi><mo>+</mo><mi>b</mi></math> and <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>c</mi><mo>+</mo><mi>d</mi></math>.</p>
+
+
+[Markdown]
+$$
+x^2+y^2=z^2
+$$
+[HTML]
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><msup><mi>x</mi><mn>2</mn></msup><mo>+</mo><msup><mi>y</mi><mn>2</mn></msup><mo>=</mo><msup><mi>z</mi><mn>2</mn></msup></math>

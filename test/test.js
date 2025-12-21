@@ -4,9 +4,12 @@ import path from 'path'
 import mdit from 'markdown-it'
 
 import mditMathTexToMathML from '../index.js'
+import { loadSvgFontData } from '../node-svg-fonts.js'
 
 // Ignore trailing whitespace differences when fixtures are hand-formatted.
 const normalizeTrailing = (s) => `${s.replace(/[ \t]+$/gm, '').trimEnd()}\n`
+
+const svgFontClass = await loadSvgFontData('newcm')
 
 const configs = [
   {
@@ -25,6 +28,23 @@ const configs = [
     name: 'useSvg',
     option: { useSvg: true, removeMathJaxData: true, linebreaks: { width: '6em', inline: true } },
     file: 'examples-svg.txt',
+    normalize: normalizeTrailing,
+  },
+  {
+    name: 'useSvg(node font)',
+    option: {
+      useSvg: true,
+      svgFont: svgFontClass,
+      removeMathJaxData: true,
+      linebreaks: { width: '6em', inline: true },
+    },
+    file: 'examples-svg.txt',
+    normalize: normalizeTrailing,
+  },
+  {
+    name: 'compactMathML',
+    option: { compactMathML: true, removeMathJaxData: true },
+    file: 'examples-compact.txt',
     normalize: normalizeTrailing,
   },
 ]

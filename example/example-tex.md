@@ -6,7 +6,7 @@ main {
 </style>
 <link rel="stylesheet" type="text/css" href="../style/math.css">
 
-数式はSVGに変換されます。$x$段落。段$x=ab$落$z+c$。段落。
+数式は変換されます。$x$段落。段$x=ab$落$z+c$。段落。
 
 $$
 x^2+y^2=z^2
@@ -101,12 +101,6 @@ $$
 P(\phi) = |\langle \phi | \psi \rangle|^2 = \left| \int \phi^*(\mathbf{r}) \psi(\mathbf{r}) \, d\mathbf{r} \right|^2 \tag{6}
 $$
 
-$$
-\begin{align}
-a\tag{1}\\
-b\tag{2}
-\end{align}
-$$
 
 因数分解
 
@@ -118,6 +112,30 @@ f(x) &= x^3 - 3x^2 + 4 \\
   &= (x - 2)^2(x + 1)
 \end{align}
 $$
+
+Test
+
+$$
+a = b \tag{A}
+$$
+
+
+$$
+\begin{align}
+a = b\tag{1}\\
+b = c\tag{2}
+\end{align}
+$$
+
+$$
+\begin{align}
+f(x) &= x^3 - 3x^2 + 4 \\
+  &= (x - 2)(x^2 - x - 2) \tag{2}\\
+  &= (x - 2)(x - 2)(x + 1) \\
+  &= (x - 2)^2(x + 1)
+\end{align}
+$$
+
 
 <section class="sc-reference">
 <p><span class="sc-reference-label">Reference</span></p>
