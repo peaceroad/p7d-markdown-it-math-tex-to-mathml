@@ -17,7 +17,7 @@ math[display="block"] {
   margin: 2em auto;
   /* Centering Multiple Expressions */
   mtable > :is(mtr, mlabeledtr) > mtd {
-    padding: 0.5em 0;
+    padding-block: 0.5em;
   }
   mtable[columnalign="right left"] > mtr > mtd {
     &:nth-child(1) {
@@ -28,39 +28,88 @@ math[display="block"] {
     }
   }
   /* formula number by \tag{} */
-  &:has(mlabeledtr > mtd[id^="mjx-eqn"]) {
-    inline-size: 100%;
+  &:has(> mtable:not([columnalign="right left"]) > mlabeledtr > mtd[id^="mjx-eqn"]) {
     margin-inline: 0;
-    mtable {
-      inline-size: inherit;
+    > mtable {
+      inline-size: 100%;
       > mlabeledtr {
-        display: flex;
-        flex-direction: row-reverse;
+        inline-size: 100%;
+        display: grid;
+        grid-template-columns: 1fr;
         align-items: center;
         > mtd {
           display: math;
-          @supports (-moz-appearance: none) {
-            display: block;
-            &:nth-child(1) {
-              padding-inline-end: 0.5em;
+          &[id^="mjx-eqn"] {
+            @supports (-moz-appearance: none) {
+              display: block;
             }
+            grid-column: 1 / -1;
+            grid-row: 1 / 2;
+            justify-self: end;
+            padding-inline-end: 0.2em;
           }
-          &:nth-child(2) {
-            margin-inline: auto;
-            @media (min-width: 600px) {
-              padding-inline-start: 1.5em;
-            }
+          &:not([id^="mjx-eqn"]) {
+            grid-column: 1 / -1;
+            grid-row: 1 / 2;
+            justify-self: center;
           }
         }
       }
     }
   }
-  /* When displaying a multi-line formula, it is currently not possible to display the formula number on the right side using \tag{}. */
-  &:has(mtr + mlabeledtr, mlabeledtr + mtr) {
-    background: lightpink;
-    width: fit-content;
-    table > mlabeledtr {
-      display: none; /* can't render it properly yet. */
+}
+
+math:has(> mtable[columnalign="right left"] > mlabeledtr > mtd[id^="mjx-eqn:"]) {
+  margin-inline: 0;
+  > mtable {
+    display: grid;
+    inline-size: 100%;
+    grid-template-columns: 1fr auto auto 1fr;
+    > mtr, mlabeledtr {
+      display: grid;
+      grid-template-columns: subgrid;
+      grid-column: 1 / -1;
+      align-items: center;
+      position: relative;
+      > mtd {
+        display: math;
+      }
+    }
+    > mtr > mtd {
+      &:nth-child(1) {
+        grid-column: 2;
+        justify-self: end;
+        text-align: end;
+      }
+      &:nth-child(2) {
+        grid-column: 3;
+        justify-self: start;
+        /*padding-left: 0.1em;*/
+        text-align: start;
+      }
+    }
+    > mlabeledtr > mtd {
+      &:nth-child(1) {
+        @supports (-moz-appearance: none) {
+          display: block;
+        }
+        position: absolute;
+        right: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        white-space: nowrap;
+        z-index: 10;
+      }
+      &:nth-child(2) {
+        grid-column: 2;
+        justify-self: end;
+      }
+
+      &:nth-child(3) {
+        grid-column: 3;
+        justify-self: start;
+        text-align: start;
+      }
     }
   }
 }
