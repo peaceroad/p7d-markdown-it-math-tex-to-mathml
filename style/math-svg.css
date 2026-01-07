@@ -1,0 +1,23 @@
+:root {
+  --math-svg-inline-margin-inline: 0.15em;
+  --math-svg-block-margin-block: 2em;
+}
+
+mjx-container[jax="SVG"] {
+  display: inline-block;
+}
+
+mjx-container[jax="SVG"]:not([display="true"]) {
+  margin-inline: var(--math-svg-inline-margin-inline);
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  margin: var(--math-svg-block-margin-block) auto;
+  text-align: center;
+}
+
+mjx-container[jax="SVG"][display="true"] > svg {
+  display: block;
+  margin: 0 auto;
+}

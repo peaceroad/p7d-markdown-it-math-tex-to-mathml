@@ -1,0 +1,186 @@
+@font-face {
+  font-family: custom-math;
+  src: local('STIX Two Math');
+       /* url('https://example.com/assets/fonts/STIX2Math-Regular.woff2') format('woff2'); */
+  font-style: normal;
+  font-weight: 400;
+}
+:root {
+  --math-inline-font-size: 1.15em;
+  --math-inline-margin-inline:0.15em;
+  --math-block-font-size: 1.2em;
+  --math-block-margin-block: 2em;
+  --math-block-line-margin-block: 0.5em;
+  --math-block-label-margin-inline-end: 0.15em;
+  --math-letter-spacing: 0.05em;
+}
+math {
+  font-family: custom-math, math;
+  font-size: var(--math-block-font-size);
+  &:not([display="block"]) {
+    margin-inline: var(--math-inline-margin-inline);
+    font-size: var(--math-inline-font-size);
+  }
+  .math-layout-integral + :is(mo, mi) {
+    margin-inline-start: -0.5em;
+  }
+  @supports selector(::-webkit-search-cancel-button) {
+    mi + mo {
+      margin-inline: calc(var(--math-letter-spacing) * 1);
+    }
+    mi + :is(mi, mn) {
+      margin-inline-start: calc(var(--math-letter-spacing) * 2);
+    }
+    mi + mrow {
+      margin-inline-start: calc(var(--math-letter-spacing) * 2);
+    }
+    [mathvariant="bold"] {
+      font-weight: bold;
+      text-transform: none;
+    }
+    [mathvariant="normal"] {
+      font-style: normal;
+    }
+    [mathvariant="bold-italic"] {
+      font-weight: bold;
+      font-style: italic;
+    }
+    msup > mi + mi {
+      font-size: 0.85em;
+      margin-inline-start: 0.05em;
+    }
+    msup > mrow > mi {
+      font-size: 1em;
+      margin-inline-start: 0.05em;
+      &:first-child {
+        margin-inline-start: 0.1em;
+      }
+    }
+    msubsup > *:not(:nth-child(1)) {
+      margin-inline-start: 0.1em;
+
+    }
+    .math-layout-prime {
+      transform: scale(1.4);
+      transform-origin: 0 -0.8em;
+      margin-inline: 0.25em 0.15em;
+    }
+    .math-layout-msup-bar {
+      position: relative;
+      margin-inline-start: 0.2em;
+      &:has(> mo:first-child[stretchy="false"]) {
+        top: -0.05em;
+      }
+      &:has(> mo:first-child:not([stretchy="false"])) {
+        top: -0.25em;
+      }
+    }
+    .math-layout-integral + :is(mo, mi) {
+      margin-inline-start: -0.75em;
+    }
+    > mtable[columnalign="right left"] > mtr > mtd {
+      &:nth-child(1) {
+        text-align: -webkit-right;
+        position: relative;
+        right: -0.6em;
+      }
+      &:not(:nth-child(1)) {
+        text-align: -webkit-left;
+      }
+    }
+  }
+}
+math[display="block"] {
+  margin: var(--math-block-margin-block) auto;
+  /* Centering Multiple Expressions */
+  mtable > :is(mtr, mlabeledtr) > mtd {
+    padding-block: var(--math-block-line-margin-block);
+  }
+  /* formula number by \tag{} */
+  &:has(> mtable:not([columnalign="right left"]) > mlabeledtr > mtd[id^="mjx-eqn"]) {
+    margin-inline: 0;
+    > mtable {
+      inline-size: 100%;
+      > mlabeledtr {
+        inline-size: 100%;
+        display: grid;
+        grid-template-columns: 1fr;
+        align-items: baseline;
+        > mtd {
+          display: math;
+          &[id^="mjx-eqn"] {
+            @supports (-moz-appearance: none) {
+              display: block;
+            }
+            grid-column: 1 / -1;
+            grid-row: 1 / 2;
+            justify-self: end;
+            padding-inline-end: 0.2em;
+          }
+          &:not([id^="mjx-eqn"]) {
+            grid-column: 1 / -1;
+            grid-row: 1 / 2;
+            justify-self: center;
+          }
+        }
+      }
+    }
+  }
+}
+
+math[display="block"]:has(> mtable[columnalign="right left"] > mlabeledtr > mtd[id^="mjx-eqn:"]) {
+  margin-inline: 0;
+  > mtable {
+    display: grid;
+    inline-size: 100%;
+    grid-template-columns: 1fr auto auto 1fr;
+    > mtr, mlabeledtr {
+      display: grid;
+      grid-template-columns: subgrid;
+      grid-column: 1 / -1;
+      align-items: baseline;
+      position: relative;
+      > mtd {
+        display: math;
+      }
+    }
+    > mtr > mtd {
+      &:nth-child(1) {
+        grid-column: 2;
+        justify-self: end;
+        text-align: end;
+      }
+      &:nth-child(2) {
+        grid-column: 3;
+        justify-self: start;
+        text-align: start;
+      }
+    }
+    > mlabeledtr > mtd {
+      &[id^="mjx-eqn"] {
+        @supports (-moz-appearance: none) {
+          display: block;
+        }
+        position: absolute;
+        right: calc(var(--math-block-label-margin-inline-end) * -1);
+        top: 50%;
+        transform: translateY(-50%);
+        white-space: nowrap;
+        z-index: 10;
+      }
+      &:nth-child(2) {
+        grid-column: 2;
+        justify-self: end;
+      }
+
+      &:nth-child(3) {
+        grid-column: 3;
+        justify-self: start;
+        text-align: start;
+        @supports (-moz-appearance: none) {
+          margin-inline-start: -0.4em;
+        }
+      }
+    }
+  }
+}
