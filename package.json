@@ -1,6 +1,6 @@
 {
   "name": "@peaceroad/markdown-it-math-tex-to-mathml",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "convert TeX-formatted math expressions (inline $...$ and block $$...$$) in Markdown to MathML.",
   "homepage": "https://github.com/peaceroad/p7d-markdown-it-math-tex-to-mathml#readme",
   "bugs": {
