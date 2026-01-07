@@ -1,1 +1,7 @@
 node_modules/
+assets/
+scripts/
+.tmp-ctan-newcm/
+assets/
+example/fonts.md
+example/font_ja.md
