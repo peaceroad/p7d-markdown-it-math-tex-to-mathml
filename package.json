@@ -10,17 +10,24 @@
     "type": "git",
     "url": "git+https://github.com/peaceroad/p7d-markdown-it-math-tex-to-mathml.git"
   },
+  "files": [
+    "style/",
+    "index.js",
+    "README.md",
+    "LICENSE"
+  ],
   "license": "MIT",
   "author": "peaceroad <peaceroad@gmail.com>",
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "test": "node test/test.js"
+    "test": "node test/test.js && node test/svg-font-name.test.js && node test/svg-font-packages.test.js && node test/mathml-class-map.test.js"
   },
   "dependencies": {
     "@mathjax/src": "^4.0.0"
   },
   "devDependencies": {
+    "@mathjax/mathjax-stix2-font": "^4.1.0",
     "markdown-it": "^14.1.0"
   }
 }
