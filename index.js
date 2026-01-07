@@ -9,40 +9,17 @@ import { SVG } from '@mathjax/src/mjs/output/svg.js'
 import { RegisterHTMLHandler } from '@mathjax/src/mjs/handlers/html.js'
 import { source } from '@mathjax/src/components/mjs/source.js'
 
-const STRIP_DATA_ATTRS_RE = /\sdata-(?:latex(?:-item)?|mjx-[a-z0-9_-]+|semantic-[a-z0-9_-]+|break-align|mml-node|c)="[^"]*"/gi
+const STRIP_DATA_ATTRS_RE = /\sdata-(?:latex(?:-item)?|mjx-[a-z0-9_-]+|semantic-[a-z0-9_-]+|break-align|mml-node|c|cramped|speech-node)="[^"]*"/gi
 const PRIME_MO_CONTENT = new Set([
   '\u2032', // U+2032 PRIME
   '\u2033', // U+2033 DOUBLE PRIME
   '\u2034', // U+2034 TRIPLE PRIME
   '\u2057', // U+2057 QUADRUPLE PRIME
-  '&#x2032;', // HTML hex entity: U+2032 PRIME
-  '&#x2033;', // HTML hex entity: U+2033 DOUBLE PRIME
-  '&#x2034;', // HTML hex entity: U+2034 TRIPLE PRIME
-  '&#x2057;', // HTML hex entity: U+2057 QUADRUPLE PRIME
-  '&#8242;', // HTML decimal entity: U+2032 PRIME
-  '&#8243;', // HTML decimal entity: U+2033 DOUBLE PRIME
-  '&#8244;', // HTML decimal entity: U+2034 TRIPLE PRIME
-  '&#8279;', // HTML decimal entity: U+2057 QUADRUPLE PRIME
-  '&prime;', // HTML named entity: U+2032 PRIME
-  '&Prime;', // HTML named entity: U+2033 DOUBLE PRIME
-  '&tprime;', // HTML named entity: U+2034 TRIPLE PRIME
-  '&qprime;', // HTML named entity: U+2057 QUADRUPLE PRIME
 ])
-const PRIME_MO_RE = /<mo([^>]*)>([^<]+)<\/mo>/g
-const PRIME_MO_MARKER_RE = /(?:\u2032|\u2033|\u2034|\u2057|&prime;|&Prime;|&tprime;|&qprime;|&#x2032;|&#x2033;|&#x2034;|&#x2057;|&#8242;|&#8243;|&#8244;|&#8279;)/
-const MSUP_BAR_MO_CONTENT = new Set(['|', '&#x7C;', '&#124;', '&vert;'])
-const MSUP_BAR_MARKERS = ['|', '&#x7C;', '&#124;', '&vert;']
+const MSUP_BAR_MO_CONTENT = new Set(['|'])
 const MSUBSUP_INTEGRAL_MO_CONTENT = new Set([
   '\u222B', // U+222B INTEGRAL
-  '&#x222B;', // HTML hex entity: U+222B INTEGRAL
-  '&#8747;', // HTML decimal entity: U+222B INTEGRAL
-  '&int;', // HTML named entity: U+222B INTEGRAL
 ])
-const MSUBSUP_INTEGRAL_MARKERS = ['\u222B', '&#x222B;', '&#8747;', '&int;']
-const MSUP_BAR_RE = /<msup([^>]*)>([\s\S]*?)<\/msup>/g
-const MSUP_BAR_INNER_RE = /^\s*<mo([^>]*)>([^<]+)<\/mo>\s*<mn([^>]*)>([^<]+)<\/mn>\s*$/
-const MSUBSUP_RE = /<msubsup([^>]*)>([\s\S]*?)<\/msubsup>/g
-const MSUBSUP_INTEGRAL_MO_RE = /^\s*<mo[^>]*>([^<]+)<\/mo>/
 const DEFAULT_PRIME_CLASS = 'math-layout-prime'
 const DEFAULT_MSUP_BAR_CLASS = 'math-layout-msup-bar'
 const DEFAULT_INTEGRAL_CLASS = 'math-layout-integral'
@@ -94,7 +71,6 @@ const normalizeSvgFontName = (value) => {
 }
 
 const normalizeClassList = (value) => value.split(/\s+/).filter(Boolean)
-const hasAnyMarker = (markup, markers) => markers.some((marker) => markup.includes(marker))
 
 const resolveClassName = (value, defaultName) => {
   if (value === true) return defaultName
@@ -131,66 +107,54 @@ const resolveMathmlClassMap = (value) => {
   }
 }
 
-const appendClassAttribute = (attrs, className) => {
+const appendClassAttribute = (node, className) => {
   const additions = normalizeClassList(className)
-  if (additions.length === 0) return attrs
-  const classMatch = attrs.match(/\sclass=(["'])([^"']*)\1/)
-  if (!classMatch) {
-    return `${attrs} class="${additions.join(' ')}"`
-  }
-  const existing = normalizeClassList(classMatch[2])
+  if (additions.length === 0) return
+  const attributes = node?.attributes
+  if (!attributes) return
+  const current = attributes.get('class') || ''
+  const existing = normalizeClassList(current)
+  let changed = false
   for (const cls of additions) {
     if (!existing.includes(cls)) {
       existing.push(cls)
+      changed = true
     }
   }
-  const updated = ` class=${classMatch[1]}${existing.join(' ')}${classMatch[1]}`
-  return attrs.replace(classMatch[0], updated)
+  if (changed) {
+    attributes.set('class', existing.join(' '))
+  }
 }
 
-const markPrimeOperators = (markup, className) => {
-  if (!className) return markup
-  if (!markup.includes('<mo')) return markup
-  if (!PRIME_MO_MARKER_RE.test(markup)) return markup
-  return markup.replace(PRIME_MO_RE, (match, attrs, content) => {
-    const trimmed = content.trim()
-    if (!PRIME_MO_CONTENT.has(trimmed)) {
-      return match
+const applyMathmlClassMap = (node, classMap) => {
+  const { primeClass, msupBarClass, integralClass } = classMap
+  if (!primeClass && !msupBarClass && !integralClass) return
+  node.walkTree((current) => {
+    if (primeClass && current.kind === 'mo') {
+      const text = current.getText().trim()
+      if (PRIME_MO_CONTENT.has(text)) {
+        appendClassAttribute(current, primeClass)
+      }
     }
-    const updatedAttrs = appendClassAttribute(attrs, className)
-    return `<mo${updatedAttrs}>${content}</mo>`
-  })
-}
-
-const markBarSuperscripts = (markup, className) => {
-  if (!className) return markup
-  if (!markup.includes('<msup')) return markup
-  if (!hasAnyMarker(markup, MSUP_BAR_MARKERS)) return markup
-  return markup.replace(MSUP_BAR_RE, (match, attrs, inner) => {
-    const innerMatch = inner.match(MSUP_BAR_INNER_RE)
-    if (!innerMatch) return match
-    const moContent = innerMatch[2]
-    if (!MSUP_BAR_MO_CONTENT.has(moContent.trim())) {
-      return match
+    if (msupBarClass && current.kind === 'msup') {
+      const base = current.childNodes?.[0]
+      const sup = current.childNodes?.[1]
+      if (base?.kind === 'mo' && sup?.kind === 'mn') {
+        const text = base.getText().trim()
+        if (MSUP_BAR_MO_CONTENT.has(text)) {
+          appendClassAttribute(current, msupBarClass)
+        }
+      }
     }
-    const updatedAttrs = appendClassAttribute(attrs, className)
-    return `<msup${updatedAttrs}>${inner}</msup>`
-  })
-}
-
-const markIntegralSubsup = (markup, className) => {
-  if (!className) return markup
-  if (!markup.includes('<msubsup')) return markup
-  if (!hasAnyMarker(markup, MSUBSUP_INTEGRAL_MARKERS)) return markup
-  return markup.replace(MSUBSUP_RE, (match, attrs, inner) => {
-    const moMatch = inner.match(MSUBSUP_INTEGRAL_MO_RE)
-    if (!moMatch) return match
-    const trimmed = moMatch[1].trim()
-    if (!MSUBSUP_INTEGRAL_MO_CONTENT.has(trimmed)) {
-      return match
+    if (integralClass && current.kind === 'msubsup') {
+      const base = current.childNodes?.[0]
+      if (base?.kind === 'mo') {
+        const text = base.getText().trim()
+        if (MSUBSUP_INTEGRAL_MO_CONTENT.has(text)) {
+          appendClassAttribute(current, integralClass)
+        }
+      }
     }
-    const updatedAttrs = appendClassAttribute(attrs, className)
-    return `<msubsup${updatedAttrs}>${inner}</msubsup>`
   })
 }
 
@@ -349,23 +313,14 @@ const mditMathTexToMathML = (md, options = {}) => {
   } else {
     const { html, visitor } = mathmlContext
     const convertMathML = (texContent, convertOptions) => {
-      const mathML = visitor.visitTree(
-        html.convert(texContent || '', convertOptions),
-        html
-      )
+      const mmlNode = html.convert(texContent || '', convertOptions)
+      if (primeClass || msupBarClass || integralClass) {
+        applyMathmlClassMap(mmlNode, { primeClass, msupBarClass, integralClass })
+      }
+      const mathML = visitor.visitTree(mmlNode)
       html.clear()
       const stripped = removeMathJaxData(mathML, removeAttrs)
-      let output = stripped
-      if (primeClass) {
-        output = markPrimeOperators(output, primeClass)
-      }
-      if (msupBarClass) {
-        output = markBarSuperscripts(output, msupBarClass)
-      }
-      if (integralClass) {
-        output = markIntegralSubsup(output, integralClass)
-      }
-      return compact ? compactMathML(output) : output
+      return compact ? compactMathML(stripped) : stripped
     }
     convertInline = (texContent) => convertMathML(texContent, mathmlInlineOptions)
     convertBlock = (texContent) => convertMathML(texContent, mathmlBlockOptions)

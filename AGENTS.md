@@ -28,7 +28,7 @@
 
 ### Conversion steps
 
-- MathML: MathJax converts, `SerializedMmlVisitor` serializes, optional attribute stripping, optional compaction.
+- MathML: MathJax converts, optional `mathmlClassMap` tags are applied to the MmlTree, `SerializedMmlVisitor` serializes, optional attribute stripping, optional compaction.
 - SVG: MathJax converts to an SVG node, the document is cleared, and `outerHTML` is returned.
 
 ### Options and behavior
@@ -37,7 +37,7 @@
 - `removeMathJaxData` strips MathJax-generated `data-*` metadata; other `data-*` attributes are preserved.
   It does not remove non-`data-*` attributes like `xmlns`, `display`, `width`, `height`, `viewBox`, `role`, or `aria-*`.
 - `compactMathML` removes whitespace between tags and trims the output.
-- `mathmlClassMap` controls class injection in MathML:
+- `mathmlClassMap` controls class injection in MathML (applied via MmlTree traversal before serialization):
   - `true` enables `math-layout-prime`, `math-layout-msup-bar`, `math-layout-integral`.
   - A string applies to prime operators only.
   - An object `{ prime, msupBar, integral }` controls each target.
