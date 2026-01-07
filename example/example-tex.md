@@ -1,11 +1,3 @@
-<style>
-main {
-  inline-size: 64em;
-  margin: 1rem auto;
-}
-</style>
-<link rel="stylesheet" type="text/css" href="../style/math.css">
-
 数式は変換されます。$x$段落。段$x=ab$落$z+c$。段落。
 
 $$

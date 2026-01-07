@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>MathML compare: New Computer Modern vs STIX Two Math</title>
+<style>
+  body {
+    margin: 0;
+    font-family: system-ui, sans-serif;
+  }
+  main {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    height: 100vh;
+  }
+  section {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    border-left: 1px solid #ddd;
+  }
+  section:first-child {
+    border-left: none;
+  }
+  header {
+    padding: 0.5rem 0.75rem;
+    background: #f5f5f5;
+    font-weight: 600;
+    border-bottom: 1px solid #ddd;
+  }
+  iframe {
+    flex: 1;
+    width: 100%;
+    border: 0;
+  }
+</style>
+</head>
+<body>
+<main>
+  <section>
+    <header>New Computer Modern</header>
+    <iframe src="example-mathml-newcm.html" title="New Computer Modern" data-compare="left"></iframe>
+  </section>
+  <section>
+    <header>STIX Two Math</header>
+    <iframe src="example-mathml-stix2.html" title="STIX Two Math" data-compare="right"></iframe>
+  </section>
+</main>
+<script>
+  const leftFrame = document.querySelector('iframe[data-compare="left"]');
+  const rightFrame = document.querySelector('iframe[data-compare="right"]');
+  let syncing = false;
+
+  const relay = (source) => {
+    if (source === leftFrame?.contentWindow) return rightFrame?.contentWindow;
+    if (source === rightFrame?.contentWindow) return leftFrame?.contentWindow;
+    return null;
+  };
+
+  window.addEventListener('message', (event) => {
+    const data = event.data;
+    if (!data || data.type !== 'math-compare-scroll' || typeof data.ratio !== 'number') return;
+    if (syncing) return;
+    const target = relay(event.source);
+    if (!target) return;
+    syncing = true;
+    target.postMessage(data, '*');
+    requestAnimationFrame(() => {
+      syncing = false;
+    });
+  });
+</script>
+</body>
+</html>
