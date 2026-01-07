@@ -24,7 +24,7 @@
     "test": "node test/test.js && node test/svg-font-name.test.js && node test/svg-font-packages.test.js && node test/mathml-class-map.test.js"
   },
   "dependencies": {
-    "@mathjax/src": "^4.0.0"
+    "@mathjax/src": "^4.1.0"
   },
   "devDependencies": {
     "@mathjax/mathjax-stix2-font": "^4.1.0",
