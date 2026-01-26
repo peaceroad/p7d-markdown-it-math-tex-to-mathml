@@ -12,6 +12,7 @@
   },
   "files": [
     "style/",
+    "script/",
     "index.js",
     "README.md",
     "LICENSE"
@@ -20,6 +21,14 @@
   "author": "peaceroad <peaceroad@gmail.com>",
   "type": "module",
   "main": "index.js",
+  "exports": {
+    ".": {
+      "browser": "./script/math-tex-to-mathml.js",
+      "node": "./index.js",
+      "default": "./index.js"
+    },
+    "./script/math-tex-to-mathml.js": "./script/math-tex-to-mathml.js"
+  },
   "scripts": {
     "test": "node test/test.js && node test/svg-font-name.test.js && node test/svg-font-packages.test.js && node test/mathml-class-map.test.js"
   },

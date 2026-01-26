@@ -10,20 +10,20 @@ const normalizeTrailing = (s) => `${s.replace(/[ \t]+$/gm, '').trimEnd()}\n`
 
 const configs = [
   {
-    name: 'removeMathJaxData=true',
-    option: { removeMathJaxData: true },
+    name: 'setMathJaxDataAttrs=false',
+    option: { setMathJaxDataAttrs: false },
     file: 'examples.txt',
     normalize: normalizeTrailing,
   },
   {
-    name: 'removeMathJaxData=false',
-    option: { removeMathJaxData: false },
+    name: 'setMathJaxDataAttrs=true',
+    option: { setMathJaxDataAttrs: true },
     file: 'examples-with-data.txt',
     normalize: normalizeTrailing,
   },
   {
     name: 'useSvg',
-    option: { useSvg: true, removeMathJaxData: true, linebreaks: { width: '6em', inline: true } },
+    option: { useSvg: true, setMathJaxDataAttrs: false, svgLinebreaks: { width: '6em', inline: true } },
     file: 'examples-svg.txt',
     normalize: normalizeTrailing,
   },
@@ -32,15 +32,15 @@ const configs = [
     option: {
       useSvg: true,
       svgFont: 'newcm',
-      removeMathJaxData: true,
-      linebreaks: { width: '6em', inline: true },
+      setMathJaxDataAttrs: false,
+      svgLinebreaks: { width: '6em', inline: true },
     },
     file: 'examples-svg.txt',
     normalize: normalizeTrailing,
   },
   {
-    name: 'compactMathML',
-    option: { compactMathML: true, removeMathJaxData: true },
+    name: 'compactInlineMathML+compactBlockMathML',
+    option: { compactInlineMathML: true, compactBlockMathML: true, setMathJaxDataAttrs: false },
     file: 'examples-compact.txt',
     normalize: normalizeTrailing,
   },

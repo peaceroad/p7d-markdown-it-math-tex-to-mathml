@@ -29,7 +29,7 @@ math {
       margin-inline: calc(var(--math-letter-spacing) * 1);
     }
     mi + :is(mi, mn) {
-      margin-inline-start: calc(var(--math-letter-spacing) * 2);
+      margin-inline-start: calc(var(--math-letter-spacing) * 1);
     }
     mi + mrow {
       margin-inline-start: calc(var(--math-letter-spacing) * 2);

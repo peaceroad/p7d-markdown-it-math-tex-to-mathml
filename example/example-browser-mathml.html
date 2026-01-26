@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Browser MathML Example</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../style/math-newcm.css">
+<style>
+  body {
+    margin: 0;
+    font-family: system-ui, sans-serif;
+    background: #f6f6f6;
+  }
+  main {
+    max-width: 960px;
+    margin: 1.5rem auto;
+    padding: 0 1rem 2rem;
+    display: grid;
+    gap: 1rem;
+  }
+  textarea {
+    width: 100%;
+    min-height: 12rem;
+    font: 14px/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+    padding: 0.75rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background: #fff;
+  }
+  #preview {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 1rem;
+  }
+  .note {
+    font-size: 0.9rem;
+    color: #555;
+  }
+</style>
+<script src="../node_modules/markdown-it/dist/markdown-it.min.js"></script>
+<script type="importmap">
+{
+  "imports": {
+    "@mathjax/src/": "../node_modules/@mathjax/src/",
+    "@mathjax/mathjax-newcm-font/": "../node_modules/@mathjax/mathjax-newcm-font/",
+    "mj-context-menu/": "../node_modules/mj-context-menu/",
+    "speech-rule-engine/": "../node_modules/speech-rule-engine/",
+    "mhchemparser/": "../node_modules/mhchemparser/",
+    "#js/": "../node_modules/@mathjax/src/mjs/",
+    "#source/": "../node_modules/@mathjax/src/components/mjs/",
+    "#root/": "../node_modules/@mathjax/src/mjs/components/mjs/",
+    "#menu/": "../node_modules/mj-context-menu/js/",
+    "#sre/": "../node_modules/speech-rule-engine/js/",
+    "#mhchem/": "../node_modules/mhchemparser/esm/",
+    "#default-font/": "../node_modules/@mathjax/mathjax-newcm-font/mjs/"
+  }
+}
+</script>
+</head>
+<body>
+<main>
+  <div class="note">
+    <p>Serve this file with a local web server so module imports can resolve.</p>
+    <p>Local run:</p>
+    <ol>
+      <li>npm install (if needed)</li>
+      <li>python -m http.server 8000 (from repo root)</li>
+      <li>Open http://localhost:8000/example/example-browser-mathml.html</li>
+    </ol>
+  </p>
+  </div>
+  <textarea id="source">Inline $E=mc^2$ and block math:
+
+$$
+\int_0^1 x^2\,dx = \frac{1}{3}
+$$
+</textarea>
+  <div id="preview"></div>
+</main>
+<script type="module">
+  import mditMathTexToMathML from '../script/math-tex-to-mathml.js'
+
+  const md = window.markdownit({ html: true }).use(mditMathTexToMathML, {
+    mathmlLayoutClass: true
+  })
+
+  const source = document.getElementById('source')
+  const preview = document.getElementById('preview')
+
+  const render = () => {
+    preview.innerHTML = md.render(source.value)
+  }
+
+  source.addEventListener('input', render)
+  render()
+</script>
+</body>
+</html>

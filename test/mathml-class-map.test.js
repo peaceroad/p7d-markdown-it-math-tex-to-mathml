@@ -4,13 +4,13 @@ import mdit from 'markdown-it'
 import mditMathTexToMathML from '../index.js'
 
 const mdDefault = mdit({ html: true }).use(mditMathTexToMathML, {
-  removeMathJaxData: true,
-  mathmlClassMap: true,
+  setMathJaxDataAttrs: false,
+  mathmlLayoutClass: true,
 })
 
 const mdCustom = mdit({ html: true }).use(mditMathTexToMathML, {
-  removeMathJaxData: true,
-  mathmlClassMap: { prime: 'prime-mark', msupBar: 'sup-bar', integral: 'integral-mark' },
+  setMathJaxDataAttrs: false,
+  mathmlLayoutClass: { prime: 'prime-mark', msupBar: 'sup-bar', integral: 'integral-mark' },
 })
 
 const source = String.raw`$$f'(x) + g''(x) + h'''(x) + |x|^2 + \int_0^1 x\,dx$$`

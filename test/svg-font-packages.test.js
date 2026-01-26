@@ -10,7 +10,7 @@ const normalizeTrailing = (s) => `${s.replace(/[ \t]+$/gm, '').trimEnd()}\n`
 const renderSvg = (options) => {
   const md = mdit({ html: true }).use(mditMathTexToMathML, {
     useSvg: true,
-    removeMathJaxData: true,
+    setMathJaxDataAttrs: false,
     ...options,
   })
   return normalizeTrailing(md.render(MARKDOWN))

@@ -184,8 +184,8 @@ const canResolve = (specifier) => {
   }
 }
 
-const mathmlBaseOptions = { removeMathJaxData: true }
-const mathmlClassMapOptions = { removeMathJaxData: true, mathmlClassMap: true }
+const mathmlBaseOptions = { setMathJaxDataAttrs: false }
+const mathmlLayoutOptions = { setMathJaxDataAttrs: false, mathmlLayoutClass: true }
 
 const jobs = [
   {
@@ -196,7 +196,7 @@ const jobs = [
   {
     input: path.join(__dirname, 'example-tex.md'),
     output: path.join(__dirname, 'example-mathml-class-map.html'),
-    options: mathmlClassMapOptions,
+    options: mathmlLayoutOptions,
   },
   {
     input: path.join(__dirname, 'example-tex.md'),
@@ -213,13 +213,13 @@ const jobs = [
   {
     input: path.join(__dirname, 'example-tex.md'),
     output: path.join(__dirname, 'example-mathml-class-map-newcm.html'),
-    options: mathmlClassMapOptions,
+    options: mathmlLayoutOptions,
     transformHtml: (html) => replaceStylesheet(html, '../style/math-newcm.css'),
   },
   {
     input: path.join(__dirname, 'example-tex.md'),
     output: path.join(__dirname, 'example-mathml-class-map-stix2.html'),
-    options: mathmlClassMapOptions,
+    options: mathmlLayoutOptions,
     transformHtml: (html) => replaceStylesheet(html, '../style/math-stix2.css'),
   },
 ]
@@ -249,7 +249,7 @@ for (const fontJob of svgFontJobs) {
   jobs.push({
     input: path.join(__dirname, 'example-tex.md'),
     output: path.join(__dirname, svgOutputs[fontJob.name]),
-    options: { useSvg: true, svgFont: fontJob.svgFont, removeMathJaxData: true },
+    options: { useSvg: true, svgFont: fontJob.svgFont, setMathJaxDataAttrs: false },
     transformHtml: (html) => replaceStylesheet(html, '../style/math-svg.css'),
   })
 }
