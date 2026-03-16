@@ -817,7 +817,7 @@ $$
             <mi mathvariant="normal" data-latex="\infty">&#x221E;</mi>
           </mrow>
         </msubsup>
-        <mo data-mjx-texclass="ORD" data-latex="|">|</mo>
+        <mo data-mjx-texclass="ORD" stretchy="false" data-latex="|">|</mo>
         <mi mathvariant="normal" data-latex="\Psi">&#x3A8;</mi>
         <mo data-latex="(" stretchy="false">(</mo>
         <mrow data-mjx-texclass="ORD" data-latex="\mathbf{r}">
@@ -827,7 +827,7 @@ $$
         <mi data-latex="t">t</mi>
         <mo data-latex=")" stretchy="false">)</mo>
         <msup data-latex="|^2">
-          <mo data-mjx-texclass="ORD" data-latex="|">|</mo>
+          <mo data-mjx-texclass="ORD" stretchy="false" data-latex="|">|</mo>
           <mn data-latex="2">2</mn>
         </msup>
         <mspace width="0.167em" data-latex="\,"></mspace>
@@ -869,7 +869,7 @@ $$
         <mi data-latex="t">t</mi>
         <mo data-latex=")" stretchy="false">)</mo>
         <mo data-latex="=">=</mo>
-        <mo data-mjx-texclass="ORD" data-latex="|">|</mo>
+        <mo data-mjx-texclass="ORD" stretchy="false" data-latex="|">|</mo>
         <mi mathvariant="normal" data-latex="\Psi">&#x3A8;</mi>
         <mo data-latex="(" stretchy="false">(</mo>
         <mrow data-mjx-texclass="ORD" data-latex="\mathbf{r}">
@@ -957,7 +957,7 @@ $$
             <mi mathvariant="normal" data-latex="\infty">&#x221E;</mi>
           </mrow>
         </msubsup>
-        <mo data-mjx-texclass="ORD" data-latex="|">|</mo>
+        <mo data-mjx-texclass="ORD" stretchy="false" data-latex="|">|</mo>
         <mi mathvariant="normal" data-latex="\Psi">&#x3A8;</mi>
         <mo data-latex="(" stretchy="false">(</mo>
         <mrow data-mjx-texclass="ORD" data-latex="\mathbf{r}">
@@ -967,7 +967,7 @@ $$
         <mi data-latex="t">t</mi>
         <mo data-latex=")" stretchy="false">)</mo>
         <msup data-latex="|^2">
-          <mo data-mjx-texclass="ORD" data-latex="|">|</mo>
+          <mo data-mjx-texclass="ORD" stretchy="false" data-latex="|">|</mo>
           <mn data-latex="2">2</mn>
         </msup>
         <mspace width="0.167em" data-latex="\,"></mspace>
@@ -1002,7 +1002,7 @@ $$
       <mtd>
         <mo fence="false" stretchy="false" data-latex="\langle">&#x27E8;</mo>
         <mi data-latex="\psi">&#x3C8;</mi>
-        <mo data-mjx-texclass="ORD" data-latex="|">|</mo>
+        <mo data-mjx-texclass="ORD" stretchy="false" data-latex="|">|</mo>
         <mi data-latex="\phi">&#x3D5;</mi>
         <mo fence="false" stretchy="false" data-latex="\rangle">&#x27E9;</mo>
         <mo data-latex="=">=</mo>
@@ -1062,14 +1062,14 @@ $$
         <mi data-latex="\phi">&#x3D5;</mi>
         <mo data-latex=")" stretchy="false">)</mo>
         <mo data-latex="=">=</mo>
-        <mo data-mjx-texclass="ORD" data-latex="|">|</mo>
+        <mo data-mjx-texclass="ORD" stretchy="false" data-latex="|">|</mo>
         <mo fence="false" stretchy="false" data-latex="\langle">&#x27E8;</mo>
         <mi data-latex="\phi">&#x3D5;</mi>
-        <mo data-mjx-texclass="ORD" data-latex="|">|</mo>
+        <mo data-mjx-texclass="ORD" stretchy="false" data-latex="|">|</mo>
         <mi data-latex="\psi">&#x3C8;</mi>
         <mo fence="false" stretchy="false" data-latex="\rangle">&#x27E9;</mo>
         <msup data-latex="|^2">
-          <mo data-mjx-texclass="ORD" data-latex="|">|</mo>
+          <mo data-mjx-texclass="ORD" stretchy="false" data-latex="|">|</mo>
           <mn data-latex="2">2</mn>
         </msup>
         <mo data-latex="=">=</mo>
@@ -1260,3 +1260,4 @@ f(x) &amp;= x^3  - 3x^2  + 4 \\
     </mtr>
   </mtable>
 </math>
+

@@ -30,13 +30,15 @@
     "./script/math-tex-to-mathml.js": "./script/math-tex-to-mathml.js"
   },
   "scripts": {
-    "test": "node test/test.js && node test/svg-font-name.test.js && node test/svg-font-packages.test.js && node test/mathml-class-map.test.js"
+    "build:browser-entry": "node tools/generate-browser-entry.js",
+    "benchmark": "node tools/benchmark.js",
+    "test": "node test/browser-entry-sync.test.js && node test/test.js && node test/parser-boundaries.test.js && node test/svg-font-name.test.js && node test/svg-font-packages.test.js && node test/mathml-class-map.test.js"
   },
   "dependencies": {
-    "@mathjax/src": "^4.1.0"
+    "@mathjax/src": "^4.1.1"
   },
   "devDependencies": {
-    "@mathjax/mathjax-stix2-font": "^4.1.0",
+    "@mathjax/mathjax-stix2-font": "^4.1.1",
     "markdown-it": "^14.1.0"
   }
 }

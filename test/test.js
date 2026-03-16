@@ -1,6 +1,7 @@
 import assert from 'assert'
 import fs from 'fs'
 import path from 'path'
+import { fileURLToPath } from 'url'
 import mdit from 'markdown-it'
 
 import mditMathTexToMathML from '../index.js'
@@ -46,11 +47,7 @@ const configs = [
   },
 ]
 
-let __dirname = path.dirname(new URL(import.meta.url).pathname)
-const isWindows = (process.platform === 'win32')
-if (isWindows) {
-  __dirname = __dirname.replace(/^\/+/, '').replace(/\//g, '\\')
-}
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 const testData = configs.map((cfg) => ({
   name: cfg.name,
@@ -91,7 +88,7 @@ const getTestData = (pat) => {
 const runTest = (process, pat, pass, testId, normalize = normalizeTrailing) => {
   console.log('===========================================================')
   console.log(pat)
-  let ms = getTestData(pat)
+  const ms = getTestData(pat)
   if (ms.length === 0) return
   let n = 1;
   let end = ms.length - 1
@@ -137,4 +134,5 @@ for (const td of testData) {
   pass = runTest(md, td.path, pass, undefined, td.normalize)
 }
 
-if (pass) console.log('Passed all test.')
+assert.ok(pass, 'Snapshot mismatches detected.')
+console.log('Passed all test.')

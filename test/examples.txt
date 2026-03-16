@@ -785,7 +785,7 @@ $$
             <mi mathvariant="normal">&#x221E;</mi>
           </mrow>
         </msubsup>
-        <mo>|</mo>
+        <mo stretchy="false">|</mo>
         <mi mathvariant="normal">&#x3A8;</mi>
         <mo stretchy="false">(</mo>
         <mrow>
@@ -795,7 +795,7 @@ $$
         <mi>t</mi>
         <mo stretchy="false">)</mo>
         <msup>
-          <mo>|</mo>
+          <mo stretchy="false">|</mo>
           <mn>2</mn>
         </msup>
         <mspace width="0.167em"></mspace>
@@ -837,7 +837,7 @@ $$
         <mi>t</mi>
         <mo stretchy="false">)</mo>
         <mo>=</mo>
-        <mo>|</mo>
+        <mo stretchy="false">|</mo>
         <mi mathvariant="normal">&#x3A8;</mi>
         <mo stretchy="false">(</mo>
         <mrow>
@@ -925,7 +925,7 @@ $$
             <mi mathvariant="normal">&#x221E;</mi>
           </mrow>
         </msubsup>
-        <mo>|</mo>
+        <mo stretchy="false">|</mo>
         <mi mathvariant="normal">&#x3A8;</mi>
         <mo stretchy="false">(</mo>
         <mrow>
@@ -935,7 +935,7 @@ $$
         <mi>t</mi>
         <mo stretchy="false">)</mo>
         <msup>
-          <mo>|</mo>
+          <mo stretchy="false">|</mo>
           <mn>2</mn>
         </msup>
         <mspace width="0.167em"></mspace>
@@ -970,7 +970,7 @@ $$
       <mtd>
         <mo fence="false" stretchy="false">&#x27E8;</mo>
         <mi>&#x3C8;</mi>
-        <mo>|</mo>
+        <mo stretchy="false">|</mo>
         <mi>&#x3D5;</mi>
         <mo fence="false" stretchy="false">&#x27E9;</mo>
         <mo>=</mo>
@@ -1030,14 +1030,14 @@ $$
         <mi>&#x3D5;</mi>
         <mo stretchy="false">)</mo>
         <mo>=</mo>
-        <mo>|</mo>
+        <mo stretchy="false">|</mo>
         <mo fence="false" stretchy="false">&#x27E8;</mo>
         <mi>&#x3D5;</mi>
-        <mo>|</mo>
+        <mo stretchy="false">|</mo>
         <mi>&#x3C8;</mi>
         <mo fence="false" stretchy="false">&#x27E9;</mo>
         <msup>
-          <mo>|</mo>
+          <mo stretchy="false">|</mo>
           <mn>2</mn>
         </msup>
         <mo>=</mo>
@@ -1259,3 +1259,4 @@ $$
   </msup>
 </math>
 <p>最後のパラグラフ。</p>
+

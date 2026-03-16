@@ -85,7 +85,7 @@ const md = mdit({ html: true }).use(mditMathTexToMathML, {
   // MathML only: collapse whitespace between tags (inline/block independently).
   compactInlineMathML: false,
   compactBlockMathML: false,
-  // MathML only: add layout classes (true, "prime,msupBar,integral", or { prime, msupBar, integral }).
+  // MathML only: add layout classes (true, "prime-only", "prime,msupBar,integral", or { prime, msupBar, integral }).
   mathmlLayoutClass: '',
 
   // Use SVG output instead of MathML
@@ -113,7 +113,7 @@ Applies to both MathML and SVG output:
 MathML-only options:
 - `compactInlineMathML` (default: `false`): collapses whitespace for inline MathML only.
 - `compactBlockMathML` (default: `false`): collapses whitespace for block MathML only.
-- `mathmlLayoutClass` (default: `''`): adds classes to prime operators and layout helpers. Set it to `true` to enable default class names (`math-layout-prime`, `math-layout-msup-bar`, `math-layout-integral`). Pass a comma-separated string (`"prime,msupBar,integral"`) or pass an object: `{ prime, msupBar, integral }`.
+- `mathmlLayoutClass` (default: `''`): adds classes to prime operators and layout helpers. Set it to `true` to enable default class names (`math-layout-prime`, `math-layout-msup-bar`, `math-layout-integral`). Pass a single string to style prime operators only, pass a comma-separated string (`"prime,msupBar,integral"`) to set all three slots positionally, or pass an object: `{ prime, msupBar, integral }`.
 
 SVG-only options:
 - `svgFont` (default: `''`): pass a MathJax SVG font class or instance (e.g. `MathJaxStix2Font`) to switch fonts. In Node.js you can also pass a font name string (e.g. `'stix2'` or `'@mathjax/mathjax-stix2-font'`) if the package is installed. When omitted, MathJax v4 defaults to the New Computer Modern SVG font (via `@mathjax/src` mapping `#default-font` to `@mathjax/mathjax-newcm-font`).
