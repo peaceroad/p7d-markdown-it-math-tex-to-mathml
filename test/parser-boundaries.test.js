@@ -44,6 +44,40 @@ assert.strictEqual(
 )
 
 assert.strictEqual(
+  normalizeTrailing(md.render(String.raw`Escaped inline marker: \$x$`)),
+  '<p>Escaped inline marker: $x$</p>\n',
+  'Escaped inline $ should not open inline math.'
+)
+
+assert.strictEqual(
+  normalizeTrailing(md.render(String.raw`Escaped block marker: \$$x$$`)),
+  '<p>Escaped block marker: $$x$$</p>\n',
+  'Escaped $$ inside a paragraph should remain literal text.'
+)
+
+assert.strictEqual(
+  normalizeTrailing(md.render(String.raw`\$$
+x
+$$`)),
+  '<p>$$\nx\n$$</p>\n',
+  'An escaped $$ line should not open a block math region.'
+)
+
+assert.strictEqual(
+  normalizeTrailing(md.render(String.raw`Even slashes inline: \\$x$`)),
+  normalizeTrailing(`<p>Even slashes inline: \\<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>x</mi>
+</math></p>`),
+  'An even number of backslashes should leave one literal backslash and still allow inline math.'
+)
+
+assert.strictEqual(
+  normalizeTrailing(md.render(String.raw`Odd slashes inline: \\\$x$`)),
+  '<p>Odd slashes inline: \\$x$</p>\n',
+  'An odd number of backslashes should keep the inline marker escaped.'
+)
+
+assert.strictEqual(
   normalizeTrailing(md.render('A $x and text')),
   '<p>A $x and text</p>\n',
   'Unclosed inline math should pass through as literal text.'

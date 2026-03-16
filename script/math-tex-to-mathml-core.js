@@ -11,6 +11,7 @@ import { RegisterHTMLHandler } from '@mathjax/src/mjs/handlers/html.js'
 const STRIP_DATA_ATTRS_RE = /\sdata-(?:latex(?:-item)?|mjx-[a-z0-9_-]+|semantic-[a-z0-9_-]+|break-align|mml-node|c|cramped|speech-node)="[^"]*"/gi
 const COMPACT_MATHML_RE = />\s+</g
 const DOLLAR_CHAR_CODE = 0x24
+const MDIT_INSTALL_STATE = Symbol('math-tex-to-mathml.installState')
 const PRIME_TRIGGER_RE = /'|\\prime\b|[\u2032\u2033\u2034\u2057]/
 const MSUP_BAR_TRIGGER_RE = /\||\\(?:vert|lvert|rvert)\b/
 const INTEGRAL_TRIGGER_RE = /\\int(?:op)?\b|\u222B/
@@ -266,9 +267,8 @@ const createMathTexToMathML = ({ texPackages, resolveSvgFontModule } = {}) => {
     return fontData
   }
 
-  const createSvgDocument = (options) => {
+  const createSvgDocument = (options, svgFontData = null) => {
     const { adaptor, tex } = getSvgContext()
-    const svgFontData = resolveSvgFontData(options.svgFont)
     const svgScale = Number.isFinite(options.svgScale) ? options.svgScale : 1
     const svgOptions = {
       fontCache: options.svgFontCache ?? 'local',
@@ -299,22 +299,29 @@ const createMathTexToMathML = ({ texPackages, resolveSvgFontModule } = {}) => {
   }
 
   const mditMathTexToMathML = (md, options = {}) => {
+    if (md[MDIT_INSTALL_STATE]) return
+    md[MDIT_INSTALL_STATE] = true
+
     const stripMathJaxData = options.setMathJaxDataAttrs !== true
     const useSvg = options.useSvg === true
     const em = Number.isFinite(options.em) ? options.em : 16
     const ex = Number.isFinite(options.ex) ? options.ex : 8
     const containerWidth = Number.isFinite(options.containerWidth) ? options.containerWidth : 680
-    const svgInlineOptions = { display: false, em, ex, containerWidth }
-    const svgBlockOptions = { display: true, em, ex, containerWidth }
-    const mathmlInlineOptions = { display: false, end: STATE.CONVERT, em, ex, containerWidth }
-    const mathmlBlockOptions = { display: true, end: STATE.CONVERT, em, ex, containerWidth }
 
     let convertInline
     let convertBlock
     if (useSvg) {
-      const svgDocument = createSvgDocument(options)
+      const svgInlineOptions = { display: false, em, ex, containerWidth }
+      const svgBlockOptions = { display: true, em, ex, containerWidth }
+      const svgFontData = resolveSvgFontData(options.svgFont)
+      let svgDocument = null
+      const getSvgDocument = () => {
+        if (svgDocument) return svgDocument
+        svgDocument = createSvgDocument(options, svgFontData)
+        return svgDocument
+      }
       const convertSvg = (texContent, convertOptions) => {
-        const { adaptor, html } = svgDocument
+        const { adaptor, html } = getSvgDocument()
         try {
           const node = html.convert(texContent || '', convertOptions)
           const svgCont = adaptor.outerHTML(node)
@@ -328,6 +335,8 @@ const createMathTexToMathML = ({ texPackages, resolveSvgFontModule } = {}) => {
     } else {
       const compactInline = options.compactInlineMathML === true
       const compactBlock = options.compactBlockMathML === true
+      const mathmlInlineOptions = { display: false, end: STATE.CONVERT, em, ex, containerWidth }
+      const mathmlBlockOptions = { display: true, end: STATE.CONVERT, em, ex, containerWidth }
       const mathmlClassMap = normalizeMathmlClassMap(options.mathmlLayoutClass ?? '')
       const mathmlClassMapMatcher = createMathmlClassMapMatcher(mathmlClassMap)
       const convertMathML = (texContent, convertOptions, shouldCompact) => {
@@ -353,6 +362,13 @@ const createMathTexToMathML = ({ texPackages, resolveSvgFontModule } = {}) => {
       let nextLine = startLine + 1
       const startPos = state.bMarks[startLine] + state.tShift[startLine]
       const endPos = state.eMarks[startLine]
+      if (
+        endPos - startPos < 2
+        || state.src.charCodeAt(startPos) !== DOLLAR_CHAR_CODE
+        || state.src.charCodeAt(startPos + 1) !== DOLLAR_CHAR_CODE
+      ) {
+        return false
+      }
       const firstLine = state.src.slice(startPos, endPos).trim()
 
       const hasStartMathMark = firstLine === '$$'
@@ -372,7 +388,14 @@ const createMathTexToMathML = ({ texPackages, resolveSvgFontModule } = {}) => {
 
       if (hasStartMathMark) {
         while (nextLine < endLine) {
-          if (state.src.slice(state.bMarks[nextLine] + state.tShift[nextLine], state.eMarks[nextLine]).trim() === '$$') {
+          const nextStartPos = state.bMarks[nextLine] + state.tShift[nextLine]
+          const nextEndPos = state.eMarks[nextLine]
+          if (
+            nextEndPos - nextStartPos >= 2
+            && state.src.charCodeAt(nextStartPos) === DOLLAR_CHAR_CODE
+            && state.src.charCodeAt(nextStartPos + 1) === DOLLAR_CHAR_CODE
+            && state.src.slice(nextStartPos, nextEndPos).trim() === '$$'
+          ) {
             break
           }
           nextLine++

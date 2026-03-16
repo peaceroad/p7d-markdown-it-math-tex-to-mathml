@@ -19,7 +19,7 @@
 - MathML context is created once per entry instance and reused across renders:
   `liteAdaptor` + `TeX` + `HTMLDocument` + `SerializedMmlVisitor`.
 - SVG context shares `liteAdaptor` + `RegisterHTMLHandler` + `TeX`.
-  A new `SVG` OutputJax + `HTMLDocument` is created per plugin instance when `useSvg` is true.
+  A new `SVG` OutputJax + `HTMLDocument` is created lazily per plugin instance on the first SVG conversion when `useSvg` is true.
 
 ### Parsing and rendering
 
@@ -34,6 +34,7 @@
 
 ### Options and behavior
 
+- Plugin installation is idempotent per `MarkdownIt` instance. Repeated `.use(plugin, ...)` calls after the first registration are ignored, so the first option set wins for that `md` instance.
 - `useSvg` switches output from MathML to SVG.
 - `setMathJaxDataAttrs` controls MathJax-generated `data-*` metadata (default: false). Set it to `true` to keep them. Other `data-*` attributes are preserved.
   It does not remove non-`data-*` attributes like `xmlns`, `display`, `width`, `height`, `viewBox`, `role`, or `aria-*`.
