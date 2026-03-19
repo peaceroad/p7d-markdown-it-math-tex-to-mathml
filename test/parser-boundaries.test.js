@@ -83,4 +83,101 @@ assert.strictEqual(
   'Unclosed inline math should pass through as literal text.'
 )
 
+assert.strictEqual(
+  normalizeTrailing(md.render('Price is $5 and $6')),
+  '<p>Price is $5 and $6</p>\n',
+  'Currency-like dollar text should not be consumed as inline math.'
+)
+
+assert.strictEqual(
+  normalizeTrailing(md.render('Price is $5:')),
+  '<p>Price is $5:</p>\n',
+  'A currency-like dollar amount followed by a colon should stay literal text.'
+)
+
+assert.strictEqual(
+  normalizeTrailing(md.render('Price is $5.')),
+  '<p>Price is $5.</p>\n',
+  'A currency-like dollar amount followed by a period should stay literal text.'
+)
+
+assert.strictEqual(
+  normalizeTrailing(md.render('Price is $5, and math $x$')),
+  normalizeTrailing(`<p>Price is $5, and math <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>x</mi>
+</math></p>`),
+  'A currency-like dollar amount followed by a comma should stay literal text.'
+)
+
+assert.strictEqual(
+  normalizeTrailing(md.render('Price is $5.20 and math $x$')),
+  normalizeTrailing(`<p>Price is $5.20 and math <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>x</mi>
+</math></p>`),
+  'A decimal currency-like dollar amount should stay literal text.'
+)
+
+assert.strictEqual(
+  normalizeTrailing(md.render('Price is $5,000 and math $x$')),
+  normalizeTrailing(`<p>Price is $5,000 and math <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>x</mi>
+</math></p>`),
+  'A grouped currency-like dollar amount should stay literal text.'
+)
+
+assert.strictEqual(
+  normalizeTrailing(md.render('Price is $5:$x$')),
+  normalizeTrailing(`<p>Price is $5:<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>x</mi>
+</math></p>`),
+  'A literal currency-like dollar amount should not prevent a later inline math span from opening.'
+)
+
+assert.strictEqual(
+  normalizeTrailing(md.render('USD $5 and math $x$')),
+  normalizeTrailing(`<p>USD $5 and math <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>x</mi>
+</math></p>`),
+  'A currency-like dollar amount should not swallow later inline math.'
+)
+
+assert.strictEqual(
+  normalizeTrailing(md.render('$5$')),
+  normalizeTrailing(`<p><math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mn>5</mn>
+</math></p>`),
+  'A closed numeric-only inline math span should still render as math.'
+)
+
+assert.strictEqual(
+  normalizeTrailing(md.render('$5^2$')),
+  normalizeTrailing(`<p><math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msup>
+    <mn>5</mn>
+    <mn>2</mn>
+  </msup>
+</math></p>`),
+  'A numeric-leading inline math span should still render when it has a normal closing delimiter.'
+)
+
+assert.strictEqual(
+  normalizeTrailing(md.render(String.raw`$x+\$+y$`)),
+  normalizeTrailing(`<p><math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>x</mi>
+  <mo>+</mo>
+  <mi mathvariant="normal">$</mi>
+  <mo>+</mo>
+  <mi>y</mi>
+</math></p>`),
+  'An escaped dollar inside inline math should not terminate the formula.'
+)
+
+assert.strictEqual(
+  normalizeTrailing(md.render(String.raw`$\text{price \$5}$`)),
+  normalizeTrailing(`<p><math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mtext>price $5</mtext>
+</math></p>`),
+  'An escaped dollar inside \\text should remain part of the MathJax input.'
+)
+
 console.log('Passed parser boundary tests.')

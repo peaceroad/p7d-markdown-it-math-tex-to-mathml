@@ -11,6 +11,7 @@
     "url": "git+https://github.com/peaceroad/p7d-markdown-it-math-tex-to-mathml.git"
   },
   "files": [
+    "assets/",
     "style/",
     "script/",
     "index.js",
@@ -32,7 +33,7 @@
   "scripts": {
     "build:browser-entry": "node tools/generate-browser-entry.js",
     "benchmark": "node tools/benchmark.js",
-    "test": "node test/browser-entry-sync.test.js && node test/test.js && node test/parser-boundaries.test.js && node test/plugin-install.test.js && node test/svg-font-name.test.js && node test/svg-font-packages.test.js && node test/mathml-class-map.test.js"
+    "test": "node test/browser-entry-sync.test.js && node test/test.js && node test/parser-boundaries.test.js && node test/plugin-install.test.js && node test/tex-packages-option.test.js && node test/svg-font-name.test.js && node test/svg-font-packages.test.js && node test/svg-dynamic-fonts.test.js && node test/mathml-class-map.test.js && node test/mathbb-variant.test.js"
   },
   "dependencies": {
     "@mathjax/src": "^4.1.1"

@@ -11,10 +11,16 @@ import { RegisterHTMLHandler } from '@mathjax/src/mjs/handlers/html.js'
 const STRIP_DATA_ATTRS_RE = /\sdata-(?:latex(?:-item)?|mjx-[a-z0-9_-]+|semantic-[a-z0-9_-]+|break-align|mml-node|c|cramped|speech-node)="[^"]*"/gi
 const COMPACT_MATHML_RE = />\s+</g
 const DOLLAR_CHAR_CODE = 0x24
+const BACKSLASH_CHAR_CODE = 0x5C
+const PERIOD_CHAR_CODE = 0x2E
+const COMMA_CHAR_CODE = 0x2C
+const COLON_CHAR_CODE = 0x3A
 const MDIT_INSTALL_STATE = Symbol('math-tex-to-mathml.installState')
+const BASE_TEX_PACKAGE = 'base'
 const PRIME_TRIGGER_RE = /'|\\prime\b|[\u2032\u2033\u2034\u2057]/
 const MSUP_BAR_TRIGGER_RE = /\||\\(?:vert|lvert|rvert)\b/
 const INTEGRAL_TRIGGER_RE = /\\int(?:op)?\b|\u222B/
+const DOUBLE_STRUCK_TRIGGER_RE = /\\mathbb\b/
 const PRIME_MO_CONTENT = new Set([
   '\u2032', // U+2032 PRIME
   '\u2033', // U+2033 DOUBLE PRIME
@@ -47,6 +53,16 @@ const SVG_FONTS = Object.freeze({
   },
 })
 
+const DOUBLE_STRUCK_EXCEPTIONS = Object.freeze({
+  C: '\u2102', // ℂ
+  H: '\u210D', // ℍ
+  N: '\u2115', // ℕ
+  P: '\u2119', // ℙ
+  Q: '\u211A', // ℚ
+  R: '\u211D', // ℝ
+  Z: '\u2124', // ℤ
+})
+
 const normalizeSvgFontName = (value) => {
   if (typeof value !== 'string') return null
   const trimmed = value.trim()
@@ -73,6 +89,141 @@ const resolveSvgFontName = (value) => {
 const normalizeClassList = (value) => {
   if (typeof value !== 'string') return []
   return value.split(/\s+/).filter(Boolean)
+}
+
+const normalizeTexPackageList = (value, fallback = [BASE_TEX_PACKAGE]) => {
+  let entries = null
+  if (Array.isArray(value)) {
+    entries = value
+  } else if (typeof value === 'string') {
+    entries = value.split(',')
+  }
+
+  if (!entries) {
+    return [...fallback]
+  }
+
+  const normalized = []
+  const seen = new Set()
+
+  const addPackage = (name) => {
+    if (typeof name !== 'string') return
+    const trimmed = name.trim()
+    if (!trimmed || seen.has(trimmed)) return
+    seen.add(trimmed)
+    normalized.push(trimmed)
+  }
+
+  addPackage(BASE_TEX_PACKAGE)
+  for (const entry of entries) {
+    addPackage(entry)
+  }
+
+  return normalized
+}
+
+const getTexPackageCacheKey = (packages) => packages.join('\u001F')
+
+const isWhitespaceCharCode = (charCode) =>
+  charCode === 0x20 || charCode === 0x09 || charCode === 0x0A || charCode === 0x0D
+
+const isDigitCharCode = (charCode) => charCode >= 0x30 && charCode <= 0x39
+
+const isEscapedCharacter = (src, pos) => {
+  let count = 0
+  for (let i = pos - 1; i >= 0 && src.charCodeAt(i) === BACKSLASH_CHAR_CODE; i--) {
+    count++
+  }
+  return (count % 2) === 1
+}
+
+const getInlineMathDelimiterInfo = (src, pos, max) => {
+  const prevChar = pos > 0 ? src.charCodeAt(pos - 1) : -1
+  const nextChar = pos + 1 < max ? src.charCodeAt(pos + 1) : -1
+
+  let canOpen = true
+  let canClose = true
+
+  if (nextChar < 0 || nextChar === DOLLAR_CHAR_CODE || isWhitespaceCharCode(nextChar)) {
+    canOpen = false
+  }
+  if (prevChar < 0 || prevChar === DOLLAR_CHAR_CODE || isWhitespaceCharCode(prevChar)) {
+    canClose = false
+  }
+  if (isDigitCharCode(prevChar)) {
+    canOpen = false
+  }
+  if (isDigitCharCode(nextChar)) {
+    canClose = false
+  }
+
+  return { canOpen, canClose, nextChar }
+}
+
+const isCurrencyLikeInlineDollarStart = (src, pos, max) => {
+  const prevChar = pos > 0 ? src.charCodeAt(pos - 1) : -1
+  if (prevChar >= 0 && !isWhitespaceCharCode(prevChar)) {
+    return false
+  }
+
+  let cursor = pos + 1
+  if (cursor >= max || !isDigitCharCode(src.charCodeAt(cursor))) {
+    return false
+  }
+
+  cursor++
+  while (cursor < max) {
+    const charCode = src.charCodeAt(cursor)
+    if (isDigitCharCode(charCode)) {
+      cursor++
+      continue
+    }
+
+    const nextChar = cursor + 1 < max ? src.charCodeAt(cursor + 1) : -1
+    if ((charCode === PERIOD_CHAR_CODE || charCode === COMMA_CHAR_CODE) && isDigitCharCode(nextChar)) {
+      cursor++
+      continue
+    }
+
+    break
+  }
+
+  const boundaryChar = cursor < max ? src.charCodeAt(cursor) : -1
+  return (
+    boundaryChar < 0 ||
+    isWhitespaceCharCode(boundaryChar) ||
+    boundaryChar === PERIOD_CHAR_CODE ||
+    boundaryChar === COMMA_CHAR_CODE ||
+    boundaryChar === COLON_CHAR_CODE
+  )
+}
+
+const toDoubleStruckChar = (char) => {
+  if (char in DOUBLE_STRUCK_EXCEPTIONS) {
+    return DOUBLE_STRUCK_EXCEPTIONS[char]
+  }
+  const codePoint = char.codePointAt(0)
+  if (codePoint >= 0x41 && codePoint <= 0x5A) {
+    return String.fromCodePoint(0x1D538 + codePoint - 0x41)
+  }
+  if (codePoint >= 0x61 && codePoint <= 0x7A) {
+    return String.fromCodePoint(0x1D552 + codePoint - 0x61)
+  }
+  if (codePoint >= 0x30 && codePoint <= 0x39) {
+    return String.fromCodePoint(0x1D7D8 + codePoint - 0x30)
+  }
+  return null
+}
+
+const toDoubleStruckText = (text) => {
+  if (typeof text !== 'string' || !text) return null
+  let normalized = ''
+  for (const char of text) {
+    const mapped = toDoubleStruckChar(char)
+    if (!mapped) return null
+    normalized += mapped
+  }
+  return normalized
 }
 
 const resolveClassName = (value, defaultName) => {
@@ -171,6 +322,59 @@ const applyMathmlClassMap = (node, classMap) => {
   })
 }
 
+const applyMathmlCoreDoubleStruckFallback = (node) => {
+  node.walkTree((current) => {
+    if (current.kind !== 'mi' && current.kind !== 'mn' && current.kind !== 'mtext') return
+    const attributes = current.attributes
+    if (!attributes || attributes.getExplicit('mathvariant') !== 'double-struck') return
+    if (current.childNodes?.length !== 1) return
+    const textNode = current.childNodes[0]
+    if (textNode?.kind !== 'text') return
+    const normalized = toDoubleStruckText(textNode.getText())
+    if (!normalized) return
+    textNode.setText(normalized)
+    attributes.unset('mathvariant')
+  })
+}
+
+const forEachDynamicFontFile = (font, callback) => {
+  const CLASS = font?.CLASS
+  if (!CLASS || typeof callback !== 'function') return
+  const dynamicFiles = CLASS.dynamicFiles ?? {}
+  for (const name of Object.keys(dynamicFiles)) {
+    callback(dynamicFiles[name])
+  }
+  const dynamicExtensions = CLASS.dynamicExtensions
+  if (!dynamicExtensions?.values) return
+  for (const extension of dynamicExtensions.values()) {
+    const files = extension?.files ?? {}
+    for (const name of Object.keys(files)) {
+      callback(files[name])
+    }
+  }
+}
+
+const ensureSynchronousSvgFont = (svg) => {
+  const font = svg?.font
+  if (typeof font?.loadDynamicFilesSync !== 'function') return
+
+  let hasUnloadedFiles = false
+  forEachDynamicFontFile(font, (dynamic) => {
+    if (!dynamic) return
+    if (dynamic.promise) {
+      if (!dynamic.failed && typeof dynamic.setup === 'function') {
+        dynamic.setup(font)
+      }
+      return
+    }
+    hasUnloadedFiles = true
+  })
+
+  if (hasUnloadedFiles) {
+    font.loadDynamicFilesSync()
+  }
+}
+
 const stripMathJaxDataAttrs = (markup, shouldStrip) => {
   if (!shouldStrip || !markup.includes('data-')) return markup
   // Drop MathJax-generated metadata (data-latex/latex-item/mjx-*/semantic-*/break-align/mml-node/c),
@@ -214,38 +418,54 @@ const createMathmlClassMapMatcher = (classMap) => {
 }
 
 const findInlineMathEnd = (src, start, max) => {
-  let pos = start + 1
-  while (pos < max) {
-    if (src.charCodeAt(pos) === DOLLAR_CHAR_CODE) {
+  const { nextChar } = getInlineMathDelimiterInfo(src, start, max)
+  const abortOnInvalidClose = isDigitCharCode(nextChar)
+
+  for (let pos = start + 1; pos < max; pos++) {
+    if (src.charCodeAt(pos) !== DOLLAR_CHAR_CODE || isEscapedCharacter(src, pos)) continue
+    if (getInlineMathDelimiterInfo(src, pos, max).canClose) {
       return pos
     }
-    pos++
+    if (abortOnInvalidClose) {
+      return -1
+    }
   }
   return -1
 }
 
-const createMathTexToMathML = ({ texPackages, resolveSvgFontModule } = {}) => {
-  const packages = Array.isArray(texPackages) && texPackages.length ? texPackages : ['base']
+const createMathTexToMathML = ({
+  texPackages,
+  defaultSvgFont = '',
+  resolveSvgFontModule,
+  prepareSynchronousSvg,
+} = {}) => {
+  const defaultPackages = normalizeTexPackageList(texPackages)
 
-  let mathmlContext = null
-  const getMathmlContext = () => {
-    if (mathmlContext) return mathmlContext
+  const mathmlContextCache = new Map()
+  const getMathmlContext = (packages) => {
+    const cacheKey = getTexPackageCacheKey(packages)
+    const cached = mathmlContextCache.get(cacheKey)
+    if (cached) return cached
     const adaptor = liteAdaptor()
     const tex = new TeX({ packages })
     const html = new HTMLDocument('', adaptor, { InputJax: tex })
     const visitor = new SerializedMmlVisitor()
-    mathmlContext = { html, visitor }
-    return mathmlContext
+    const context = { html, visitor }
+    mathmlContextCache.set(cacheKey, context)
+    return context
   }
 
-  let svgContext = null
-  const getSvgContext = () => {
-    if (svgContext) return svgContext
+  const svgContextCache = new Map()
+  const getSvgContext = (packages) => {
+    const cacheKey = getTexPackageCacheKey(packages)
+    const cached = svgContextCache.get(cacheKey)
+    if (cached) return cached
     const adaptor = liteAdaptor()
     RegisterHTMLHandler(adaptor)
     const tex = new TeX({ packages })
-    svgContext = { adaptor, tex }
-    return svgContext
+    const context = { adaptor, tex }
+    svgContextCache.set(cacheKey, context)
+    return context
   }
 
   const resolveSvgFontData = (value) => {
@@ -267,8 +487,8 @@ const createMathTexToMathML = ({ texPackages, resolveSvgFontModule } = {}) => {
     return fontData
   }
 
-  const createSvgDocument = (options, svgFontData = null) => {
-    const { adaptor, tex } = getSvgContext()
+  const createSvgDocument = (options, packages, svgFontData = null) => {
+    const { adaptor, tex } = getSvgContext(packages)
     const svgScale = Number.isFinite(options.svgScale) ? options.svgScale : 1
     const svgOptions = {
       fontCache: options.svgFontCache ?? 'local',
@@ -294,6 +514,10 @@ const createMathTexToMathML = ({ texPackages, resolveSvgFontModule } = {}) => {
       svgOptions.fontPath = options.svgFontPath
     }
     const svg = new SVG(svgOptions)
+    if (prepareSynchronousSvg) {
+      prepareSynchronousSvg(svg)
+      ensureSynchronousSvgFont(svg)
+    }
     const html = mathjax.document('', { InputJax: tex, OutputJax: svg })
     return { adaptor, html }
   }
@@ -304,6 +528,7 @@ const createMathTexToMathML = ({ texPackages, resolveSvgFontModule } = {}) => {
 
     const stripMathJaxData = options.setMathJaxDataAttrs !== true
     const useSvg = options.useSvg === true
+    const resolvedPackages = normalizeTexPackageList(options.texPackages, defaultPackages)
     const em = Number.isFinite(options.em) ? options.em : 16
     const ex = Number.isFinite(options.ex) ? options.ex : 8
     const containerWidth = Number.isFinite(options.containerWidth) ? options.containerWidth : 680
@@ -313,11 +538,11 @@ const createMathTexToMathML = ({ texPackages, resolveSvgFontModule } = {}) => {
     if (useSvg) {
       const svgInlineOptions = { display: false, em, ex, containerWidth }
       const svgBlockOptions = { display: true, em, ex, containerWidth }
-      const svgFontData = resolveSvgFontData(options.svgFont)
+      const svgFontData = resolveSvgFontData(options.svgFont || defaultSvgFont)
       let svgDocument = null
       const getSvgDocument = () => {
         if (svgDocument) return svgDocument
-        svgDocument = createSvgDocument(options, svgFontData)
+        svgDocument = createSvgDocument(options, resolvedPackages, svgFontData)
         return svgDocument
       }
       const convertSvg = (texContent, convertOptions) => {
@@ -340,9 +565,12 @@ const createMathTexToMathML = ({ texPackages, resolveSvgFontModule } = {}) => {
       const mathmlClassMap = normalizeMathmlClassMap(options.mathmlLayoutClass ?? '')
       const mathmlClassMapMatcher = createMathmlClassMapMatcher(mathmlClassMap)
       const convertMathML = (texContent, convertOptions, shouldCompact) => {
-        const { html, visitor } = getMathmlContext()
+        const { html, visitor } = getMathmlContext(resolvedPackages)
         try {
           const mmlNode = html.convert(texContent || '', convertOptions)
+          if (DOUBLE_STRUCK_TRIGGER_RE.test(texContent)) {
+            applyMathmlCoreDoubleStruckFallback(mmlNode)
+          }
           if (mathmlClassMapMatcher && mathmlClassMapMatcher(texContent)) {
             applyMathmlClassMap(mmlNode, mathmlClassMap)
           }
@@ -419,6 +647,9 @@ const createMathTexToMathML = ({ texPackages, resolveSvgFontModule } = {}) => {
       if (state.src.charCodeAt(start) !== DOLLAR_CHAR_CODE || start + 2 > max) return false
       if (start > 0 && state.src.charCodeAt(start - 1) === DOLLAR_CHAR_CODE) return false
       if (state.src.charCodeAt(start + 1) === DOLLAR_CHAR_CODE) return false
+      if (isEscapedCharacter(state.src, start)) return false
+      if (isCurrencyLikeInlineDollarStart(state.src, start, max)) return false
+      if (!getInlineMathDelimiterInfo(state.src, start, max).canOpen) return false
       const end = findInlineMathEnd(state.src, start, max)
       if (end === -1) return false
 

@@ -6,3 +6,4 @@ assets/
 example/fonts.md
 example/font_ja.md
 package-lock.json
+.npm-cache/

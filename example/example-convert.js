@@ -2,16 +2,13 @@ import fs from 'fs'
 import path from 'path'
 import mdit from 'markdown-it'
 import { createRequire } from 'node:module'
+import { fileURLToPath } from 'node:url'
 
 import plugin from '../index.js'
 
 const require = createRequire(import.meta.url)
 
-let __dirname = path.dirname(new URL(import.meta.url).pathname)
-const isWindows = process.platform === 'win32'
-if (isWindows) {
-  __dirname = __dirname.replace(/^\/+/, '').replace(/\//g, '\\')
-}
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 const childSyncScript = `
 <script>
@@ -43,7 +40,7 @@ const childSyncScript = `
 </script>
 `
 
-const wrapHtml = (body) => `<!DOCTYPE html>
+const wrapHtml = (body, stylesheetHref = '../style/math-newcm.css') => `<!DOCTYPE html>
 <html>
 <head>
 <meta charset="utf-8">
@@ -54,7 +51,7 @@ const wrapHtml = (body) => `<!DOCTYPE html>
     margin: 1rem auto;
   }
 </style>
-<link rel="stylesheet" type="text/css" href="../style/math-newcm.css">
+<link rel="stylesheet" type="text/css" href="${stylesheetHref}">
 </head>
 <body>
 <main>
@@ -64,18 +61,12 @@ ${childSyncScript}
 </html>
 `
 
-const renderMarkdown = (inputPath, outputPath, options, transformHtml = null) => {
+const renderMarkdown = (inputPath, outputPath, options, { stylesheetHref } = {}) => {
   const markdown = fs.readFileSync(inputPath, 'utf8')
   const md = mdit({ html: true }).use(plugin, options)
-  let html = wrapHtml(md.render(markdown))
-  if (typeof transformHtml === 'function') {
-    html = transformHtml(html)
-  }
+  const html = wrapHtml(md.render(markdown), stylesheetHref)
   fs.writeFileSync(outputPath, html, 'utf8')
 }
-
-const replaceStylesheet = (html, newHref) =>
-  html.replace('../style/math-newcm.css', newHref)
 
 const writeCompareHtml = (outputPath, title, left, right) => {
   const html = `<!DOCTYPE html>
@@ -202,25 +193,23 @@ const jobs = [
     input: path.join(__dirname, 'example-tex.md'),
     output: path.join(__dirname, 'example-mathml-newcm.html'),
     options: mathmlBaseOptions,
-    transformHtml: (html) => replaceStylesheet(html, '../style/math-newcm.css'),
   },
   {
     input: path.join(__dirname, 'example-tex.md'),
     output: path.join(__dirname, 'example-mathml-stix2.html'),
     options: mathmlBaseOptions,
-    transformHtml: (html) => replaceStylesheet(html, '../style/math-stix2.css'),
+    stylesheetHref: '../style/math-stix2.css',
   },
   {
     input: path.join(__dirname, 'example-tex.md'),
     output: path.join(__dirname, 'example-mathml-class-map-newcm.html'),
     options: mathmlLayoutOptions,
-    transformHtml: (html) => replaceStylesheet(html, '../style/math-newcm.css'),
   },
   {
     input: path.join(__dirname, 'example-tex.md'),
     output: path.join(__dirname, 'example-mathml-class-map-stix2.html'),
     options: mathmlLayoutOptions,
-    transformHtml: (html) => replaceStylesheet(html, '../style/math-stix2.css'),
+    stylesheetHref: '../style/math-stix2.css',
   },
 ]
 
@@ -250,12 +239,14 @@ for (const fontJob of svgFontJobs) {
     input: path.join(__dirname, 'example-tex.md'),
     output: path.join(__dirname, svgOutputs[fontJob.name]),
     options: { useSvg: true, svgFont: fontJob.svgFont, setMathJaxDataAttrs: false },
-    transformHtml: (html) => replaceStylesheet(html, '../style/math-svg.css'),
+    stylesheetHref: '../style/math-svg.css',
   })
 }
 
 for (const job of jobs) {
-  renderMarkdown(job.input, job.output, job.options, job.transformHtml)
+  renderMarkdown(job.input, job.output, job.options, {
+    stylesheetHref: job.stylesheetHref,
+  })
   console.log(`Wrote ${job.output}`)
 }
 

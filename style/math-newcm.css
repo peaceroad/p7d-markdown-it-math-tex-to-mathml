@@ -1,7 +1,8 @@
 @font-face {
   font-family: custom-math;
-  src: local('NewCMMath-Regular');
-        /* url('https://example.com/assets/fonts/NewCMMath-Regular.otf') format('opentype'); */
+  src: url('../assets/fonts/newcm/NewCMMath-Regular.woff2') format('woff2'),
+       url('../assets/fonts/newcm/NewCMMath-Regular.otf') format('opentype'),
+       local('NewCMMath-Regular');
   font-style: normal;
   font-weight: 400;
 }

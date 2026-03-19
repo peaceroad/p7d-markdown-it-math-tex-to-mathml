@@ -93,6 +93,12 @@ $$
 P(\phi) = |\langle \phi | \psi \rangle|^2 = \left| \int \phi^*(\mathbf{r}) \psi(\mathbf{r}) \, d\mathbf{r} \right|^2 \tag{6}
 $$
 
+フーリエ変換
+
+$$
+f : \mathbb{R} \to \mathbb{C}, \qquad \widehat{f}(\xi) = \int_{\mathbb{R}} f(x) e^{-2 \pi i x \xi} \, dx
+$$
+
 
 因数分解
 

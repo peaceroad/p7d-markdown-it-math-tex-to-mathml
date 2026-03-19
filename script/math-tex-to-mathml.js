@@ -9,7 +9,6 @@ import '@mathjax/src/components/mjs/input/tex/extensions/ams/ams.js'
 import '@mathjax/src/components/mjs/input/tex/extensions/amscd/amscd.js'
 import '@mathjax/src/components/mjs/input/tex/extensions/autoload/autoload.js'
 import '@mathjax/src/components/mjs/input/tex/extensions/bbm/bbm.js'
-import '@mathjax/src/components/mjs/input/tex/extensions/bboldx/bboldx.js'
 import '@mathjax/src/components/mjs/input/tex/extensions/bbox/bbox.js'
 import '@mathjax/src/components/mjs/input/tex/extensions/begingroup/begingroup.js'
 import '@mathjax/src/components/mjs/input/tex/extensions/boldsymbol/boldsymbol.js'
@@ -52,7 +51,6 @@ const TEX_EXTENSION_NAMES = [
   'amscd',
   'autoload',
   'bbm',
-  'bboldx',
   'bbox',
   'begingroup',
   'boldsymbol',

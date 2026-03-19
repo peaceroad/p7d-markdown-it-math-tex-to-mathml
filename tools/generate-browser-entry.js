@@ -17,7 +17,7 @@ export const getBrowserTexExtensionNames = () =>
   Object.keys(source)
     .filter((name) => name.startsWith('[tex]/'))
     .map((name) => name.slice(6))
-    .filter((name) => name !== 'bussproofs')
+    .filter((name) => name !== 'bussproofs' && name !== 'bboldx')
 
 export const renderBrowserEntry = () => {
   const texExtensionNames = getBrowserTexExtensionNames()
