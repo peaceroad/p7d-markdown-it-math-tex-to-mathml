@@ -92,8 +92,7 @@
 
 - MathML output is Presentation MathML serialization.
 - `\mathbb` is emitted as Unicode double-struck characters (`ℝ`, `ℂ`, `𝔸`, `𝟙`, etc.) rather than relying on legacy `mathvariant="double-struck"` rendering.
-- The packaged `math-newcm.css` references bundled font assets under `assets/fonts/newcm/`.
-  `math-stix2.css` still expects a local STIX Two Math installation unless consumers replace the `@font-face` source.
+- `math-newcm.css` and `math-stix2.css` both expect a local math font installation by default unless consumers replace the `@font-face` source.
 - MathJax linebreaking hints (e.g. `data-overflow="linebreak"`) are not used by browsers when rendering raw MathML.
 - AssistiveMML is a MathJax feature for injecting hidden MathML alongside non-MathML outputs (CHTML/SVG).
   This plugin already emits MathML directly when `useSvg` is false, so AssistiveMML is not relevant there.

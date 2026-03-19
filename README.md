@@ -157,8 +157,8 @@ const md = mdit({ html: true }).use(mditMathTexToMathML, {
 ```
 
 See `style/math-newcm.css` (and `style/math-stix2.css`) for the full baseline styles.
-The packaged `math-newcm.css` points at bundled New Computer Modern font files under `assets/fonts/newcm/`.
-`math-stix2.css` still assumes a locally installed STIX Two Math font unless you replace the `@font-face` source with your own hosted asset.
+Both baseline styles assume a locally installed math font by default.
+Replace the `@font-face` source if you want to host the font files yourself.
 
 Minimal example:
 
