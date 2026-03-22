@@ -36,8 +36,15 @@
 
 ### Conversion steps
 
-- MathML: MathJax converts, `\mathbb` is normalized to Unicode double-struck characters in the MmlTree for MathML Core/browser compatibility, optional `mathmlLayoutClass` tags are applied, `SerializedMmlVisitor` serializes, optional attribute stripping, optional compaction.
+- MathML: MathJax converts, `mathmlMode: 'browser'` (the default) normalizes explicit MathJax variant-origin tokens (`\mathbb`, `\mathbf`, `\mathcal`, `\mathfrak`, `\mathit`, etc.) toward browser-friendly Unicode MathML while leaving ordinary identifiers alone. Successful Unicode rewrites remove legacy `mathvariant`; limited style-fallback cases (for example `\mathbf{+}`) keep the legacy `mathvariant` attribute and add presentational `style`; unsupported cases preserve legacy variant markup unchanged. Optional `mathmlLayoutClass` tags are applied, `SerializedMmlVisitor` serializes, optional attribute stripping, optional compaction. `mathmlMode: 'mathjax'` skips that normalization and stays closer to raw MathJax Presentation MathML serialization.
 - SVG: MathJax converts to an SVG node, the document is cleared, and `outerHTML` is returned.
+
+### Output contract
+
+- Default MathML output is browser-oriented Presentation MathML with explicit variant normalization.
+- It is not a strict MathML Core-only emitter today.
+- `mathmlMode: 'mathjax'` opts out and keeps output closer to MathJax's broader Presentation MathML behavior.
+- `texPackages` controls parser/package availability only; it does not imply that output is restricted to the MathML Core element/attribute subset.
 
 ### Options and behavior
 
@@ -52,6 +59,12 @@
   - A single string applies to prime operators only.
   - A comma-separated string maps to `{ prime, msupBar, integral }` in order.
   - An object `{ prime, msupBar, integral }` controls each target.
+- `mathmlMode` controls the raw MathML contract when `useSvg` is false:
+  - `'browser'` (default): normalize explicit token-level `mathvariant` usage using a MathJax-style Unicode mathematical alphanumeric transform, keep ordinary identifiers untouched, remove legacy `mathvariant` on successful Unicode rewrites, add limited inline-style fallbacks when Unicode conversion is not possible while preserving the legacy `mathvariant` attribute, and preserve unsupported variants instead of silently degrading them.
+  - `'mathjax'`: skip project normalization and keep output closer to raw MathJax Presentation MathML.
+- `mathmlReport` enables per-render findings in `env.mathmlReport` for the selected MathML mode.
+  - Findings can include non-Core element names, legacy `mathvariant` usage except `mathvariant="normal"`, and browser-mode fallback markers (`style-fallback-mathvariant`, `unsupported-mathvariant`, `unconverted-mathvariant`).
+  - SVG output does not add findings today.
 - `em`, `ex`, `containerWidth` apply to both MathML and SVG conversion.
 - `svgLinebreaks`, `svgFontCache`, `svgFontPath`, `svgFont`, `svgScale` apply only when `useSvg` is true.
 
@@ -69,6 +82,8 @@
 - The Node entry also wires MathJax's synchronous `asyncLoad` bridge (for both MJS output and CJS font packages).
   When creating an SVG OutputJax, it replays already loaded dynamic font files onto the new font instance and loads any remaining dynamic chunks synchronously.
   This keeps synchronous `md.render()` SVG conversion working when a formula needs glyph ranges beyond the base tables.
+  If MathJax already has a synchronous `asyncLoad` bridge, the plugin composes with it.
+  If MathJax already has a non-synchronous `asyncLoad` bridge, SVG rendering throws a clear error instead of silently overriding it.
 
 ### Default SVG font
 
@@ -93,6 +108,10 @@
 - MathML output is Presentation MathML serialization.
 - `\mathbb` is emitted as Unicode double-struck characters (`ℝ`, `ℂ`, `𝔸`, `𝟙`, etc.) rather than relying on legacy `mathvariant="double-struck"` rendering.
 - `math-newcm.css` and `math-stix2.css` both expect a local math font installation by default unless consumers replace the `@font-face` source.
+- Shared MathML CSS sources are split into `style-src/math-mathml-base.css` (Core-aligned reset/guard layer) and `style-src/math-mathml-presentation.css` (shared project presentation/layout layer).
+  `style/math-newcm.css`, `style/math-stix2.css`, and `style/math-svg.css` are generated standalone bundles built from CSS sources in `style-src/` via `npm run build:styles`.
+- The shared base mirrors the MathML Core user-agent reset for text-oriented properties and also adds author-level guards like `hanging-punctuation: none` for browser quirks that MathML Core does not explicitly enumerate.
+- Manual browser-rendering verification is currently centered on `example/src/example-rendering-check.md`, the compare entry pages under `example/generated/compare/`, and their single-view iframe sources under `example/generated/pages/`; this is the main rendering harness for iOS/WebKit issues.
 - MathJax linebreaking hints (e.g. `data-overflow="linebreak"`) are not used by browsers when rendering raw MathML.
 - AssistiveMML is a MathJax feature for injecting hidden MathML alongside non-MathML outputs (CHTML/SVG).
   This plugin already emits MathML directly when `useSvg` is false, so AssistiveMML is not relevant there.

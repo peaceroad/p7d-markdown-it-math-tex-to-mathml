@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>MathML class map compare: New Computer Modern vs STIX Two Math</title>
+<title>Rendering check compare: browser MathML vs MathJax MathML</title>
 <style>
   body {
     margin: 0;
@@ -38,12 +38,12 @@
 <body>
 <main>
   <section>
-    <header>New Computer Modern</header>
-    <iframe src="example-mathml-class-map-newcm.html" title="New Computer Modern" data-compare="left"></iframe>
+    <header>MathML (`mathmlMode: 'browser'`, `math-newcm.css`)</header>
+    <iframe src="../pages/example-rendering-check-mathml.html" title="MathML (`mathmlMode: 'browser'`, `math-newcm.css`)" data-compare="left"></iframe>
   </section>
   <section>
-    <header>STIX Two Math</header>
-    <iframe src="example-mathml-class-map-stix2.html" title="STIX Two Math" data-compare="right"></iframe>
+    <header>MathML (`mathmlMode: 'mathjax'`, `math-newcm.css`)</header>
+    <iframe src="../pages/example-rendering-check-mathml-mathjax.html" title="MathML (`mathmlMode: 'mathjax'`, `math-newcm.css`)" data-compare="right"></iframe>
   </section>
 </main>
 <script>

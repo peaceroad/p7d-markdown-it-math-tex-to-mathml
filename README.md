@@ -13,9 +13,32 @@ npm install @mathjax/src
 
 This package is ESM. The Node entry uses top-level await to preload MathJax TeX extensions, so run it in an ESM context. For browsers, use the browser entry (`@peaceroad/markdown-it-math-tex-to-mathml/script/math-tex-to-mathml.js`) with a bundler that can resolve `@mathjax/src` and its internal imports.
 
-By default, the plugin preloads MathJax TeX extensions from `@mathjax/src`, excluding `bussproofs` and `bboldx`. `bboldx` is intentionally left out so `\mathbb` does not become a MathJax-private variant that depends on `data-mjx-*` metadata. For MathML output, `\mathbb` is additionally normalized to Unicode double-struck characters (`ℝ`, `ℂ`, `𝔸`, `𝟙`, etc.) for better MathML Core/browser compatibility.
+By default, the plugin preloads MathJax TeX extensions from `@mathjax/src`, excluding `bussproofs` and `bboldx`. `bboldx` is intentionally left out so `\mathbb` does not become a MathJax-private variant that depends on `data-mjx-*` metadata.
 
 The default package set is intentionally broad for compatibility. If you want stricter TeX support, pass `texPackages` to limit the active MathJax TeX packages for that `MarkdownIt` instance. Note that the entry still preloads the default extension modules at startup so synchronous conversion keeps working; `texPackages` narrows parser behavior, not startup imports.
+
+### Output contract
+
+When `useSvg` is `false`, this plugin emits Presentation MathML in one of two MathML modes.
+
+- The default MathML mode is `mathmlMode: 'browser'`.
+- Browser mode applies project-level normalization to **explicit variant-origin tokens** such as `\mathbb`, `\mathbf`, `\mathcal`, `\mathfrak`, and `\mathit`, using Unicode mathematical alphanumeric output where possible and limited inline-style fallback where Unicode is not available.
+  - When browser mode falls back to inline style (for example `\mathbf{+}`), it keeps the legacy `mathvariant` attribute and adds presentational style so current browsers still render while future browsers can take advantage of the preserved attribute.
+- Ordinary identifiers such as plain `$x$` are left alone.
+- Non-Core constructs such as `\cancel` / `<menclose>` and `\tag` / `<mlabeledtr>` are preserved as Presentation MathML structures.
+- `mathmlMode: 'mathjax'` is the opt-out that keeps output closer to MathJax's broader Presentation MathML serialization.
+- Neither mode is a strict MathML Core-only subset.
+- `texPackages` controls TeX parser behavior for a given `MarkdownIt` instance. It does **not** guarantee that the resulting MathML is limited to MathML Core constructs.
+
+Additional notes:
+
+- `docs/en/mathml-css-notes.md` / `docs/ja/mathml-css-notes.md`: CSS baseline for native MathML
+- `docs/en/mathml-core-interop-notes.md` / `docs/ja/mathml-core-interop-notes.md`: MathML Core interoperability
+- `docs/en/mathjax-font-notes.md` / `docs/ja/mathjax-font-notes.md`: MathML/SVG font setup
+- `docs/en/manual-rendering-checks.md` / `docs/ja/manual-rendering-checks.md`: manual browser-rendering checks
+
+The detailed notes keep links to the primary external references (MathML Core,
+MathJax docs, MDN, and related sources) where those references matter.
 
 ```js
 import mdit from 'markdown-it'
@@ -91,6 +114,12 @@ const md = mdit({ html: true }).use(mditMathTexToMathML, {
   compactBlockMathML: false,
   // MathML only: add layout classes (true, "prime-only", "prime,msupBar,integral", or { prime, msupBar, integral }).
   mathmlLayoutClass: '',
+  // MathML only: choose the raw MathML contract.
+  // 'browser' = browser-oriented normalized MathML (default)
+  // 'mathjax' = output closer to MathJax Presentation MathML serialization
+  mathmlMode: 'browser',
+  // MathML only: append interop findings to env.mathmlReport.
+  mathmlReport: false,
   // TeX input packages for this MarkdownIt instance. Omit this option to use the broad default set.
   // Pass [] (or ['base']) to restrict parsing to the base package only.
   // texPackages: [],
@@ -121,7 +150,8 @@ MathML-only options:
 - `compactInlineMathML` (default: `false`): collapses whitespace for inline MathML only.
 - `compactBlockMathML` (default: `false`): collapses whitespace for block MathML only.
 - `mathmlLayoutClass` (default: `''`): adds classes to prime operators and layout helpers. Set it to `true` to enable default class names (`math-layout-prime`, `math-layout-msup-bar`, `math-layout-integral`). Pass a single string to style prime operators only, pass a comma-separated string (`"prime,msupBar,integral"`) to set all three slots positionally, or pass an object: `{ prime, msupBar, integral }`.
-- `\mathbb` output is normalized to Unicode double-struck characters instead of relying on legacy `mathvariant="double-struck"` so raw MathML renders more reliably in browsers.
+- `mathmlMode` (default: `'browser'`): MathML-only output mode. `'browser'` is the project default and normalizes explicit variant-origin tokens (for example `\\mathbb`, `\\mathbf`, `\\mathcal`, `\\mathfrak`, `\\mathit`) toward browser-friendly Unicode MathML where possible. It keeps ordinary identifiers untouched, uses limited inline-style fallbacks for a few unconvertible symbol cases (for example `\\mathbf{+}`) while preserving the legacy `mathvariant` attribute, and preserves original legacy markup when no safe rewrite exists. Non-Core structures such as `<menclose>` and `<mlabeledtr>` are still preserved. `'mathjax'` opts out of that normalization and keeps output closer to MathJax's broader Presentation MathML serialization.
+- `mathmlReport` (default: `false`): MathML-only diagnostics flag. When `true`, interoperability findings are appended to `env.mathmlReport` for the final MathML output of the selected `mathmlMode`. Findings can include `non-core-element`, `legacy-mathvariant`, `style-fallback-mathvariant`, `unsupported-mathvariant`, or `unconverted-mathvariant`. SVG output does not populate this report.
 
 Inline dollar parsing:
 - Inline math uses single-dollar delimiters only. `$$...$$` inside a paragraph is left as literal text; block math still uses `$$`.
@@ -137,6 +167,8 @@ TeX input option:
 SVG-only options:
 - `svgFont` (default: `''`): pass a MathJax SVG font class or instance (e.g. `MathJaxStix2Font`) to switch fonts. In Node.js you can also pass a font name string (e.g. `'stix2'` or `'@mathjax/mathjax-stix2-font'`) if the package is installed. When omitted, MathJax v4 defaults to the New Computer Modern SVG font (via `@mathjax/src` mapping `#default-font` to `@mathjax/mathjax-newcm-font`).
   In the Node entry, the plugin also prepares MathJax's synchronous loader and preloads dynamic SVG font chunks so `md.render()` keeps working for glyph ranges outside the base tables.
+  If MathJax already has a synchronous `asyncLoad` bridge, the plugin reuses it and adds its own fallback resolution.
+  If MathJax already has a non-synchronous `asyncLoad` bridge, SVG rendering throws a clear error instead of silently overriding it.
   In Node, string shorthands like `'stix2'` require the matching font package to be installed. If the package can't be resolved, plugin setup fails when you call `.use(..., { useSvg: true, svgFont: 'stix2' })`.
   In Node, omitting `svgFont` is treated as the default `newcm` font path. If `@mathjax/mathjax-newcm-font` can't be resolved, plugin setup fails when you call `.use(..., { useSvg: true })`.
 - `svgScale` (default: `1`): scale factor passed to MathJax SVG output.
@@ -159,6 +191,11 @@ const md = mdit({ html: true }).use(mditMathTexToMathML, {
 See `style/math-newcm.css` (and `style/math-stix2.css`) for the full baseline styles.
 Both baseline styles assume a locally installed math font by default.
 Replace the `@font-face` source if you want to host the font files yourself.
+The shared MathML source is split into a Core-aligned baseline (`style-src/math-mathml-base.css`) and a shared presentation/layout layer (`style-src/math-mathml-presentation.css`); the font-specific fragments and the SVG stylesheet source also live in `style-src/`.
+The public `style/math-newcm.css`, `style/math-stix2.css`, and `style/math-svg.css` files are generated standalone bundles so sample HTML and consumer `<link>` tags can keep pointing at a single stylesheet.
+
+The shared baseline mirrors the MathML Core user-agent reset for text-oriented properties such as `direction`, `text-indent`, `letter-spacing`, `word-spacing`, `line-height`, `font-family`, `font-style`, and `font-weight`.
+It also adds a few author-level guards that MathML Core does not explicitly list, such as `hanging-punctuation: none`, because modern article typography can visibly break native MathML on some browsers.
 
 Minimal example:
 
@@ -174,6 +211,12 @@ Minimal example:
 math {
   font-family: custom-math, math;
 }
+```
+
+When editing the shared baseline or any CSS source under `style-src/`, rebuild the standalone CSS files with:
+
+```sh
+npm run build:styles
 ```
 
 #### SVG math output (optional)

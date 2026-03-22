@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Math Test</title>
+<style>
+  main {
+    inline-size: 680px;
+    margin: 1rem auto;
+  }
+</style>
+<link rel="stylesheet" type="text/css" href="../../../style/math-newcm.css">
+</head>
+<body>
+<main>
+<h1>Function-like Identifiers and Opening Parenthesis</h1>
+<h2>Input</h2>
+<ul>
+<li><code>$\text{Tr}(A)$</code></li>
+<li><code>$\operatorname{Tr}(A)$</code></li>
+<li><code>$\text{sgn}(x)$</code></li>
+<li><code>$\operatorname{sgn}(x)$</code></li>
+</ul>
+<h2>Output</h2>
+<ul>
+<li><math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mtext>Tr</mtext>
+  <mo stretchy="false">(</mo>
+  <mi>A</mi>
+  <mo stretchy="false">)</mo>
+</math></li>
+<li><math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>Tr</mi>
+  <mo>&#x2061;</mo>
+  <mo stretchy="false">(</mo>
+  <mi>A</mi>
+  <mo stretchy="false">)</mo>
+</math></li>
+<li><math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mtext>sgn</mtext>
+  <mo stretchy="false">(</mo>
+  <mi>x</mi>
+  <mo stretchy="false">)</mo>
+</math></li>
+<li><math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>sgn</mi>
+  <mo>&#x2061;</mo>
+  <mo stretchy="false">(</mo>
+  <mi>x</mi>
+  <mo stretchy="false">)</mo>
+</math></li>
+</ul>
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <mtext>Tr</mtext>
+  <mo stretchy="false">(</mo>
+  <msup>
+    <mi>A</mi>
+    <mn>2</mn>
+  </msup>
+  <mo stretchy="false">)</mo>
+  <mo>=</mo>
+  <munderover>
+    <mo>&#x2211;</mo>
+    <mrow>
+      <mi>i</mi>
+      <mo>=</mo>
+      <mn>1</mn>
+    </mrow>
+    <mrow>
+      <mi>n</mi>
+    </mrow>
+  </munderover>
+  <msubsup>
+    <mi>&#x3BB;</mi>
+    <mi>i</mi>
+    <mn>2</mn>
+  </msubsup>
+</math>
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <mi>Tr</mi>
+  <mo>&#x2061;</mo>
+  <mo stretchy="false">(</mo>
+  <msup>
+    <mi>A</mi>
+    <mn>2</mn>
+  </msup>
+  <mo stretchy="false">)</mo>
+  <mo>=</mo>
+  <munderover>
+    <mo>&#x2211;</mo>
+    <mrow>
+      <mi>i</mi>
+      <mo>=</mo>
+      <mn>1</mn>
+    </mrow>
+    <mrow>
+      <mi>n</mi>
+    </mrow>
+  </munderover>
+  <msubsup>
+    <mi>&#x3BB;</mi>
+    <mi>i</mi>
+    <mn>2</mn>
+  </msubsup>
+</math>
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <mtext>sgn</mtext>
+  <mo stretchy="false">(</mo>
+  <mi>x</mi>
+  <mo stretchy="false">)</mo>
+  <mo>=</mo>
+  <mfrac>
+    <mi>x</mi>
+    <mrow>
+      <mo stretchy="false">|</mo>
+      <mi>x</mi>
+      <mo stretchy="false">|</mo>
+    </mrow>
+  </mfrac>
+</math>
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <mi>sgn</mi>
+  <mo>&#x2061;</mo>
+  <mo stretchy="false">(</mo>
+  <mi>x</mi>
+  <mo stretchy="false">)</mo>
+  <mo>=</mo>
+  <mfrac>
+    <mi>x</mi>
+    <mrow>
+      <mo stretchy="false">|</mo>
+      <mi>x</mi>
+      <mo stretchy="false">|</mo>
+    </mrow>
+  </mfrac>
+</math>
+<h1>Variant Coverage</h1>
+<h2>Input</h2>
+<ul>
+<li><code>$\mathbb{R}, \mathbf{r}, \mathbf{F}, \mathcal{L}, \mathfrak{g}$</code></li>
+</ul>
+<h2>Output</h2>
+<ul>
+<li><math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow>
+    <mi mathvariant="double-struck">R</mi>
+  </mrow>
+  <mo>,</mo>
+  <mrow>
+    <mi mathvariant="bold">r</mi>
+  </mrow>
+  <mo>,</mo>
+  <mrow>
+    <mi mathvariant="bold">F</mi>
+  </mrow>
+  <mo>,</mo>
+  <mrow>
+    <mi mathvariant="script">L</mi>
+  </mrow>
+  <mo>,</mo>
+  <mrow>
+    <mi mathvariant="fraktur">g</mi>
+  </mrow>
+</math></li>
+</ul>
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <mrow>
+    <mi mathvariant="bold">L</mi>
+  </mrow>
+  <mo>=</mo>
+  <mrow>
+    <mi mathvariant="bold">r</mi>
+  </mrow>
+  <mo>&#xD7;</mo>
+  <mrow>
+    <mi mathvariant="bold">p</mi>
+  </mrow>
+</math>
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <mrow>
+    <mi mathvariant="bold">F</mi>
+  </mrow>
+  <mo>=</mo>
+  <mi>q</mi>
+  <mo stretchy="false">(</mo>
+  <mrow>
+    <mi mathvariant="bold">E</mi>
+  </mrow>
+  <mo>+</mo>
+  <mrow>
+    <mi mathvariant="bold">v</mi>
+  </mrow>
+  <mo>&#xD7;</mo>
+  <mrow>
+    <mi mathvariant="bold">B</mi>
+  </mrow>
+  <mo stretchy="false">)</mo>
+</math>
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <mrow>
+    <mi mathvariant="script">L</mi>
+  </mrow>
+  <mo stretchy="false">(</mo>
+  <mi>q</mi>
+  <mo>,</mo>
+  <mrow>
+    <mover>
+      <mi>q</mi>
+      <mo>&#x2D9;</mo>
+    </mover>
+  </mrow>
+  <mo>,</mo>
+  <mi>t</mi>
+  <mo stretchy="false">)</mo>
+  <mo>=</mo>
+  <mi>T</mi>
+  <mo>&#x2212;</mo>
+  <mi>V</mi>
+</math>
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <mi>X</mi>
+  <mo>,</mo>
+  <mi>Y</mi>
+  <mo>&#x2208;</mo>
+  <mrow>
+    <mi mathvariant="fraktur">g</mi>
+  </mrow>
+  <mo>,</mo>
+  <mspace width="2em"></mspace>
+  <mo stretchy="false">[</mo>
+  <mi>X</mi>
+  <mo>,</mo>
+  <mi>Y</mi>
+  <mo stretchy="false">]</mo>
+  <mo>=</mo>
+  <mi>X</mi>
+  <mi>Y</mi>
+  <mo>&#x2212;</mo>
+  <mi>Y</mi>
+  <mi>X</mi>
+</math>
+<h1>Non-Core Constructs from Broad Packages</h1>
+<h2>Input</h2>
+<ul>
+<li><code>$$\cancel{x}$$</code></li>
+<li><code>$$\tag{1} x$$</code></li>
+</ul>
+<h2>Output</h2>
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <menclose notation="updiagonalstrike">
+    <mi>x</mi>
+  </menclose>
+</math>
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <mtable displaystyle="true">
+    <mlabeledtr>
+      <mtd id="mjx-eqn:1">
+        <mtext>(</mtext>
+        <mtext>1</mtext>
+        <mtext>)</mtext>
+      </mtd>
+      <mtd>
+        <mi>x</mi>
+      </mtd>
+    </mlabeledtr>
+  </mtable>
+</math>
+</main>
+
+<script>
+  (() => {
+    if (window.parent === window) return;
+    const getRoot = () => document.scrollingElement || document.documentElement || document.body;
+    let syncing = false;
+    window.addEventListener('scroll', () => {
+      if (syncing) return;
+      const root = getRoot();
+      if (!root) return;
+      const max = root.scrollHeight - root.clientHeight;
+      const ratio = max > 0 ? root.scrollTop / max : 0;
+      window.parent.postMessage({ type: 'math-compare-scroll', ratio }, '*');
+    }, { passive: true });
+    window.addEventListener('message', (event) => {
+      const data = event.data;
+      if (!data || data.type !== 'math-compare-scroll' || typeof data.ratio !== 'number') return;
+      const root = getRoot();
+      if (!root) return;
+      const max = root.scrollHeight - root.clientHeight;
+      syncing = true;
+      root.scrollTop = data.ratio * max;
+      requestAnimationFrame(() => {
+        syncing = false;
+      });
+    });
+  })();
+</script>
+
+</body>
+</html>
