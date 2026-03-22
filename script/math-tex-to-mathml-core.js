@@ -10,6 +10,8 @@ import { RegisterHTMLHandler } from '@mathjax/src/mjs/handlers/html.js'
 
 const STRIP_DATA_ATTRS_RE = /\sdata-(?:latex(?:-item)?|mjx-[a-z0-9_-]+|semantic-[a-z0-9_-]+|break-align|mml-node|c|cramped|speech-node)="[^"]*"/gi
 const COMPACT_MATHML_RE = />\s+</g
+const MATHML_TAG_RE = /<(?!\/)([a-z][a-z0-9-]*)(\s[^<>]*?)?>/gi
+const MATHVARIANT_ATTR_RE = /\bmathvariant="([^"]+)"/i
 const DOLLAR_CHAR_CODE = 0x24
 const BACKSLASH_CHAR_CODE = 0x5C
 const PERIOD_CHAR_CODE = 0x2E
@@ -20,7 +22,6 @@ const BASE_TEX_PACKAGE = 'base'
 const PRIME_TRIGGER_RE = /'|\\prime\b|[\u2032\u2033\u2034\u2057]/
 const MSUP_BAR_TRIGGER_RE = /\||\\(?:vert|lvert|rvert)\b/
 const INTEGRAL_TRIGGER_RE = /\\int(?:op)?\b|\u222B/
-const DOUBLE_STRUCK_TRIGGER_RE = /\\mathbb\b/
 const PRIME_MO_CONTENT = new Set([
   '\u2032', // U+2032 PRIME
   '\u2033', // U+2033 DOUBLE PRIME
@@ -34,6 +35,14 @@ const MSUBSUP_INTEGRAL_MO_CONTENT = new Set([
 const DEFAULT_PRIME_CLASS = 'math-layout-prime'
 const DEFAULT_MSUP_BAR_CLASS = 'math-layout-msup-bar'
 const DEFAULT_INTEGRAL_CLASS = 'math-layout-integral'
+const MATHML_MODE_BROWSER = 'browser'
+const MATHML_MODE_MATHJAX = 'mathjax'
+const MATHML_REPORT_ENV_KEY = 'mathmlReport'
+const LEGACY_MATHVARIANT_SHADOW_TYPES = new Set([
+  'unsupported-mathvariant',
+  'unconverted-mathvariant',
+  'style-fallback-mathvariant',
+])
 const SVG_FONTS = Object.freeze({
   newcm: {
     module: '@mathjax/mathjax-newcm-font/js/svg.js',
@@ -53,15 +62,169 @@ const SVG_FONTS = Object.freeze({
   },
 })
 
-const DOUBLE_STRUCK_EXCEPTIONS = Object.freeze({
-  C: '\u2102', // ℂ
-  H: '\u210D', // ℍ
-  N: '\u2115', // ℕ
-  P: '\u2119', // ℙ
-  Q: '\u211A', // ℚ
-  R: '\u211D', // ℝ
-  Z: '\u2124', // ℤ
+// The Unicode ranges, variant starts, and style fallbacks below are adapted from
+// MathJax's official "Convert Mathvariant to Unicode" filter example.
+// Source:
+//   https://docs.mathjax.org/en/v4.0/advanced/synchronize/filters.html#convert-mathvariant-to-unicode
+// MathJax and its documentation are Apache-2.0 licensed; project docs record the
+// provenance for this adapted local implementation.
+const MATHML_CORE_VARIANT_RANGES = Object.freeze([
+  Object.freeze([0x30, 0x39]),
+  Object.freeze([0x41, 0x5A]),
+  Object.freeze([0x61, 0x7A]),
+  Object.freeze([0x391, 0x3A9, Object.freeze({ 0x3F4: 0x3A2, 0x2207: 0x3AA })]),
+  Object.freeze([
+    0x3B1,
+    0x3C9,
+    Object.freeze({
+      0x2202: 0x3CA,
+      0x3F5: 0x3CB,
+      0x3D1: 0x3CC,
+      0x3F0: 0x3CD,
+      0x3D5: 0x3CE,
+      0x3F1: 0x3CF,
+      0x3D6: 0x3D0,
+    }),
+  ]),
+])
+
+const MATHML_CORE_VARIANTS = Object.freeze({
+  bold: Object.freeze([0x1D7CE, 0x1D400, 0x1D41A, 0x1D6A8, 0x1D6C2]),
+  italic: Object.freeze([0, 0x1D434, 0x1D44E, 0x1D6E2, 0x1D6FC, Object.freeze({ 0x68: 0x210E })]),
+  'bold-italic': Object.freeze([0, 0x1D468, 0x1D482, 0x1D71C, 0x1D736]),
+  script: Object.freeze([
+    0,
+    0x1D49C,
+    0x1D4B6,
+    0,
+    0,
+    Object.freeze({
+      0x42: 0x212C,
+      0x45: 0x2130,
+      0x46: 0x2131,
+      0x48: 0x210B,
+      0x49: 0x2110,
+      0x4C: 0x2112,
+      0x4D: 0x2133,
+      0x52: 0x211B,
+      0x65: 0x212F,
+      0x67: 0x210A,
+      0x6F: 0x2134,
+    }),
+  ]),
+  'bold-script': Object.freeze([0, 0x1D4D0, 0x1D4EA, 0, 0]),
+  fraktur: Object.freeze([
+    0,
+    0x1D504,
+    0x1D51E,
+    0,
+    0,
+    Object.freeze({
+      0x43: 0x212D,
+      0x48: 0x210C,
+      0x49: 0x2111,
+      0x52: 0x211C,
+      0x5A: 0x2128,
+    }),
+  ]),
+  'bold-fraktur': Object.freeze([0, 0x1D56C, 0x1D586, 0, 0]),
+  'double-struck': Object.freeze([
+    0x1D7D8,
+    0x1D538,
+    0x1D552,
+    0,
+    0,
+    Object.freeze({
+      0x43: 0x2102,
+      0x48: 0x210D,
+      0x4E: 0x2115,
+      0x50: 0x2119,
+      0x51: 0x211A,
+      0x52: 0x211D,
+      0x5A: 0x2124,
+      0x393: 0x213E,
+      0x3A0: 0x213F,
+      0x3B3: 0x213D,
+      0x3C0: 0x213C,
+    }),
+  ]),
+  'sans-serif': Object.freeze([0x1D7E2, 0x1D5A0, 0x1D5BA, 0, 0]),
+  'bold-sans-serif': Object.freeze([0x1D7EC, 0x1D5D4, 0x1D5EE, 0x1D756, 0x1D770]),
+  'sans-serif-italic': Object.freeze([0, 0x1D608, 0x1D622, 0, 0]),
+  'sans-serif-bold-italic': Object.freeze([0, 0x1D63C, 0x1D656, 0x1D790, 0x1D7AA]),
+  monospace: Object.freeze([0x1D7F6, 0x1D670, 0x1D68A, 0, 0]),
+  '-tex-calligraphic': Object.freeze([
+    0,
+    0x1D49C,
+    0x1D4B6,
+    0,
+    0,
+    Object.freeze({
+      0x42: 0x212C,
+      0x45: 0x2130,
+      0x46: 0x2131,
+      0x48: 0x210B,
+      0x49: 0x2110,
+      0x4C: 0x2112,
+      0x4D: 0x2133,
+      0x52: 0x211B,
+      0x65: 0x212F,
+      0x67: 0x210A,
+      0x6F: 0x2134,
+    }),
+    '\uFE00',
+  ]),
+  '-tex-bold-calligraphic': Object.freeze([0, 0x1D4D0, 0x1D4EA, 0, 0, Object.freeze({}), '\uFE00']),
+  '-tex-mathit': Object.freeze([0, 0x1D434, 0x1D44E, 0x1D6E2, 0x1D6FC, Object.freeze({ 0x68: 0x210E })]),
 })
+
+const MATHML_CORE_VARIANT_STYLES = Object.freeze({
+  bold: 'font-weight: bold',
+  italic: 'font-style: italic',
+  'bold-italic': 'font-weight: bold; font-style: italic',
+  script: 'font-family: cursive',
+  'bold-script': 'font-family: cursive; font-weight: bold',
+  'sans-serif': 'font-family: sans-serif',
+  'bold-sans-serif': 'font-family: sans-serif; font-weight: bold',
+  'sans-serif-italic': 'font-family: sans-serif; font-style: italic',
+  'sans-serif-bold-italic': 'font-family: sans-serif; font-weight: bold; font-style: italic',
+  monospace: 'font-family: monospace',
+  '-tex-mathit': 'font-style: italic',
+})
+
+const MATHML_CORE_ELEMENTS = new Set([
+  'a',
+  'annotation',
+  'annotation-xml',
+  'maction',
+  'math',
+  'merror',
+  'mfrac',
+  'mi',
+  'mmultiscripts',
+  'mn',
+  'mo',
+  'mover',
+  'mpadded',
+  'mphantom',
+  'mprescripts',
+  'mroot',
+  'mrow',
+  'ms',
+  'mspace',
+  'msqrt',
+  'mstyle',
+  'msub',
+  'msubsup',
+  'msup',
+  'mtable',
+  'mtd',
+  'mtext',
+  'mtr',
+  'munder',
+  'munderover',
+  'semantics',
+])
 
 const normalizeSvgFontName = (value) => {
   if (typeof value !== 'string') return null
@@ -89,6 +252,13 @@ const resolveSvgFontName = (value) => {
 const normalizeClassList = (value) => {
   if (typeof value !== 'string') return []
   return value.split(/\s+/).filter(Boolean)
+}
+
+const normalizeMathmlMode = (value) => {
+  if (value == null || value === '') return MATHML_MODE_BROWSER
+  if (value === MATHML_MODE_BROWSER) return MATHML_MODE_BROWSER
+  if (value === MATHML_MODE_MATHJAX) return MATHML_MODE_MATHJAX
+  throw new Error(`Unsupported mathmlMode: ${value}`)
 }
 
 const normalizeTexPackageList = (value, fallback = [BASE_TEX_PACKAGE]) => {
@@ -198,39 +368,23 @@ const isCurrencyLikeInlineDollarStart = (src, pos, max) => {
   )
 }
 
-const toDoubleStruckChar = (char) => {
-  if (char in DOUBLE_STRUCK_EXCEPTIONS) {
-    return DOUBLE_STRUCK_EXCEPTIONS[char]
-  }
-  const codePoint = char.codePointAt(0)
-  if (codePoint >= 0x41 && codePoint <= 0x5A) {
-    return String.fromCodePoint(0x1D538 + codePoint - 0x41)
-  }
-  if (codePoint >= 0x61 && codePoint <= 0x7A) {
-    return String.fromCodePoint(0x1D552 + codePoint - 0x61)
-  }
-  if (codePoint >= 0x30 && codePoint <= 0x39) {
-    return String.fromCodePoint(0x1D7D8 + codePoint - 0x30)
-  }
-  return null
-}
-
-const toDoubleStruckText = (text) => {
-  if (typeof text !== 'string' || !text) return null
-  let normalized = ''
-  for (const char of text) {
-    const mapped = toDoubleStruckChar(char)
-    if (!mapped) return null
-    normalized += mapped
-  }
-  return normalized
-}
-
 const resolveClassName = (value, defaultName) => {
   if (value === true) return defaultName
   if (typeof value !== 'string') return null
   const trimmed = value.trim()
   return trimmed ? trimmed : null
+}
+
+const appendStyleAttribute = (node, styleText) => {
+  if (!styleText) return
+  const attributes = node?.attributes
+  if (!attributes) return
+  const current = attributes.get('style') || ''
+  if (!current) {
+    attributes.set('style', styleText)
+    return
+  }
+  attributes.set('style', `${current.trim().replace(/;$/, '')}; ${styleText}`)
 }
 
 const splitLayoutClassString = (value) =>
@@ -322,18 +476,127 @@ const applyMathmlClassMap = (node, classMap) => {
   })
 }
 
-const applyMathmlCoreDoubleStruckFallback = (node) => {
-  node.walkTree((current) => {
-    if (current.kind !== 'mi' && current.kind !== 'mn' && current.kind !== 'mtext') return
-    const attributes = current.attributes
-    if (!attributes || attributes.getExplicit('mathvariant') !== 'double-struck') return
-    if (current.childNodes?.length !== 1) return
-    const textNode = current.childNodes[0]
-    if (textNode?.kind !== 'text') return
-    const normalized = toDoubleStruckText(textNode.getText())
-    if (!normalized) return
-    textNode.setText(normalized)
-    attributes.unset('mathvariant')
+const getExplicitMathmlVariantName = (node) => {
+  const attributes = node?.attributes
+  if (!attributes || typeof attributes.getExplicit !== 'function') return null
+  return (
+    attributes.getExplicit('data-mjx-variant')
+    || attributes.getExplicit('data-mjx-mathvariant')
+    || attributes.getExplicit('mathvariant')
+    || null
+  )
+}
+
+const convertMathmlVariantText = (text, start, remap = {}, modifier = '') => {
+  if (typeof text !== 'string') return null
+  const converted = [...text]
+
+  for (let i = 0; i < converted.length; i++) {
+    const codePoint = converted[i].codePointAt(0)
+    let mapped = null
+    for (let j = 0; j < 5; j++) {
+      if (!start[j]) continue
+      const [rangeStart, rangeEnd, rangeMap = {}] = MATHML_CORE_VARIANT_RANGES[j]
+      if (codePoint < rangeStart) break
+      if (rangeMap[codePoint]) {
+        mapped = String.fromCodePoint(rangeMap[codePoint] - rangeStart + start[j]) + modifier
+        break
+      }
+      if (remap[codePoint] || codePoint <= rangeEnd) {
+        mapped = String.fromCodePoint(remap[codePoint] || (codePoint - rangeStart + start[j])) + modifier
+        break
+      }
+    }
+    if (mapped == null) {
+      return null
+    }
+    converted[i] = mapped
+  }
+
+  return converted.join('')
+}
+
+const clearMathmlVariantAttributes = (attributes) => {
+  attributes.unset('mathvariant')
+  attributes.unset('data-mjx-variant')
+  attributes.unset('data-mjx-mathvariant')
+}
+
+const clearMathJaxVariantMetadata = (attributes) => {
+  attributes.unset('data-mjx-variant')
+  attributes.unset('data-mjx-mathvariant')
+}
+
+const hasSingleCodePoint = (text) =>
+  typeof text === 'string'
+  && text.length > 0
+  && (text.length === 1 || (text.length === 2 && text.codePointAt(0) > 0xFFFF))
+
+const shouldSkipMathmlCoreVariantStyleFallback = (variant, node, text) =>
+  (variant === 'italic' || variant === '-tex-mathit') && hasSingleCodePoint(text) && node.isKind('mi')
+
+const applyMathmlCoreVariantTransform = (root, allowedVariants = null, issues = null) => {
+  root.walkTree((node) => {
+    if (!node.isToken) return
+    const variant = getExplicitMathmlVariantName(node)
+    if (!variant) return
+
+    const text = node.getText()
+    if (variant === 'normal') return
+    if (allowedVariants && !allowedVariants.has(variant)) return
+
+    if (!Object.prototype.hasOwnProperty.call(MATHML_CORE_VARIANTS, variant)) {
+      if (issues) {
+        issues.push({ type: 'unsupported-mathvariant', element: node.kind, value: variant })
+      }
+      return
+    }
+
+    const start = MATHML_CORE_VARIANTS[variant]
+    const remap = start[5] || {}
+    const modifier = start[6] || ''
+    const textUpdates = []
+    let converted = true
+
+    for (const child of node.childNodes) {
+      if (child.isKind('text')) {
+        const convertedText = convertMathmlVariantText(child.getText(), start, remap, modifier)
+        if (convertedText == null) {
+          converted = false
+          break
+        }
+        textUpdates.push([child, convertedText])
+      }
+    }
+
+    const attributes = node.attributes
+
+    if (converted) {
+      clearMathmlVariantAttributes(attributes)
+      for (const [child, convertedText] of textUpdates) {
+        child.setText(convertedText)
+      }
+      return
+    }
+
+    if (shouldSkipMathmlCoreVariantStyleFallback(variant, node, text)) {
+      clearMathmlVariantAttributes(attributes)
+      return
+    }
+
+    const fallbackStyle = MATHML_CORE_VARIANT_STYLES[variant] || ''
+    if (fallbackStyle) {
+      clearMathJaxVariantMetadata(attributes)
+      appendStyleAttribute(node, fallbackStyle)
+      if (issues) {
+        issues.push({ type: 'style-fallback-mathvariant', element: node.kind, value: variant })
+      }
+      return
+    }
+
+    if (issues) {
+      issues.push({ type: 'unconverted-mathvariant', element: node.kind, value: variant })
+    }
   })
 }
 
@@ -383,6 +646,84 @@ const stripMathJaxDataAttrs = (markup, shouldStrip) => {
 }
 
 const compactMathML = (markup) => markup.replace(COMPACT_MATHML_RE, '><').trim()
+
+const collectMathmlCoreIssues = (markup) => {
+  if (typeof markup !== 'string' || !markup) return []
+
+  const issues = []
+  const seen = new Set()
+
+  const pushIssue = (issue) => {
+    const key = JSON.stringify(issue)
+    if (seen.has(key)) return
+    seen.add(key)
+    issues.push(issue)
+  }
+
+  let match = null
+  while ((match = MATHML_TAG_RE.exec(markup))) {
+    const tag = match[1].toLowerCase()
+    const attrs = match[2] || ''
+
+    if (!MATHML_CORE_ELEMENTS.has(tag)) {
+      pushIssue({ type: 'non-core-element', element: tag })
+    }
+
+    const mathvariantMatch = attrs.match(MATHVARIANT_ATTR_RE)
+    if (mathvariantMatch) {
+      const value = mathvariantMatch[1]
+      if (value.toLowerCase() !== 'normal') {
+        pushIssue({ type: 'legacy-mathvariant', element: tag, value })
+      }
+    }
+  }
+
+  return issues
+}
+
+const mergeMathmlCoreIssues = (...issueLists) => {
+  const issues = []
+  const seen = new Set()
+
+  for (const issueList of issueLists) {
+    if (!Array.isArray(issueList)) continue
+    for (const issue of issueList) {
+      if (!issue) continue
+      const key = JSON.stringify(issue)
+      if (seen.has(key)) continue
+      seen.add(key)
+      issues.push(issue)
+    }
+  }
+
+  return issues
+}
+
+const suppressRedundantMathmlCoreLegacyIssues = (issues, transformIssues) => {
+  if (!Array.isArray(issues) || issues.length === 0 || !Array.isArray(transformIssues) || transformIssues.length === 0) {
+    return issues
+  }
+
+  const shadowedLegacyKeys = new Set()
+  for (const issue of transformIssues) {
+    if (!issue || !LEGACY_MATHVARIANT_SHADOW_TYPES.has(issue.type)) continue
+    shadowedLegacyKeys.add(`${issue.element}\u001F${issue.value}`)
+  }
+
+  if (shadowedLegacyKeys.size === 0) return issues
+
+  return issues.filter((issue) => {
+    if (!issue || issue.type !== 'legacy-mathvariant') return true
+    return !shadowedLegacyKeys.has(`${issue.element}\u001F${issue.value}`)
+  })
+}
+
+const appendMathmlCoreReport = (env, entry) => {
+  if (!env || typeof env !== 'object' || !entry) return
+  const report = env[MATHML_REPORT_ENV_KEY]
+  if (!Array.isArray(report)) return
+  report.push(entry)
+}
 
 const normalizeMathmlClassMap = (value) => {
   const { primeClass, msupBarClass, integralClass } = resolveMathmlLayoutClass(value)
@@ -528,10 +869,21 @@ const createMathTexToMathML = ({
 
     const stripMathJaxData = options.setMathJaxDataAttrs !== true
     const useSvg = options.useSvg === true
+    const mathmlMode = normalizeMathmlMode(options.mathmlMode)
+    const mathmlReport = options.mathmlReport === true
     const resolvedPackages = normalizeTexPackageList(options.texPackages, defaultPackages)
     const em = Number.isFinite(options.em) ? options.em : 16
     const ex = Number.isFinite(options.ex) ? options.ex : 8
     const containerWidth = Number.isFinite(options.containerWidth) ? options.containerWidth : 680
+
+    if (mathmlReport) {
+      md.core.ruler.before('block', 'mathml_report_reset', (state) => {
+        if (!state.env || typeof state.env !== 'object') {
+          state.env = {}
+        }
+        state.env[MATHML_REPORT_ENV_KEY] = []
+      })
+    }
 
     let convertInline
     let convertBlock
@@ -564,25 +916,40 @@ const createMathTexToMathML = ({
       const mathmlBlockOptions = { display: true, end: STATE.CONVERT, em, ex, containerWidth }
       const mathmlClassMap = normalizeMathmlClassMap(options.mathmlLayoutClass ?? '')
       const mathmlClassMapMatcher = createMathmlClassMapMatcher(mathmlClassMap)
-      const convertMathML = (texContent, convertOptions, shouldCompact) => {
+      const convertMathML = (texContent, convertOptions, shouldCompact, env) => {
         const { html, visitor } = getMathmlContext(resolvedPackages)
         try {
           const mmlNode = html.convert(texContent || '', convertOptions)
-          if (DOUBLE_STRUCK_TRIGGER_RE.test(texContent)) {
-            applyMathmlCoreDoubleStruckFallback(mmlNode)
+          const transformIssues = mathmlReport && mathmlMode === MATHML_MODE_BROWSER ? [] : null
+          if (mathmlMode === MATHML_MODE_BROWSER) {
+            applyMathmlCoreVariantTransform(mmlNode, null, transformIssues)
           }
           if (mathmlClassMapMatcher && mathmlClassMapMatcher(texContent)) {
             applyMathmlClassMap(mmlNode, mathmlClassMap)
           }
           const mathML = visitor.visitTree(mmlNode)
+          if (mathmlReport) {
+            const markupIssues = suppressRedundantMathmlCoreLegacyIssues(
+              collectMathmlCoreIssues(mathML),
+              transformIssues
+            )
+            const issues = mergeMathmlCoreIssues(transformIssues, markupIssues)
+            if (issues.length > 0) {
+              appendMathmlCoreReport(env, {
+                tex: texContent || '',
+                display: convertOptions.display === true,
+                issues,
+              })
+            }
+          }
           const stripped = stripMathJaxDataAttrs(mathML, stripMathJaxData)
           return shouldCompact ? compactMathML(stripped) : stripped
         } finally {
           html.clear()
         }
       }
-      convertInline = (texContent) => convertMathML(texContent, mathmlInlineOptions, compactInline)
-      convertBlock = (texContent) => convertMathML(texContent, mathmlBlockOptions, compactBlock)
+      convertInline = (texContent, env) => convertMathML(texContent, mathmlInlineOptions, compactInline, env)
+      convertBlock = (texContent, env) => convertMathML(texContent, mathmlBlockOptions, compactBlock, env)
     }
 
     md.block.ruler.after('blockquote', 'math_block', (state, startLine, endLine, silent) => {
@@ -605,7 +972,7 @@ const createMathTexToMathML = ({
       if (!hasStartMathMark && !isOneLineMathBlock) return false
 
       const pushMathToken = (content, start, end) => {
-        const mathML = convertBlock(content) + '\n'
+        const mathML = convertBlock(content, state.env) + '\n'
         state.line = end
         const token = state.push('html_block', '', 0)
         token.content = mathML
@@ -654,11 +1021,11 @@ const createMathTexToMathML = ({
       if (end === -1) return false
 
       if (!silent) {
-        const content = state.src.slice(start + 1, end)
-        const token = state.push('math_inline', 'math', 0)
-        token.content = convertInline(content)
-        token.markup = '$'
-      }
+         const content = state.src.slice(start + 1, end)
+         const token = state.push('math_inline', 'math', 0)
+         token.content = convertInline(content, state.env)
+         token.markup = '$'
+       }
       state.pos = end + 1
       return true
     })

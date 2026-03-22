@@ -99,25 +99,41 @@ const resolveMathjaxCjsRoot = () => {
   return mathjaxCjsRoot
 }
 
+const createSynchronousSvgLoader = (existingLoaders = []) => (modulePath) => {
+  for (const load of existingLoaders) {
+    try {
+      return load(modulePath)
+    } catch (error) {
+      if (!isModuleNotFound(error, modulePath)) {
+        throw error
+      }
+    }
+  }
+
+  if (typeof modulePath === 'string' && modulePath.startsWith('.')) {
+    const root = resolveMathjaxCjsRoot()
+    if (!root) {
+      throw new Error(`MathJax CJS root could not be resolved for ${modulePath}`)
+    }
+    return nodeRequire(path.resolve(root, modulePath))
+  }
+
+  return resolveFromNodeOrMathJax(modulePath)
+}
+
+const collectSynchronousMathJaxLoader = (owner, load, isSynchronous) => {
+  if (typeof load !== 'function') return null
+  if (isSynchronous === true) return load
+  throw new Error(
+    `Synchronous SVG output requires a synchronous MathJax asyncLoad bridge, `
+      + `but MathJax ${owner} already has a non-synchronous asyncLoad configured. `
+      + `Use a dedicated process or configure a synchronous loader before enabling useSvg.`
+  )
+}
+
 const setupSynchronousSvgMathJax = resolveFromNodeOrMathJax
   ? () => {
     if (syncSvgMathJaxPrepared) return
-
-    if (!syncSvgLoadModule) {
-      syncSvgLoadModule = (modulePath) => {
-        if (typeof modulePath === 'string' && modulePath.startsWith('.')) {
-          const root = resolveMathjaxCjsRoot()
-          if (!root) {
-            throw new Error(`MathJax CJS root could not be resolved for ${modulePath}`)
-          }
-          return nodeRequire(path.resolve(root, modulePath))
-        }
-        return resolveFromNodeOrMathJax(modulePath)
-      }
-    }
-
-    mathjax.asyncLoad = syncSvgLoadModule
-    mathjax.asyncIsSynchronous = true
 
     if (mathjaxCjs === undefined) {
       try {
@@ -129,6 +145,31 @@ const setupSynchronousSvgMathJax = resolveFromNodeOrMathJax
         mathjaxCjs = null
       }
     }
+
+    const existingLoaders = []
+    const mjsLoader = collectSynchronousMathJaxLoader(
+      'MJS',
+      mathjax.asyncLoad,
+      mathjax.asyncIsSynchronous === true
+    )
+    if (mjsLoader) {
+      existingLoaders.push(mjsLoader)
+    }
+    if (mathjaxCjs) {
+      const cjsLoader = collectSynchronousMathJaxLoader(
+        'CJS',
+        mathjaxCjs.asyncLoad,
+        mathjaxCjs.asyncIsSynchronous === true
+      )
+      if (cjsLoader && cjsLoader !== mjsLoader) {
+        existingLoaders.push(cjsLoader)
+      }
+    }
+
+    syncSvgLoadModule = createSynchronousSvgLoader(existingLoaders)
+    mathjax.asyncLoad = syncSvgLoadModule
+    mathjax.asyncIsSynchronous = true
+
     if (mathjaxCjs) {
       mathjaxCjs.asyncLoad = syncSvgLoadModule
       mathjaxCjs.asyncIsSynchronous = true

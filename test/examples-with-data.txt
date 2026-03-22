@@ -14,7 +14,6 @@
   <mi data-latex="c">c</mi>
 </math>。段落。</p>
 
-
 [Markdown]
 $$
 x^2+y^2=z^2
@@ -36,7 +35,6 @@ $$
     <mn data-latex="2">2</mn>
   </msup>
 </math>
-
 
 [Markdown]
 $$
@@ -72,7 +70,6 @@ $$
   <mi data-latex="d">d</mi>
   <mi data-latex="u">u</mi>
 </math>
-
 
 [Markdown]
 $$
@@ -135,7 +132,6 @@ $$
     </mrow>
   </mfrac>
 </math>
-
 
 [Markdown]
 $$
@@ -217,7 +213,6 @@ $$
   <mo data-latex="\cdots">&#x22EF;</mo>
 </math>
 
-
 [Markdown]
 $$
 f(x) = \sum_{n=0}^{\infty} \frac{f^{(n)}(a)}{n!} (x - a)^n
@@ -269,7 +264,6 @@ $$
   </msup>
 </math>
 
-
 [Markdown]
 マクスウェル方程式。複数行の数式の中央揃え。
 
@@ -300,7 +294,7 @@ $$
         <mi mathvariant="normal" data-latex="\nabla">&#x2207;</mi>
         <mo data-latex="\cdot">&#x22C5;</mo>
         <mrow data-mjx-texclass="ORD" data-latex="\mathbf{E}">
-          <mi mathvariant="bold" data-latex="E">E</mi>
+          <mi data-latex="E">&#x1D404;</mi>
         </mrow>
       </mtd>
       <mtd>
@@ -322,7 +316,7 @@ $$
         <mi mathvariant="normal" data-latex="\nabla">&#x2207;</mi>
         <mo data-latex="\cdot">&#x22C5;</mo>
         <mrow data-mjx-texclass="ORD" data-latex="\mathbf{B}">
-          <mi mathvariant="bold" data-latex="B">B</mi>
+          <mi data-latex="B">&#x1D401;</mi>
         </mrow>
       </mtd>
       <mtd>
@@ -338,7 +332,7 @@ $$
         <mi mathvariant="normal" data-latex="\nabla">&#x2207;</mi>
         <mo data-latex="\times">&#xD7;</mo>
         <mrow data-mjx-texclass="ORD" data-latex="\mathbf{E}">
-          <mi mathvariant="bold" data-latex="E">E</mi>
+          <mi data-latex="E">&#x1D404;</mi>
         </mrow>
       </mtd>
       <mtd>
@@ -350,7 +344,7 @@ $$
             <mrow data-latex="\partial \mathbf{B}">
               <mi data-latex="\partial">&#x2202;</mi>
               <mrow data-mjx-texclass="ORD" data-latex="\mathbf{B}">
-                <mi mathvariant="bold" data-latex="B">B</mi>
+                <mi data-latex="B">&#x1D401;</mi>
               </mrow>
             </mrow>
             <mrow data-latex="\partial t">
@@ -366,7 +360,7 @@ $$
         <mi mathvariant="normal" data-latex="\nabla">&#x2207;</mi>
         <mo data-latex="\times">&#xD7;</mo>
         <mrow data-mjx-texclass="ORD" data-latex="\mathbf{B}">
-          <mi mathvariant="bold" data-latex="B">B</mi>
+          <mi data-latex="B">&#x1D401;</mi>
         </mrow>
       </mtd>
       <mtd>
@@ -378,7 +372,7 @@ $$
             <mn data-latex="0">0</mn>
           </msub>
           <mrow data-mjx-texclass="ORD" data-latex="\mathbf{J}">
-            <mi mathvariant="bold" data-latex="J">J</mi>
+            <mi data-latex="J">&#x1D409;</mi>
           </mrow>
           <mo data-latex="+">+</mo>
           <msub data-latex="\mu_0">
@@ -393,7 +387,7 @@ $$
             <mrow data-latex="\partial \mathbf{E}">
               <mi data-latex="\partial">&#x2202;</mi>
               <mrow data-mjx-texclass="ORD" data-latex="\mathbf{E}">
-                <mi mathvariant="bold" data-latex="E">E</mi>
+                <mi data-latex="E">&#x1D404;</mi>
               </mrow>
             </mrow>
             <mrow data-latex="\partial t">
@@ -406,7 +400,6 @@ $$
     </mtr>
   </mtable>
 </math>
-
 
 [Markdown]
 2×2行列の積。
@@ -526,7 +519,6 @@ ce + dg &amp; cf + dh
     <mo data-mjx-texclass="CLOSE">)</mo>
   </mrow>
 </math>
-
 
 [Markdown]
 リーマンゼータ関数の定義からオイラー積表示。
@@ -789,7 +781,6 @@ n &amp;= p_1 ^{k_1 } p_2 ^{k_2 } \cdots p_m^{k_m} \\
   </mtable>
 </math>
 
-
 [Markdown]
 波動関数
 
@@ -821,7 +812,7 @@ $$
         <mi mathvariant="normal" data-latex="\Psi">&#x3A8;</mi>
         <mo data-latex="(" stretchy="false">(</mo>
         <mrow data-mjx-texclass="ORD" data-latex="\mathbf{r}">
-          <mi mathvariant="bold" data-latex="r">r</mi>
+          <mi data-latex="r">&#x1D42B;</mi>
         </mrow>
         <mo data-latex=",">,</mo>
         <mi data-latex="t">t</mi>
@@ -833,7 +824,7 @@ $$
         <mspace width="0.167em" data-latex="\,"></mspace>
         <mi data-latex="d">d</mi>
         <mrow data-mjx-texclass="ORD" data-latex="\mathbf{r}">
-          <mi mathvariant="bold" data-latex="r">r</mi>
+          <mi data-latex="r">&#x1D42B;</mi>
         </mrow>
         <mo data-latex="=">=</mo>
         <mn data-latex="\tag{1}">1</mn>
@@ -841,7 +832,6 @@ $$
     </mlabeledtr>
   </mtable>
 </math>
-
 
 [Markdown]
 確率密度
@@ -863,7 +853,7 @@ $$
         <mi data-latex="P">P</mi>
         <mo data-latex="(" stretchy="false">(</mo>
         <mrow data-mjx-texclass="ORD" data-latex="\mathbf{r}">
-          <mi mathvariant="bold" data-latex="r">r</mi>
+          <mi data-latex="r">&#x1D42B;</mi>
         </mrow>
         <mo data-latex=",">,</mo>
         <mi data-latex="t">t</mi>
@@ -873,7 +863,7 @@ $$
         <mi mathvariant="normal" data-latex="\Psi">&#x3A8;</mi>
         <mo data-latex="(" stretchy="false">(</mo>
         <mrow data-mjx-texclass="ORD" data-latex="\mathbf{r}">
-          <mi mathvariant="bold" data-latex="r">r</mi>
+          <mi data-latex="r">&#x1D42B;</mi>
         </mrow>
         <mo data-latex=",">,</mo>
         <mi data-latex="t">t</mi>
@@ -886,7 +876,6 @@ $$
     </mlabeledtr>
   </mtable>
 </math>
-
 
 [Markdown]
 規格化条件
@@ -922,7 +911,7 @@ $$
         <mi data-latex="P">P</mi>
         <mo data-latex="(" stretchy="false">(</mo>
         <mrow data-mjx-texclass="ORD" data-latex="\mathbf{r}">
-          <mi mathvariant="bold" data-latex="r">r</mi>
+          <mi data-latex="r">&#x1D42B;</mi>
         </mrow>
         <mo data-latex=",">,</mo>
         <mi data-latex="t">t</mi>
@@ -930,7 +919,7 @@ $$
         <mspace width="0.167em" data-latex="\,"></mspace>
         <mi data-latex="d">d</mi>
         <mrow data-mjx-texclass="ORD" data-latex="\mathbf{r}">
-          <mi mathvariant="bold" data-latex="r">r</mi>
+          <mi data-latex="r">&#x1D42B;</mi>
         </mrow>
         <mo data-latex="=">=</mo>
         <mn data-latex="\tag{3}">1</mn>
@@ -961,7 +950,7 @@ $$
         <mi mathvariant="normal" data-latex="\Psi">&#x3A8;</mi>
         <mo data-latex="(" stretchy="false">(</mo>
         <mrow data-mjx-texclass="ORD" data-latex="\mathbf{r}">
-          <mi mathvariant="bold" data-latex="r">r</mi>
+          <mi data-latex="r">&#x1D42B;</mi>
         </mrow>
         <mo data-latex=",">,</mo>
         <mi data-latex="t">t</mi>
@@ -973,7 +962,7 @@ $$
         <mspace width="0.167em" data-latex="\,"></mspace>
         <mi data-latex="d">d</mi>
         <mrow data-mjx-texclass="ORD" data-latex="\mathbf{r}">
-          <mi mathvariant="bold" data-latex="r">r</mi>
+          <mi data-latex="r">&#x1D42B;</mi>
         </mrow>
         <mo data-latex="=">=</mo>
         <mn data-latex="\tag{4}">1</mn>
@@ -981,7 +970,6 @@ $$
     </mlabeledtr>
   </mtable>
 </math>
-
 
 [Markdown]
 状態の内積
@@ -1013,25 +1001,24 @@ $$
         </msup>
         <mo data-latex="(" stretchy="false">(</mo>
         <mrow data-mjx-texclass="ORD" data-latex="\mathbf{r}">
-          <mi mathvariant="bold" data-latex="r">r</mi>
+          <mi data-latex="r">&#x1D42B;</mi>
         </mrow>
         <mo data-latex=")" stretchy="false">)</mo>
         <mi data-latex="\phi">&#x3D5;</mi>
         <mo data-latex="(" stretchy="false">(</mo>
         <mrow data-mjx-texclass="ORD" data-latex="\mathbf{r}">
-          <mi mathvariant="bold" data-latex="r">r</mi>
+          <mi data-latex="r">&#x1D42B;</mi>
         </mrow>
         <mo data-latex=")" stretchy="false">)</mo>
         <mspace width="0.167em" data-latex="\,"></mspace>
         <mi data-latex="d">d</mi>
         <mrow data-mjx-texclass="ORD" data-latex="\tag{5}">
-          <mi mathvariant="bold" data-latex="r">r</mi>
+          <mi data-latex="r">&#x1D42B;</mi>
         </mrow>
       </mtd>
     </mlabeledtr>
   </mtable>
 </math>
-
 
 [Markdown]
 確率解釈
@@ -1083,19 +1070,19 @@ $$
             </msup>
             <mo data-latex="(" stretchy="false">(</mo>
             <mrow data-mjx-texclass="ORD" data-latex="\mathbf{r}">
-              <mi mathvariant="bold" data-latex="r">r</mi>
+              <mi data-latex="r">&#x1D42B;</mi>
             </mrow>
             <mo data-latex=")" stretchy="false">)</mo>
             <mi data-latex="\psi">&#x3C8;</mi>
             <mo data-latex="(" stretchy="false">(</mo>
             <mrow data-mjx-texclass="ORD" data-latex="\mathbf{r}">
-              <mi mathvariant="bold" data-latex="r">r</mi>
+              <mi data-latex="r">&#x1D42B;</mi>
             </mrow>
             <mo data-latex=")" stretchy="false">)</mo>
             <mspace width="0.167em" data-latex="\,"></mspace>
             <mi data-latex="d">d</mi>
             <mrow data-mjx-texclass="ORD" data-latex="\mathbf{r}">
-              <mi mathvariant="bold" data-latex="r">r</mi>
+              <mi data-latex="r">&#x1D42B;</mi>
             </mrow>
             <mo data-mjx-texclass="CLOSE" data-latex="\right|">|</mo>
           </mrow>
@@ -1135,7 +1122,6 @@ b\tag{2}
     </mlabeledtr>
   </mtable>
 </math>
-
 
 [Markdown]
 因数分解
@@ -1260,4 +1246,3 @@ f(x) &amp;= x^3  - 3x^2  + 4 \\
     </mtr>
   </mtable>
 </math>
-

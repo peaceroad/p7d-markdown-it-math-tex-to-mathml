@@ -14,7 +14,6 @@
   <mi>c</mi>
 </math>。段落。</p>
 
-
 [Markdown]
 $$
 x^2+y^2=z^2
@@ -36,7 +35,6 @@ $$
     <mn>2</mn>
   </msup>
 </math>
-
 
 [Markdown]
 $$
@@ -72,7 +70,6 @@ $$
   <mi>d</mi>
   <mi>u</mi>
 </math>
-
 
 [Markdown]
 $$
@@ -135,7 +132,6 @@ $$
     </mrow>
   </mfrac>
 </math>
-
 
 [Markdown]
 $$
@@ -217,7 +213,6 @@ $$
   <mo>&#x22EF;</mo>
 </math>
 
-
 [Markdown]
 $$
 f(x) = \sum_{n=0}^{\infty} \frac{f^{(n)}(a)}{n!} (x - a)^n
@@ -269,7 +264,6 @@ $$
   </msup>
 </math>
 
-
 [Markdown]
 マクスウェル方程式。複数行の数式の中央揃え。
 
@@ -290,7 +284,7 @@ $$
         <mi mathvariant="normal">&#x2207;</mi>
         <mo>&#x22C5;</mo>
         <mrow>
-          <mi mathvariant="bold">E</mi>
+          <mi>&#x1D404;</mi>
         </mrow>
       </mtd>
       <mtd>
@@ -312,7 +306,7 @@ $$
         <mi mathvariant="normal">&#x2207;</mi>
         <mo>&#x22C5;</mo>
         <mrow>
-          <mi mathvariant="bold">B</mi>
+          <mi>&#x1D401;</mi>
         </mrow>
       </mtd>
       <mtd>
@@ -328,7 +322,7 @@ $$
         <mi mathvariant="normal">&#x2207;</mi>
         <mo>&#xD7;</mo>
         <mrow>
-          <mi mathvariant="bold">E</mi>
+          <mi>&#x1D404;</mi>
         </mrow>
       </mtd>
       <mtd>
@@ -340,7 +334,7 @@ $$
             <mrow>
               <mi>&#x2202;</mi>
               <mrow>
-                <mi mathvariant="bold">B</mi>
+                <mi>&#x1D401;</mi>
               </mrow>
             </mrow>
             <mrow>
@@ -356,7 +350,7 @@ $$
         <mi mathvariant="normal">&#x2207;</mi>
         <mo>&#xD7;</mo>
         <mrow>
-          <mi mathvariant="bold">B</mi>
+          <mi>&#x1D401;</mi>
         </mrow>
       </mtd>
       <mtd>
@@ -368,7 +362,7 @@ $$
             <mn>0</mn>
           </msub>
           <mrow>
-            <mi mathvariant="bold">J</mi>
+            <mi>&#x1D409;</mi>
           </mrow>
           <mo>+</mo>
           <msub>
@@ -383,7 +377,7 @@ $$
             <mrow>
               <mi>&#x2202;</mi>
               <mrow>
-                <mi mathvariant="bold">E</mi>
+                <mi>&#x1D404;</mi>
               </mrow>
             </mrow>
             <mrow>
@@ -396,7 +390,6 @@ $$
     </mtr>
   </mtable>
 </math>
-
 
 [Markdown]
 2×2行列の積。
@@ -506,7 +499,6 @@ $$
     <mo>)</mo>
   </mrow>
 </math>
-
 
 [Markdown]
 リーマンゼータ関数の定義からオイラー積表示。
@@ -757,7 +749,6 @@ $$
   </mtable>
 </math>
 
-
 [Markdown]
 波動関数
 
@@ -789,7 +780,7 @@ $$
         <mi mathvariant="normal">&#x3A8;</mi>
         <mo stretchy="false">(</mo>
         <mrow>
-          <mi mathvariant="bold">r</mi>
+          <mi>&#x1D42B;</mi>
         </mrow>
         <mo>,</mo>
         <mi>t</mi>
@@ -801,7 +792,7 @@ $$
         <mspace width="0.167em"></mspace>
         <mi>d</mi>
         <mrow>
-          <mi mathvariant="bold">r</mi>
+          <mi>&#x1D42B;</mi>
         </mrow>
         <mo>=</mo>
         <mn>1</mn>
@@ -809,7 +800,6 @@ $$
     </mlabeledtr>
   </mtable>
 </math>
-
 
 [Markdown]
 確率密度
@@ -831,7 +821,7 @@ $$
         <mi>P</mi>
         <mo stretchy="false">(</mo>
         <mrow>
-          <mi mathvariant="bold">r</mi>
+          <mi>&#x1D42B;</mi>
         </mrow>
         <mo>,</mo>
         <mi>t</mi>
@@ -841,7 +831,7 @@ $$
         <mi mathvariant="normal">&#x3A8;</mi>
         <mo stretchy="false">(</mo>
         <mrow>
-          <mi mathvariant="bold">r</mi>
+          <mi>&#x1D42B;</mi>
         </mrow>
         <mo>,</mo>
         <mi>t</mi>
@@ -854,7 +844,6 @@ $$
     </mlabeledtr>
   </mtable>
 </math>
-
 
 [Markdown]
 規格化条件
@@ -890,7 +879,7 @@ $$
         <mi>P</mi>
         <mo stretchy="false">(</mo>
         <mrow>
-          <mi mathvariant="bold">r</mi>
+          <mi>&#x1D42B;</mi>
         </mrow>
         <mo>,</mo>
         <mi>t</mi>
@@ -898,7 +887,7 @@ $$
         <mspace width="0.167em"></mspace>
         <mi>d</mi>
         <mrow>
-          <mi mathvariant="bold">r</mi>
+          <mi>&#x1D42B;</mi>
         </mrow>
         <mo>=</mo>
         <mn>1</mn>
@@ -929,7 +918,7 @@ $$
         <mi mathvariant="normal">&#x3A8;</mi>
         <mo stretchy="false">(</mo>
         <mrow>
-          <mi mathvariant="bold">r</mi>
+          <mi>&#x1D42B;</mi>
         </mrow>
         <mo>,</mo>
         <mi>t</mi>
@@ -941,7 +930,7 @@ $$
         <mspace width="0.167em"></mspace>
         <mi>d</mi>
         <mrow>
-          <mi mathvariant="bold">r</mi>
+          <mi>&#x1D42B;</mi>
         </mrow>
         <mo>=</mo>
         <mn>1</mn>
@@ -949,7 +938,6 @@ $$
     </mlabeledtr>
   </mtable>
 </math>
-
 
 [Markdown]
 状態の内積
@@ -981,25 +969,24 @@ $$
         </msup>
         <mo stretchy="false">(</mo>
         <mrow>
-          <mi mathvariant="bold">r</mi>
+          <mi>&#x1D42B;</mi>
         </mrow>
         <mo stretchy="false">)</mo>
         <mi>&#x3D5;</mi>
         <mo stretchy="false">(</mo>
         <mrow>
-          <mi mathvariant="bold">r</mi>
+          <mi>&#x1D42B;</mi>
         </mrow>
         <mo stretchy="false">)</mo>
         <mspace width="0.167em"></mspace>
         <mi>d</mi>
         <mrow>
-          <mi mathvariant="bold">r</mi>
+          <mi>&#x1D42B;</mi>
         </mrow>
       </mtd>
     </mlabeledtr>
   </mtable>
 </math>
-
 
 [Markdown]
 確率解釈
@@ -1051,19 +1038,19 @@ $$
             </msup>
             <mo stretchy="false">(</mo>
             <mrow>
-              <mi mathvariant="bold">r</mi>
+              <mi>&#x1D42B;</mi>
             </mrow>
             <mo stretchy="false">)</mo>
             <mi>&#x3C8;</mi>
             <mo stretchy="false">(</mo>
             <mrow>
-              <mi mathvariant="bold">r</mi>
+              <mi>&#x1D42B;</mi>
             </mrow>
             <mo stretchy="false">)</mo>
             <mspace width="0.167em"></mspace>
             <mi>d</mi>
             <mrow>
-              <mi mathvariant="bold">r</mi>
+              <mi>&#x1D42B;</mi>
             </mrow>
             <mo>|</mo>
           </mrow>
@@ -1097,7 +1084,6 @@ $$
     </mlabeledtr>
   </mtable>
 </math>
-
 
 [Markdown]
 因数分解
@@ -1213,7 +1199,6 @@ $$
   </mtable>
 </math>
 
-
 [Markdown]
 Inline one $a+b$ and inline two $c+d$.
 
@@ -1259,4 +1244,3 @@ $$
   </msup>
 </math>
 <p>最後のパラグラフ。</p>
-

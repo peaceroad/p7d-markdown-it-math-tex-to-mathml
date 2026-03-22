@@ -1,0 +1,8 @@
+/* NewCM-specific MathML font source. Override src if you self-host the font. */
+@font-face {
+  font-family: custom-math;
+  src: local('NewCMMath-Regular');
+       /* url('https://example.com/assets/fonts/NewCMMath-Regular.otf') format('opentype'); */
+  font-style: normal;
+  font-weight: 400;
+}

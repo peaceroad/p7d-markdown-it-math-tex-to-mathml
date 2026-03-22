@@ -1,0 +1,81 @@
+/*
+ * Shared Core-aligned author baseline for native MathML.
+ *
+ * This file keeps the reset/guard layer only. Project presentation/layout
+ * tuning lives in `math-mathml-presentation.css`.
+ *
+ * References:
+ *   - https://www.w3.org/TR/mathml-core/#the-top-level-math-element
+ *   - https://www.w3.org/TR/mathml-core/#user-agent-stylesheet
+ */
+
+/*
+ * Core-like resets plus a few subtree guards.
+ *
+ * `hanging-punctuation: none` is kept here because prose-level hanging
+ * punctuation caused opening parentheses to overlap preceding MathML tokens on
+ * iOS/WebKit.
+ * Reference:
+ *   - https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/hanging-punctuation
+ *
+ * `text-autospace` and `hyphens` are also guarded at subtree level so broad
+ * prose selectors do not leak CJK autospace or hyphenation behavior into math.
+ * Reference:
+ *   - https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/text-autospace
+ */
+math,
+math * {
+  hanging-punctuation: none;
+  letter-spacing: normal;
+  word-spacing: normal;
+  text-transform: none;
+  text-autospace: no-autospace;
+  font-kerning: auto;
+  font-feature-settings: normal;
+  font-variant-ligatures: normal;
+  hyphens: manual;
+}
+
+/* Restore the MathML Core default for identifiers after the subtree reset. */
+math mi {
+  text-transform: math-auto;
+}
+
+/*
+ * Core-aligned <math> defaults.
+ *
+ * `dir` is a presentational hint for CSS `direction`, so only mirror the Core
+ * `ltr` default when `dir` is absent.
+ * Reference:
+ *   - https://www.w3.org/TR/mathml-core/#the-top-level-math-element
+ *   - https://w3c.github.io/mathml-core/#common-mathml-and-html-attributes
+ */
+math {
+  math-style: compact;
+}
+
+math:not([dir]) {
+  direction: ltr;
+  text-indent: 0;
+  line-height: normal;
+  font-family: math;
+  font-size: inherit;
+  font-style: normal;
+  font-weight: normal;
+}
+
+math[dir="ltr" i] {
+  direction: ltr;
+}
+
+math[dir="rtl" i] {
+  direction: rtl;
+}
+
+math[display="block" i] {
+  math-style: normal;
+}
+
+math[display="inline" i] {
+  math-style: compact;
+}

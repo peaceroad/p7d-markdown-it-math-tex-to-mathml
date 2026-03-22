@@ -1,58 +1,17 @@
-@font-face {
-  font-family: custom-math;
-  src: local('STIX Two Math');
+/*
+ * Shared MathML presentation and layout tuning.
+ *
+ * These values are project defaults, not MathML Core constants. They cover:
+ *   1. common visual theme values
+ *   2. shared layout rules
+ *   3. browser/layout workarounds that are not part of the Core reset layer
+ */
 
-  font-style: normal;
-  font-weight: 400;
-}
-
-math,
-math * {
-  hanging-punctuation: none;
-  letter-spacing: normal;
-  word-spacing: normal;
-  text-transform: none;
-  text-autospace: no-autospace;
-  font-kerning: auto;
-  font-feature-settings: normal;
-  font-variant-ligatures: normal;
-  hyphens: manual;
-}
-
-math mi {
-  text-transform: math-auto;
-}
-
-math {
-  math-style: compact;
-}
-
-math:not([dir]) {
-  direction: ltr;
-  text-indent: 0;
-  line-height: normal;
-  font-family: math;
-  font-size: inherit;
-  font-style: normal;
-  font-weight: normal;
-}
-
-math[dir="ltr" i] {
-  direction: ltr;
-}
-
-math[dir="rtl" i] {
-  direction: rtl;
-}
-
-math[display="block" i] {
-  math-style: normal;
-}
-
-math[display="inline" i] {
-  math-style: compact;
-}
-
+/*
+ * Theme tokens.
+ *
+ * Keep these conservative so consumers can override them easily.
+ */
 :root {
   --math-inline-font-size: 1.15em;
   --math-inline-margin-inline: 0.15em;
@@ -63,6 +22,13 @@ math[display="inline" i] {
   --math-letter-spacing: 0.05em;
 }
 
+/*
+ * Shared project presentation defaults.
+ *
+ * MathML Core's UA stylesheet uses `font-family: math` and `font-size: inherit`.
+ * This project intentionally keeps a slightly stronger article-oriented visual
+ * theme in the public CSS bundles.
+ */
 math {
   font-family: custom-math, math;
   font-size: var(--math-block-font-size);
@@ -72,12 +38,18 @@ math {
     font-size: var(--math-inline-font-size);
   }
 
-
+  /* Optional layout hook for mathmlLayoutClass integral-with-limits output. */
   .math-layout-integral + :is(mo, mi) {
     margin-inline-start: -0.5em;
   }
 
-
+  /*
+   * WebKit-specific spacing and layout workarounds.
+   *
+   * The numeric offsets below are heuristic tuning values from the project's
+   * rendering fixtures, not spec-derived constants. Keep them tied to observed
+   * browser behavior and adjust only with visual verification.
+   */
   @supports selector(::-webkit-search-cancel-button) {
     mi + mo {
       margin-inline: calc(var(--math-letter-spacing) * 1);
@@ -164,15 +136,16 @@ math {
   }
 }
 
+/* Display-math presentation and tagged-equation layout rules. */
 math[display="block" i] {
   margin: var(--math-block-margin-block) auto;
 
-
+  /* Centering multiple expressions. */
   mtable > :is(mtr, mlabeledtr) > mtd {
     padding-block: var(--math-block-line-margin-block);
   }
 
-
+  /* Formula number by \tag{}. */
   &:has(> mtable:not([columnalign="right left"]) > mlabeledtr > mtd[id^="mjx-eqn"]) {
     margin-inline: 0;
 
@@ -210,6 +183,7 @@ math[display="block" i] {
   }
 }
 
+/* Special layout for right/left aligned equation systems with tags. */
 math[display="block" i]:has(> mtable[columnalign="right left"] > mlabeledtr > mtd[id^="mjx-eqn:"]) {
   margin-inline: 0;
 

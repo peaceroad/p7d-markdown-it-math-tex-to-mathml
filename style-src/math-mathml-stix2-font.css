@@ -1,0 +1,8 @@
+/* STIX Two Math-specific MathML font source. Override src if you self-host the font. */
+@font-face {
+  font-family: custom-math;
+  src: local('STIX Two Math');
+       /* url('https://example.com/assets/fonts/STIX2Math-Regular.woff2') format('woff2'); */
+  font-style: normal;
+  font-weight: 400;
+}
