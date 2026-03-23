@@ -1,6 +1,6 @@
 @font-face {
   font-family: custom-math;
-  src: local('STIX Two Math');
+  src: local('STIXTwoMath-Regular');
 
   font-style: normal;
   font-weight: 400;
@@ -63,7 +63,9 @@ math[display="inline" i] {
   --math-letter-spacing: 0.05em;
 }
 
-math {
+math:not([dir]),
+math[dir="ltr" i],
+math[dir="rtl" i] {
   font-family: custom-math, math;
   font-size: var(--math-block-font-size);
 

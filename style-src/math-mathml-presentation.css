@@ -26,10 +26,12 @@
  * Shared project presentation defaults.
  *
  * MathML Core's UA stylesheet uses `font-family: math` and `font-size: inherit`.
- * This project intentionally keeps a slightly stronger article-oriented visual
- * theme in the public CSS bundles.
+ * The base layer mirrors that on `math:not([dir])`, so match that specificity
+ * here when applying the stronger article-oriented public theme values.
  */
-math {
+math:not([dir]),
+math[dir="ltr" i],
+math[dir="rtl" i] {
   font-family: custom-math, math;
   font-size: var(--math-block-font-size);
 

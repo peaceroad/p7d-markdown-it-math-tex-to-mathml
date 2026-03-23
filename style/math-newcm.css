@@ -63,7 +63,9 @@ math[display="inline" i] {
   --math-letter-spacing: 0.05em;
 }
 
-math {
+math:not([dir]),
+math[dir="ltr" i],
+math[dir="rtl" i] {
   font-family: custom-math, math;
   font-size: var(--math-block-font-size);
 
