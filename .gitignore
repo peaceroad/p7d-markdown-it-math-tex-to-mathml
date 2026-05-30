@@ -1,6 +1,8 @@
 node_modules/
 assets/
 scripts/
+__pycache__/
+*.pyc
 .tmp-ctan-newcm/
 package-lock.json
 .npm-cache/

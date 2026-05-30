@@ -74,11 +74,9 @@ math[dir="rtl" i] {
     font-size: var(--math-inline-font-size);
   }
 
-
   .math-layout-integral + :is(mo, mi) {
     margin-inline-start: -0.5em;
   }
-
 
   @supports selector(::-webkit-search-cancel-button) {
     mi + mo {
@@ -169,11 +167,9 @@ math[dir="rtl" i] {
 math[display="block" i] {
   margin: var(--math-block-margin-block) auto;
 
-
   mtable > :is(mtr, mlabeledtr) > mtd {
     padding-block: var(--math-block-line-margin-block);
   }
-
 
   &:has(> mtable:not([columnalign="right left"]) > mlabeledtr > mtd[id^="mjx-eqn"]) {
     margin-inline: 0;

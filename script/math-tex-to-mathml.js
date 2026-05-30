@@ -24,6 +24,7 @@ import '@mathjax/src/components/mjs/input/tex/extensions/dsfont/dsfont.js'
 import '@mathjax/src/components/mjs/input/tex/extensions/empheq/empheq.js'
 import '@mathjax/src/components/mjs/input/tex/extensions/enclose/enclose.js'
 import '@mathjax/src/components/mjs/input/tex/extensions/extpfeil/extpfeil.js'
+import '@mathjax/src/components/mjs/input/tex/extensions/fontsizev3/fontsizev3.js'
 import '@mathjax/src/components/mjs/input/tex/extensions/gensymb/gensymb.js'
 import '@mathjax/src/components/mjs/input/tex/extensions/html/html.js'
 import '@mathjax/src/components/mjs/input/tex/extensions/mathtools/mathtools.js'
@@ -45,7 +46,7 @@ import '@mathjax/src/components/mjs/input/tex/extensions/verb/verb.js'
 
 import createMathTexToMathML from './math-tex-to-mathml-core.js'
 
-const TEX_EXTENSION_NAMES = [
+const DEFAULT_TEX_PACKAGE_NAMES = [
   'action',
   'ams',
   'amscd',
@@ -86,7 +87,7 @@ const TEX_EXTENSION_NAMES = [
   'verb',
 ]
 
-const texPackages = ['base', ...TEX_EXTENSION_NAMES]
+const texPackages = ['base', ...DEFAULT_TEX_PACKAGE_NAMES]
 
 const mditMathTexToMathML = createMathTexToMathML({ texPackages })
 

@@ -28,4 +28,36 @@ const secondRender = md.render('Inline $x$')
 assert.strictEqual(secondRender, firstRender, 'Repeated install should keep the first option set.')
 assert.ok(secondRender.includes('<math'), 'Expected first-install-wins semantics for repeated .use() calls.')
 
+const invalidMathmlModeMd = new MarkdownIt({ html: true })
+assert.throws(
+  () => invalidMathmlModeMd.use(plugin, { mathmlMode: 'invalid-mode' }),
+  /Unsupported mathmlMode/,
+  'Invalid options should fail before marking the MarkdownIt instance as installed.'
+)
+invalidMathmlModeMd.use(plugin)
+assert.ok(
+  invalidMathmlModeMd.render('Inline $x$').includes('<math'),
+  'A failed setup should not poison the MarkdownIt instance for a later valid install.'
+)
+
+const invalidSvgFontMd = new MarkdownIt({ html: true })
+assert.throws(
+  () => invalidSvgFontMd.use(plugin, { useSvg: true, svgFont: 'unknown-font' }),
+  /Unknown SVG font name/,
+  'Invalid SVG font options should fail before marking the MarkdownIt instance as installed.'
+)
+invalidSvgFontMd.use(plugin)
+assert.ok(
+  invalidSvgFontMd.render('Inline $x$').includes('<math'),
+  'A failed SVG setup should not poison the MarkdownIt instance for a later valid install.'
+)
+
+const mutableOptions = { useSvg: true, svgFontCache: 'none' }
+const mutableOptionsMd = new MarkdownIt({ html: true }).use(plugin, mutableOptions)
+mutableOptions.svgFontCache = 'local'
+assert.ok(
+  !mutableOptionsMd.render('Inline $x$').includes('<defs>'),
+  'Options should be captured at setup instead of reading later caller mutations.'
+)
+
 console.log('Passed plugin install idempotence test.')

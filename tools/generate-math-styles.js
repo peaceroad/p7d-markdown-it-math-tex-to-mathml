@@ -31,8 +31,8 @@ const stripCssComments = (content) => content.replace(/\/\*[\s\S]*?\*\//g, '').t
 
 const compactGeneratedCss = (content) =>
   content
-    .replace(/\n{3,}/g, '\n\n')
     .replace(/[ \t]+\n/g, '\n')
+    .replace(/\n{3,}/g, '\n\n')
     .trim()
 
 for (const target of buildTargets) {

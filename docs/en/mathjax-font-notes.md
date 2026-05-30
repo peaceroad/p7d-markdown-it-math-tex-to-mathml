@@ -178,7 +178,7 @@ Minimal pattern:
 ```css
 @font-face {
   font-family: custom-math;
-  src: local('STIX Two Math'),
+  src: local('STIXTwoMath-Regular'),
        url('/fonts/STIXTwoMath-Regular.woff2') format('woff2');
   font-style: normal;
   font-weight: 400;
@@ -190,6 +190,60 @@ math {
 ```
 
 Do not assume that a MathJax SVG/CHTML package is itself a drop-in raw MathML font for CSS.
+
+## NewCM Math WOFF2 regeneration
+
+This repo does not commit NewCM font assets.
+
+If you want a local NewCM Math WOFF2 for self-hosting, start from your own OTF copy.
+The most natural upstream source is Antonis Tsolomitis's NewComputerModern package. The local OTF metadata examined during development points to the GUST Font License, and CTAN lists the same upstream package and release site.
+
+This repo intentionally does not include a font-fetching script or commit font assets.
+Download the upstream package yourself, keep the source OTF in an ignored/local asset directory, then run the converter on that local file.
+
+- CTAN package: <https://ctan.org/pkg/newcomputermodern>
+- upstream release page: <https://download.gnu.org.ua/release/newcm/>
+- CTAN package ZIP: use the CTAN package page's "Download" link, or a CTAN mirror URL such as `https://mirrors.ctan.org/fonts/newcomputermodern.zip`.
+
+After extracting the ZIP, use the regular NewCM math OTF:
+
+```text
+newcomputermodern/newcomputermodern/otf/NewCMMath-Regular.otf
+```
+
+If the upstream archive layout changes, search the extracted tree for `NewCMMath-Regular.otf`.
+A convenient local placement in this repo is:
+
+```text
+assets/fonts/newcm/NewCMMath-Regular.otf
+```
+
+`assets/` is ignored by git, so this keeps local font assets out of commits.
+
+The repo includes an optional local helper:
+
+```bash
+python -m pip install fonttools brotli
+python tools/convert-newcm-woff2.py --input assets/fonts/newcm/NewCMMath-Regular.otf --output assets/fonts/newcm/NewCMMathCustom-Regular.woff2
+```
+
+Use `python3` instead of `python` on systems where the Python 3 executable is named `python3`.
+
+That command converts a user-supplied local NewCM Math OTF into a WOFF2 file.
+If `--output` is omitted, the helper writes `<input-stem>.woff2` next to the input file.
+The helper also rewrites the WOFF2 metadata so the derived webfont packaging is visibly distinct from the upstream OTF.
+It is included for local asset preparation; it does not bundle or download font assets for you.
+
+If you prefer the npm wrapper, use:
+
+```bash
+npm run build:newcm-woff2 -- --input assets/fonts/newcm/NewCMMath-Regular.otf --output assets/fonts/newcm/NewCMMathCustom-Regular.woff2
+```
+
+The npm wrapper assumes a `python` executable is available on `PATH`; call the Python script directly with `python3` if that is how your environment exposes Python 3.
+
+The license metadata is currently fixed in the helper on purpose. It is repo-specific packaging metadata, not a general-purpose font conversion frontend.
+For an application, copy the generated WOFF2 to the app's public/static font directory and point `@font-face` at that hosted file.
 
 ## SVG Font Choice
 

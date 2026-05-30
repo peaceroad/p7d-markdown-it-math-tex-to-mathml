@@ -13,7 +13,7 @@ npm install @mathjax/src
 
 This package is ESM. The Node entry uses top-level await to preload MathJax TeX extensions, so run it in an ESM context. For browsers, use the browser entry (`@peaceroad/markdown-it-math-tex-to-mathml/script/math-tex-to-mathml.js`) with a bundler that can resolve `@mathjax/src` and its internal imports.
 
-By default, the plugin preloads MathJax TeX extensions from `@mathjax/src`, excluding `bussproofs` and `bboldx`. `bboldx` is intentionally left out so `\mathbb` does not become a MathJax-private variant that depends on `data-mjx-*` metadata.
+By default, the plugin preloads MathJax TeX extensions from `@mathjax/src`, excluding `bussproofs` and `bboldx`. `bboldx` is intentionally left out so `\mathbb` does not become a MathJax-private variant that depends on `data-mjx-*` metadata. The `fontsizev3` compatibility package is preloaded for opt-in use, but is excluded from the default active package set so MathJax v4.1.2's corrected font-size macro values are used by default.
 
 The default package set is intentionally broad for compatibility. If you want stricter TeX support, pass `texPackages` to limit the active MathJax TeX packages for that `MarkdownIt` instance. Note that the entry still preloads the default extension modules at startup so synchronous conversion keeps working; `texPackages` narrows parser behavior, not startup imports.
 
@@ -30,12 +30,15 @@ When `useSvg` is `false`, this plugin emits Presentation MathML in one of two Ma
 - Neither mode is a strict MathML Core-only subset.
 - `texPackages` controls TeX parser behavior for a given `MarkdownIt` instance. It does **not** guarantee that the resulting MathML is limited to MathML Core constructs.
 
+For production native MathML output, use `mathmlReport: true` in preview or CI and treat `math-error`, `non-core-element`, `nested-mathsize`, and residual `mathvariant` findings according to your browser-support policy. If visual fidelity must match MathJax layout for broad TeX input, use `useSvg: true` for that surface.
+
 Additional notes:
 
 - `docs/en/mathml-css-notes.md` / `docs/ja/mathml-css-notes.md`: CSS baseline for native MathML
 - `docs/en/mathml-core-interop-notes.md` / `docs/ja/mathml-core-interop-notes.md`: MathML Core interoperability
 - `docs/en/mathjax-font-notes.md` / `docs/ja/mathjax-font-notes.md`: MathML/SVG font setup
 - `docs/en/manual-rendering-checks.md` / `docs/ja/manual-rendering-checks.md`: manual browser-rendering checks
+- `python tools/convert-newcm-woff2.py --input <path-to-NewCMMath-Regular.otf> [--output <path-to-output.woff2>]`: convert a user-supplied local NewCM Math OTF into a WOFF2 asset with project metadata (use `python3` instead if that is how your environment exposes Python 3; the npm script is only a thin wrapper around `python`)
 
 The detailed notes keep links to the primary external references (MathML Core,
 MathJax docs, MDN, and related sources) where those references matter.
@@ -141,6 +144,9 @@ const md = mdit({ html: true }).use(mditMathTexToMathML, {
 
 Options summary:
 
+Options are normalized and unsupported option values are rejected during plugin setup.
+Options marked as MathML-only or SVG-only affect only that output mode.
+
 Applies to both MathML and SVG output:
 - `setMathJaxDataAttrs` (default: `false`): keeps MathJax-generated `data-*` metadata (`data-latex`, `data-latex-item`, `data-mjx-*`, `data-semantic-*`, `data-break-align`, `data-mml-node`, `data-c`, `data-cramped`, `data-speech-node`). Set it to `true` to keep these attributes. Browsers ignore `data-*` attributes for rendering, so removing them is safe for static MathML **and SVG** output. For MathML, screen readers rely on native MathML semantics (not `data-*`), so trimming these attributes does not affect speech. Keep them if you plan to re-process the MathML/SVG with MathJax, rely on MathJax's exploration/speech tooling, or want to debug using the embedded metadata. `data-mjx-*` is internal MathJax metadata (not a stable styling hook). This option does not remove non-`data-*` attributes like `xmlns`, `display`, `width`, `height`, `viewBox`, `role`, or `aria-*`.
 - `em`, `ex`, `containerWidth`: conversion metrics passed to MathJax. `containerWidth` influences MathJax linebreaking calculations (percent widths resolve against it). For MathML output, browsers ignore MathJax linebreaking hints, so this mostly affects metadata; for SVG, it affects linebreak layout when `svgLinebreaks` is enabled.
@@ -150,8 +156,10 @@ MathML-only options:
 - `compactInlineMathML` (default: `false`): collapses whitespace for inline MathML only.
 - `compactBlockMathML` (default: `false`): collapses whitespace for block MathML only.
 - `mathmlLayoutClass` (default: `''`): adds classes to prime operators and layout helpers. Set it to `true` to enable default class names (`math-layout-prime`, `math-layout-msup-bar`, `math-layout-integral`). Pass a single string to style prime operators only, pass a comma-separated string (`"prime,msupBar,integral"`) to set all three slots positionally, or pass an object: `{ prime, msupBar, integral }`.
-- `mathmlMode` (default: `'browser'`): MathML-only output mode. `'browser'` is the project default and normalizes explicit variant-origin tokens (for example `\\mathbb`, `\\mathbf`, `\\mathcal`, `\\mathfrak`, `\\mathit`) toward browser-friendly Unicode MathML where possible. It keeps ordinary identifiers untouched, uses limited inline-style fallbacks for a few unconvertible symbol cases (for example `\\mathbf{+}`) while preserving the legacy `mathvariant` attribute, and preserves original legacy markup when no safe rewrite exists. Non-Core structures such as `<menclose>` and `<mlabeledtr>` are still preserved. `'mathjax'` opts out of that normalization and keeps output closer to MathJax's broader Presentation MathML serialization.
-- `mathmlReport` (default: `false`): MathML-only diagnostics flag. When `true`, interoperability findings are appended to `env.mathmlReport` for the final MathML output of the selected `mathmlMode`. Findings can include `non-core-element`, `legacy-mathvariant`, `style-fallback-mathvariant`, `unsupported-mathvariant`, or `unconverted-mathvariant`. SVG output does not populate this report.
+- `mathmlMode` (default: `'browser'`): MathML-only output mode. This value is validated during plugin setup, but it affects output only when `useSvg` is `false`. `'browser'` is the project default and normalizes explicit variant-origin tokens (for example `\\mathbb`, `\\mathbf`, `\\mathcal`, `\\mathfrak`, `\\mathit`) toward browser-friendly Unicode MathML where possible. It keeps ordinary identifiers untouched, uses limited inline-style fallbacks for a few unconvertible symbol cases (for example `\\mathbf{+}`) while preserving the legacy `mathvariant` attribute, and preserves original legacy markup when no safe rewrite exists. Non-Core structures such as `<menclose>` and `<mlabeledtr>` are still preserved. `'mathjax'` opts out of that normalization and keeps output closer to MathJax's broader Presentation MathML serialization.
+- `mathmlReport` (default: `false`): MathML-only diagnostics flag. When `true`, interoperability findings are appended to `env.mathmlReport` for the final MathML output of the selected `mathmlMode`. Findings can include `math-error`, `non-core-element`, `legacy-mathvariant`, `style-fallback-mathvariant`, `unsupported-mathvariant`, `unconverted-mathvariant`, or `nested-mathsize`. SVG output does not populate this report.
+  `math-error` reports MathJax `<merror>` output, which usually means a TeX input/package error such as a macro that is unavailable under the selected `texPackages`.
+  `nested-mathsize` reports TeX font-size declarations that became nested relative `mathsize` values, such as `$\tiny x, \small x, \large x$`. For native MathML output, group size changes (`${\tiny x}, {\small x}, {\large x}$`) when you need side-by-side size comparisons, because CSS `em` values are relative to the current parent size.
 
 Inline dollar parsing:
 - Inline math uses single-dollar delimiters only. `$$...$$` inside a paragraph is left as literal text; block math still uses `$$`.
@@ -162,7 +170,7 @@ Inline dollar parsing:
 - If you want numeric-leading inline math that should not look like currency prose, continue the TeX expression immediately after the number. Examples: `$5\,a$`, `$5\,\mathrm{kg}$`, `$5\text{ apples}$`. `$5\ a$` also works, but `\,`, `\mathrm{}`, or `\text{}` are clearer in source.
 
 TeX input option:
-- `texPackages` (default: omit the option to keep the built-in broad package set): array or comma-separated string of MathJax TeX package names to activate for this `MarkdownIt` instance. `base` is always included automatically. Passing `[]` is equivalent to `['base']`. This is useful when you want stricter input handling or to avoid package-level macro overrides. Example: `texPackages: ['base', 'ams', 'newcommand']` or `texPackages: 'ams,newcommand'`.
+- `texPackages` (default: omit the option to keep the built-in broad package set): array or comma-separated string of MathJax TeX package names to activate for this `MarkdownIt` instance. `base` is always included automatically. Passing `[]` is equivalent to `['base']`. This is useful when you want stricter input handling or to avoid package-level macro overrides. Example: `texPackages: ['base', 'ams', 'newcommand']` or `texPackages: 'ams,newcommand'`. The MathJax `fontsizev3` compatibility package is not active by default; include it explicitly if you need the pre-4.1.2 font-size macro values, e.g. `texPackages: ['base', 'fontsizev3']`.
 
 SVG-only options:
 - `svgFont` (default: `''`): pass a MathJax SVG font class or instance (e.g. `MathJaxStix2Font`) to switch fonts. In Node.js you can also pass a font name string (e.g. `'stix2'` or `'@mathjax/mathjax-stix2-font'`) if the package is installed. When omitted, MathJax v4 defaults to the New Computer Modern SVG font (via `@mathjax/src` mapping `#default-font` to `@mathjax/mathjax-newcm-font`).

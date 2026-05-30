@@ -3,6 +3,7 @@
   font-family: custom-math;
   src: local('NewCMMath-Regular');
        /* url('https://example.com/assets/fonts/NewCMMath-Regular.otf') format('opentype'); */
+       /* url('path/to/NewCMMathCustom-Regular.woff2') format('woff2'); */
   font-style: normal;
   font-weight: 400;
 }

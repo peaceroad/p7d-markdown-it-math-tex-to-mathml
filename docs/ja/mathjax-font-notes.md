@@ -180,7 +180,7 @@ raw MathML には、CSS から直接使える本物の数式フォントを使�
 ```css
 @font-face {
   font-family: custom-math;
-  src: local('STIX Two Math'),
+  src: local('STIXTwoMath-Regular'),
        url('/fonts/STIXTwoMath-Regular.woff2') format('woff2');
   font-style: normal;
   font-weight: 400;
@@ -192,6 +192,59 @@ math {
 ```
 
 重要なのは、MathJax の SVG/CHTML 用パッケージを、そのまま raw MathML 用 CSS フォントだと思わないことです。
+
+## NewCM Math WOFF2 再生成
+
+この repo は NewCM の font asset 自体は commit しません。
+
+NewCM Math の WOFF2 を self-host 用に用意したい場合は、手元の OTF を起点にします。upstream source として自然なのは Antonis Tsolomitis の NewComputerModern package で、開発時に確認したローカル OTF の metadata も GUST Font License を指していました。CTAN にも同じ upstream package / release site が出ています。
+
+この repo は、font を fetch する script も font asset 自体も commit しない方針です。
+upstream package は手動で取得し、source OTF は git 管理外のローカル asset directory に置いて、そのローカル file を converter に渡します。
+
+- CTAN package: <https://ctan.org/pkg/newcomputermodern>
+- upstream release page: <https://download.gnu.org.ua/release/newcm/>
+- CTAN package ZIP: CTAN package page の「Download」link、または `https://mirrors.ctan.org/fonts/newcomputermodern.zip` のような CTAN mirror URL を使います。
+
+ZIP を展開したら、regular weight の NewCM math OTF を使います。
+
+```text
+newcomputermodern/newcomputermodern/otf/NewCMMath-Regular.otf
+```
+
+upstream archive の layout が変わった場合は、展開先から `NewCMMath-Regular.otf` を探してください。
+この repo 内で作業するなら、次の場所に置くと分かりやすいです。
+
+```text
+assets/fonts/newcm/NewCMMath-Regular.otf
+```
+
+`assets/` は git ignore されているため、ローカル font asset は commit されません。
+
+repo には次の任意のローカル helper があります。
+
+```bash
+python -m pip install fonttools brotli
+python tools/convert-newcm-woff2.py --input assets/fonts/newcm/NewCMMath-Regular.otf --output assets/fonts/newcm/NewCMMathCustom-Regular.woff2
+```
+
+Python 3 の実行ファイル名が `python3` の環境では、`python` の代わりに `python3` を使ってください。
+
+これは手元の NewCM Math OTF を WOFF2 へ変換します。
+`--output` を省略した場合は、入力ファイルと同じフォルダに `<input-stem>.woff2` を書き出します。
+あわせて、派生 webfont packaging だと分かるように WOFF2 の metadata も書き換えます。
+ローカル asset 準備用に含めている helper で、font asset の同梱や download は行いません。
+
+npm wrapper を使うなら、次でも同じです。
+
+```bash
+npm run build:newcm-woff2 -- --input assets/fonts/newcm/NewCMMath-Regular.otf --output assets/fonts/newcm/NewCMMathCustom-Regular.woff2
+```
+
+npm wrapper は `PATH` 上に `python` 実行ファイルがある前提です。Python 3 が `python3` 名で提供される環境では、Python script を `python3` で直接実行してください。
+
+license metadata は、いまのところ意図的に helper 内の固定値です。一般-purpose なフォント変換 frontend ではなく、この repo 用の packaging metadata として扱っています。
+実際の application では、生成した WOFF2 を application 側の public/static font directory にコピーし、`@font-face` の URL をその配信先に向けます。
 
 ## SVG で使うフォント
 

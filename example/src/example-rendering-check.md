@@ -56,6 +56,22 @@ $$
 X, Y \in \mathfrak{g}, \qquad [X, Y] = XY - YX
 $$
 
+# Font-size Macro Coverage
+
+## Input
+
+- `${\tiny x}, {\small x}, x, {\large x}, {\Large x}$`
+- `${\footnotesize x}, {\HUGE x}$`
+
+## Output
+
+- ${\tiny x}, {\small x}, x, {\large x}, {\Large x}$
+- ${\footnotesize x}, {\HUGE x}$
+
+$$
+{\tiny x} \quad {\small x} \quad x \quad {\large x} \quad {\Large x}
+$$
+
 # Non-Core Constructs from Broad Packages
 
 ## Input

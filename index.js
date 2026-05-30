@@ -3,12 +3,15 @@ import { mathjax } from '@mathjax/src/mjs/mathjax.js'
 import { source } from '@mathjax/src/components/mjs/source.js'
 import createMathTexToMathML from './script/math-tex-to-mathml-core.js'
 
+const PRELOAD_EXCLUDED_TEX_PACKAGES = new Set(['bussproofs', 'bboldx'])
+const DEFAULT_INACTIVE_TEX_PACKAGES = new Set(['fontsizev3'])
+
 const texExtensionNames = Object.keys(source)
   .filter((name) => name.startsWith('[tex]/'))
   .map((name) => name.substring(6))
-  .filter((name) => name !== 'bussproofs' && name !== 'bboldx')
+  .filter((name) => !PRELOAD_EXCLUDED_TEX_PACKAGES.has(name))
 
-const texPackages = ['base', ...texExtensionNames]
+const texPackages = ['base', ...texExtensionNames.filter((name) => !DEFAULT_INACTIVE_TEX_PACKAGES.has(name))]
 
 const texPackageImports = texExtensionNames.map(
   (name) => `@mathjax/src/components/mjs/input/tex/extensions/${name}/${name}.js`

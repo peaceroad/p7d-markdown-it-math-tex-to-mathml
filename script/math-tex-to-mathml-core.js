@@ -10,8 +10,9 @@ import { RegisterHTMLHandler } from '@mathjax/src/mjs/handlers/html.js'
 
 const STRIP_DATA_ATTRS_RE = /\sdata-(?:latex(?:-item)?|mjx-[a-z0-9_-]+|semantic-[a-z0-9_-]+|break-align|mml-node|c|cramped|speech-node)="[^"]*"/gi
 const COMPACT_MATHML_RE = />\s+</g
-const MATHML_TAG_RE = /<(?!\/)([a-z][a-z0-9-]*)(\s[^<>]*?)?>/gi
+const MATHML_TAG_RE = /<\/?([a-z][a-z0-9-]*)(\s[^<>]*?)?>/gi
 const MATHVARIANT_ATTR_RE = /\bmathvariant="([^"]+)"/i
+const MATHSIZE_ATTR_RE = /\bmathsize="([^"]+)"/i
 const DOLLAR_CHAR_CODE = 0x24
 const BACKSLASH_CHAR_CODE = 0x5C
 const PERIOD_CHAR_CODE = 0x2E
@@ -535,7 +536,7 @@ const hasSingleCodePoint = (text) =>
 const shouldSkipMathmlCoreVariantStyleFallback = (variant, node, text) =>
   (variant === 'italic' || variant === '-tex-mathit') && hasSingleCodePoint(text) && node.isKind('mi')
 
-const applyMathmlCoreVariantTransform = (root, allowedVariants = null, issues = null) => {
+const applyMathmlCoreVariantTransform = (root, issues = null) => {
   root.walkTree((node) => {
     if (!node.isToken) return
     const variant = getExplicitMathmlVariantName(node)
@@ -543,7 +544,6 @@ const applyMathmlCoreVariantTransform = (root, allowedVariants = null, issues = 
 
     const text = node.getText()
     if (variant === 'normal') return
-    if (allowedVariants && !allowedVariants.has(variant)) return
 
     if (!Object.prototype.hasOwnProperty.call(MATHML_CORE_VARIANTS, variant)) {
       if (issues) {
@@ -652,6 +652,9 @@ const collectMathmlCoreIssues = (markup) => {
 
   const issues = []
   const seen = new Set()
+  const shouldTrackMathsize = markup.includes('mathsize=')
+  const mathmlElementStack = []
+  const mathsizeValueStack = []
 
   const pushIssue = (issue) => {
     const key = JSON.stringify(issue)
@@ -662,19 +665,57 @@ const collectMathmlCoreIssues = (markup) => {
 
   let match = null
   while ((match = MATHML_TAG_RE.exec(markup))) {
+    const rawTag = match[0]
+    const isClosing = rawTag.startsWith('</')
     const tag = match[1].toLowerCase()
     const attrs = match[2] || ''
+
+    if (isClosing) {
+      if (!shouldTrackMathsize) continue
+      while (mathmlElementStack.length > 0) {
+        const entry = mathmlElementStack.pop()
+        if (entry.mathsizeValue) mathsizeValueStack.pop()
+        if (entry.tag === tag) break
+      }
+      continue
+    }
 
     if (!MATHML_CORE_ELEMENTS.has(tag)) {
       pushIssue({ type: 'non-core-element', element: tag })
     }
 
-    const mathvariantMatch = attrs.match(MATHVARIANT_ATTR_RE)
+    if (tag === 'merror') {
+      pushIssue({ type: 'math-error', element: tag })
+    }
+
+    const mathvariantMatch = attrs.includes('mathvariant=') ? attrs.match(MATHVARIANT_ATTR_RE) : null
     if (mathvariantMatch) {
       const value = mathvariantMatch[1]
       if (value.toLowerCase() !== 'normal') {
         pushIssue({ type: 'legacy-mathvariant', element: tag, value })
       }
+    }
+
+    let mathsizeValue = null
+    if (shouldTrackMathsize && attrs.includes('mathsize=')) {
+      const mathsizeMatch = attrs.match(MATHSIZE_ATTR_RE)
+      mathsizeValue = mathsizeMatch ? mathsizeMatch[1] : null
+    }
+    if (mathsizeValue) {
+      const ancestorValue = mathsizeValueStack[mathsizeValueStack.length - 1]
+      if (ancestorValue) {
+        pushIssue({
+          type: 'nested-mathsize',
+          element: tag,
+          value: mathsizeValue,
+          ancestorValue,
+        })
+      }
+    }
+
+    if (shouldTrackMathsize && !rawTag.endsWith('/>')) {
+      mathmlElementStack.push({ tag, mathsizeValue })
+      if (mathsizeValue) mathsizeValueStack.push(mathsizeValue)
     }
   }
 
@@ -828,16 +869,28 @@ const createMathTexToMathML = ({
     return fontData
   }
 
-  const createSvgDocument = (options, packages, svgFontData = null) => {
+  const createSvgDocument = (svgOptions, packages, svgFontData = null) => {
     const { adaptor, tex } = getSvgContext(packages)
+    const outputOptions = { ...svgOptions }
+    if (svgFontData) {
+      outputOptions.fontData = svgFontData
+    }
+    const svg = new SVG(outputOptions)
+    if (prepareSynchronousSvg) {
+      prepareSynchronousSvg(svg)
+      ensureSynchronousSvgFont(svg)
+    }
+    const html = mathjax.document('', { InputJax: tex, OutputJax: svg })
+    return { adaptor, html }
+  }
+
+  const normalizeSvgOptions = (options) => {
     const svgScale = Number.isFinite(options.svgScale) ? options.svgScale : 1
     const svgOptions = {
       fontCache: options.svgFontCache ?? 'local',
       scale: svgScale,
     }
-    if (svgFontData) {
-      svgOptions.fontData = svgFontData
-    }
+
     const linebreaks = options.svgLinebreaks
     let hasLinebreaks = false
     if (linebreaks && typeof linebreaks === 'object' && !Array.isArray(linebreaks)) {
@@ -849,23 +902,19 @@ const createMathTexToMathML = ({
       }
     }
     if (hasLinebreaks) {
-      svgOptions.linebreaks = linebreaks
+      svgOptions.linebreaks = { ...linebreaks }
     }
     if (options.svgFontPath) {
       svgOptions.fontPath = options.svgFontPath
     }
-    const svg = new SVG(svgOptions)
-    if (prepareSynchronousSvg) {
-      prepareSynchronousSvg(svg)
-      ensureSynchronousSvgFont(svg)
-    }
-    const html = mathjax.document('', { InputJax: tex, OutputJax: svg })
-    return { adaptor, html }
+    return svgOptions
   }
 
   const mditMathTexToMathML = (md, options = {}) => {
     if (md[MDIT_INSTALL_STATE]) return
-    md[MDIT_INSTALL_STATE] = true
+    if (!options || typeof options !== 'object') {
+      options = {}
+    }
 
     const stripMathJaxData = options.setMathJaxDataAttrs !== true
     const useSvg = options.useSvg === true
@@ -875,6 +924,10 @@ const createMathTexToMathML = ({
     const em = Number.isFinite(options.em) ? options.em : 16
     const ex = Number.isFinite(options.ex) ? options.ex : 8
     const containerWidth = Number.isFinite(options.containerWidth) ? options.containerWidth : 680
+    const svgFontData = useSvg ? resolveSvgFontData(options.svgFont || defaultSvgFont) : null
+    const normalizedSvgOptions = useSvg ? normalizeSvgOptions(options) : null
+
+    md[MDIT_INSTALL_STATE] = true
 
     if (mathmlReport) {
       md.core.ruler.before('block', 'mathml_report_reset', (state) => {
@@ -890,11 +943,10 @@ const createMathTexToMathML = ({
     if (useSvg) {
       const svgInlineOptions = { display: false, em, ex, containerWidth }
       const svgBlockOptions = { display: true, em, ex, containerWidth }
-      const svgFontData = resolveSvgFontData(options.svgFont || defaultSvgFont)
       let svgDocument = null
       const getSvgDocument = () => {
         if (svgDocument) return svgDocument
-        svgDocument = createSvgDocument(options, resolvedPackages, svgFontData)
+        svgDocument = createSvgDocument(normalizedSvgOptions, resolvedPackages, svgFontData)
         return svgDocument
       }
       const convertSvg = (texContent, convertOptions) => {
@@ -922,7 +974,7 @@ const createMathTexToMathML = ({
           const mmlNode = html.convert(texContent || '', convertOptions)
           const transformIssues = mathmlReport && mathmlMode === MATHML_MODE_BROWSER ? [] : null
           if (mathmlMode === MATHML_MODE_BROWSER) {
-            applyMathmlCoreVariantTransform(mmlNode, null, transformIssues)
+            applyMathmlCoreVariantTransform(mmlNode, transformIssues)
           }
           if (mathmlClassMapMatcher && mathmlClassMapMatcher(texContent)) {
             applyMathmlClassMap(mmlNode, mathmlClassMap)
@@ -1021,11 +1073,11 @@ const createMathTexToMathML = ({
       if (end === -1) return false
 
       if (!silent) {
-         const content = state.src.slice(start + 1, end)
-         const token = state.push('math_inline', 'math', 0)
-         token.content = convertInline(content, state.env)
-         token.markup = '$'
-       }
+        const content = state.src.slice(start + 1, end)
+        const token = state.push('math_inline', 'math', 0)
+        token.content = convertInline(content, state.env)
+        token.markup = '$'
+      }
       state.pos = end + 1
       return true
     })

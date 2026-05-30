@@ -66,6 +66,60 @@ assert.deepStrictEqual(
   'Expected \\tag to report non-Core element usage.'
 )
 
+const fontSizeMd = new MarkdownIt({ html: true }).use(plugin, {
+  setMathJaxDataAttrs: false,
+  mathmlReport: true,
+})
+
+const nestedFontSizeEnv = {}
+fontSizeMd.render(String.raw`$\tiny x, \small x, x, \large x, \Large x$`, nestedFontSizeEnv)
+
+assert.deepStrictEqual(
+  nestedFontSizeEnv.mathmlReport,
+  [
+    {
+      tex: String.raw`\tiny x, \small x, x, \large x, \Large x`,
+      display: false,
+      issues: [
+        { type: 'nested-mathsize', element: 'mstyle', value: '0.9em', ancestorValue: '0.6em' },
+        { type: 'nested-mathsize', element: 'mstyle', value: '1.095em', ancestorValue: '0.9em' },
+        { type: 'nested-mathsize', element: 'mstyle', value: '1.2em', ancestorValue: '1.095em' },
+      ],
+    },
+  ],
+  'Expected ungrouped font-size declarations to report nested relative mathsize values.'
+)
+
+const groupedFontSizeEnv = {}
+fontSizeMd.render('${\\tiny x}, {\\small x}, x, {\\large x}, {\\Large x}$', groupedFontSizeEnv)
+
+assert.deepStrictEqual(
+  groupedFontSizeEnv.mathmlReport,
+  [],
+  'Expected grouped font-size declarations to avoid nested relative mathsize reports.'
+)
+
+const mathErrorMd = new MarkdownIt({ html: true }).use(plugin, {
+  setMathJaxDataAttrs: false,
+  mathmlReport: true,
+  texPackages: ['base'],
+})
+
+const mathErrorEnv = {}
+mathErrorMd.render(String.raw`$$\cancel{x}$$`, mathErrorEnv)
+
+assert.deepStrictEqual(
+  mathErrorEnv.mathmlReport,
+  [
+    {
+      tex: String.raw`\cancel{x}`,
+      display: true,
+      issues: [{ type: 'math-error', element: 'merror' }],
+    },
+  ],
+  'Expected MathJax merror output to be reported for production diagnostics.'
+)
+
 assert.throws(
   () => new MarkdownIt({ html: true }).use(plugin, { mathmlMode: 'strict' }),
   /Unsupported mathmlMode/i,

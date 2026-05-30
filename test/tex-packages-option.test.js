@@ -10,6 +10,11 @@ const baseOnlyCancel = render(String.raw`$$\cancel{x}$$`, { texPackages: ['base'
 const emptyListCancel = render(String.raw`$$\cancel{x}$$`, { texPackages: [] })
 const amsTag = render(String.raw`$$\tag{1} x$$`, { texPackages: ['ams'] })
 const baseOnlyTag = render(String.raw`$$\tag{1} x$$`, { texPackages: ['base'] })
+const defaultLarge = render(String.raw`$\large x$`, { compactInlineMathML: true })
+const fontsizeV3Large = render(String.raw`$\large x$`, {
+  compactInlineMathML: true,
+  texPackages: ['base', 'fontsizev3'],
+})
 
 assert.match(
   defaultCancel,
@@ -35,6 +40,16 @@ assert.match(
   baseOnlyTag,
   /<merror>\s*<mtext>Undefined control sequence \\tag<\/mtext>/,
   'texPackages should disable macros from omitted packages.'
+)
+assert.match(
+  defaultLarge,
+  /mathsize="1\.095em"/,
+  'Default package set should use MathJax 4.1.2 corrected font-size macro values.'
+)
+assert.match(
+  fontsizeV3Large,
+  /mathsize="1\.2em"/,
+  'texPackages should allow opting into the MathJax fontsizev3 compatibility package.'
 )
 
 console.log('Passed texPackages option test.')
