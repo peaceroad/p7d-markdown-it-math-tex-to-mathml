@@ -39,6 +39,8 @@ const DEFAULT_INTEGRAL_CLASS = 'math-layout-integral'
 const MATHML_MODE_BROWSER = 'browser'
 const MATHML_MODE_MATHJAX = 'mathjax'
 const MATHML_REPORT_ENV_KEY = 'mathmlReport'
+const SVG_FONT_CACHE_LOCAL = 'local'
+const SVG_FONT_CACHE_NONE = 'none'
 const LEGACY_MATHVARIANT_SHADOW_TYPES = new Set([
   'unsupported-mathvariant',
   'unconverted-mathvariant',
@@ -262,6 +264,17 @@ const normalizeMathmlMode = (value) => {
   throw new Error(`Unsupported mathmlMode: ${value}`)
 }
 
+const normalizeSvgFontCache = (value) => {
+  if (value == null || value === '') return SVG_FONT_CACHE_LOCAL
+  if (value === SVG_FONT_CACHE_LOCAL || value === SVG_FONT_CACHE_NONE) return value
+  if (value === 'global') {
+    throw new Error(
+      "Unsupported svgFontCache: global. This plugin serializes each SVG independently; use 'local' or 'none'."
+    )
+  }
+  throw new Error(`Unsupported svgFontCache: ${value}`)
+}
+
 const normalizeTexPackageList = (value, fallback = [BASE_TEX_PACKAGE]) => {
   let entries = null
   if (Array.isArray(value)) {
@@ -308,27 +321,28 @@ const isEscapedCharacter = (src, pos) => {
   return (count % 2) === 1
 }
 
-const getInlineMathDelimiterInfo = (src, pos, max) => {
+const canOpenInlineMathDelimiter = (src, pos, max) => {
   const prevChar = pos > 0 ? src.charCodeAt(pos - 1) : -1
   const nextChar = pos + 1 < max ? src.charCodeAt(pos + 1) : -1
 
-  let canOpen = true
-  let canClose = true
+  return (
+    nextChar >= 0
+    && nextChar !== DOLLAR_CHAR_CODE
+    && !isWhitespaceCharCode(nextChar)
+    && !isDigitCharCode(prevChar)
+  )
+}
 
-  if (nextChar < 0 || nextChar === DOLLAR_CHAR_CODE || isWhitespaceCharCode(nextChar)) {
-    canOpen = false
-  }
-  if (prevChar < 0 || prevChar === DOLLAR_CHAR_CODE || isWhitespaceCharCode(prevChar)) {
-    canClose = false
-  }
-  if (isDigitCharCode(prevChar)) {
-    canOpen = false
-  }
-  if (isDigitCharCode(nextChar)) {
-    canClose = false
-  }
+const canCloseInlineMathDelimiter = (src, pos, max) => {
+  const prevChar = pos > 0 ? src.charCodeAt(pos - 1) : -1
+  const nextChar = pos + 1 < max ? src.charCodeAt(pos + 1) : -1
 
-  return { canOpen, canClose, nextChar }
+  return (
+    prevChar >= 0
+    && prevChar !== DOLLAR_CHAR_CODE
+    && !isWhitespaceCharCode(prevChar)
+    && !isDigitCharCode(nextChar)
+  )
 }
 
 const isCurrencyLikeInlineDollarStart = (src, pos, max) => {
@@ -617,25 +631,15 @@ const forEachDynamicFontFile = (font, callback) => {
   }
 }
 
-const ensureSynchronousSvgFont = (svg) => {
+const replayLoadedDynamicSvgFontFiles = (svg) => {
   const font = svg?.font
-  if (typeof font?.loadDynamicFilesSync !== 'function') return
+  if (!font) return
 
-  let hasUnloadedFiles = false
   forEachDynamicFontFile(font, (dynamic) => {
-    if (!dynamic) return
-    if (dynamic.promise) {
-      if (!dynamic.failed && typeof dynamic.setup === 'function') {
-        dynamic.setup(font)
-      }
-      return
+    if (dynamic?.promise && !dynamic.failed && typeof dynamic.setup === 'function') {
+      dynamic.setup(font)
     }
-    hasUnloadedFiles = true
   })
-
-  if (hasUnloadedFiles) {
-    font.loadDynamicFilesSync()
-  }
 }
 
 const stripMathJaxDataAttrs = (markup, shouldStrip) => {
@@ -800,12 +804,11 @@ const createMathmlClassMapMatcher = (classMap) => {
 }
 
 const findInlineMathEnd = (src, start, max) => {
-  const { nextChar } = getInlineMathDelimiterInfo(src, start, max)
-  const abortOnInvalidClose = isDigitCharCode(nextChar)
+  const abortOnInvalidClose = isDigitCharCode(src.charCodeAt(start + 1))
 
-  for (let pos = start + 1; pos < max; pos++) {
-    if (src.charCodeAt(pos) !== DOLLAR_CHAR_CODE || isEscapedCharacter(src, pos)) continue
-    if (getInlineMathDelimiterInfo(src, pos, max).canClose) {
+  for (let pos = src.indexOf('$', start + 1); pos !== -1 && pos < max; pos = src.indexOf('$', pos + 1)) {
+    if (isEscapedCharacter(src, pos)) continue
+    if (canCloseInlineMathDelimiter(src, pos, max)) {
       return pos
     }
     if (abortOnInvalidClose) {
@@ -852,15 +855,25 @@ const createMathTexToMathML = ({
 
   const resolveSvgFontData = (value) => {
     if (!value) return null
-    if (typeof value !== 'string') return value
-    const resolved = resolveSvgFontName(value)
-    if (!resolved) {
-      throw new Error(`Unknown SVG font name: ${value}`)
+
+    let fontDefinition = null
+    if (typeof value === 'string') {
+      const resolved = resolveSvgFontName(value)
+      if (!resolved) {
+        throw new Error(`Unknown SVG font name: ${value}`)
+      }
+      if (!resolveSvgFontModule) {
+        throw new Error('svgFont name resolution is only available in Node.js. Import the font class and pass it via svgFont in browser/bundler environments.')
+      }
+      fontDefinition = SVG_FONTS[resolved]
+    } else if (resolveSvgFontModule) {
+      const className = typeof value === 'function' ? value.name : value?.constructor?.name
+      fontDefinition = Object.values(SVG_FONTS).find(({ exportName }) => exportName === className) ?? null
     }
-    if (!resolveSvgFontModule) {
-      throw new Error('svgFont name resolution is only available in Node.js. Import the font class and pass it via svgFont in browser/bundler environments.')
-    }
-    const { module: modulePath, exportName } = SVG_FONTS[resolved]
+
+    if (!fontDefinition) return value
+
+    const { module: modulePath, exportName } = fontDefinition
     const mod = resolveSvgFontModule(modulePath)
     const fontData = mod?.[exportName]
     if (!fontData) {
@@ -878,7 +891,7 @@ const createMathTexToMathML = ({
     const svg = new SVG(outputOptions)
     if (prepareSynchronousSvg) {
       prepareSynchronousSvg(svg)
-      ensureSynchronousSvgFont(svg)
+      replayLoadedDynamicSvgFontFiles(svg)
     }
     const html = mathjax.document('', { InputJax: tex, OutputJax: svg })
     return { adaptor, html }
@@ -887,7 +900,7 @@ const createMathTexToMathML = ({
   const normalizeSvgOptions = (options) => {
     const svgScale = Number.isFinite(options.svgScale) ? options.svgScale : 1
     const svgOptions = {
-      fontCache: options.svgFontCache ?? 'local',
+      fontCache: normalizeSvgFontCache(options.svgFontCache),
       scale: svgScale,
     }
 
@@ -968,8 +981,14 @@ const createMathTexToMathML = ({
       const mathmlBlockOptions = { display: true, end: STATE.CONVERT, em, ex, containerWidth }
       const mathmlClassMap = normalizeMathmlClassMap(options.mathmlLayoutClass ?? '')
       const mathmlClassMapMatcher = createMathmlClassMapMatcher(mathmlClassMap)
+      let mathmlContext = null
+      const getPluginMathmlContext = () => {
+        if (mathmlContext) return mathmlContext
+        mathmlContext = getMathmlContext(resolvedPackages)
+        return mathmlContext
+      }
       const convertMathML = (texContent, convertOptions, shouldCompact, env) => {
-        const { html, visitor } = getMathmlContext(resolvedPackages)
+        const { html, visitor } = getPluginMathmlContext()
         try {
           const mmlNode = html.convert(texContent || '', convertOptions)
           const transformIssues = mathmlReport && mathmlMode === MATHML_MODE_BROWSER ? [] : null
@@ -1004,6 +1023,16 @@ const createMathTexToMathML = ({
       convertBlock = (texContent, env) => convertMathML(texContent, mathmlBlockOptions, compactBlock, env)
     }
 
+    const pushMathBlockToken = (state, content, start, end) => {
+      const markup = convertBlock(content, state.env) + '\n'
+      state.line = end
+      const token = state.push('html_block', '', 0)
+      token.content = markup
+      token.block = true
+      token.map = [start, end]
+      token.level = state.level
+    }
+
     md.block.ruler.after('blockquote', 'math_block', (state, startLine, endLine, silent) => {
       if (silent) return false
       let nextLine = startLine + 1
@@ -1023,16 +1052,6 @@ const createMathTexToMathML = ({
 
       if (!hasStartMathMark && !isOneLineMathBlock) return false
 
-      const pushMathToken = (content, start, end) => {
-        const mathML = convertBlock(content, state.env) + '\n'
-        state.line = end
-        const token = state.push('html_block', '', 0)
-        token.content = mathML
-        token.block = true
-        token.map = [start, end]
-        token.level = state.level
-      }
-
       if (hasStartMathMark) {
         while (nextLine < endLine) {
           const nextStartPos = state.bMarks[nextLine] + state.tShift[nextLine]
@@ -1049,13 +1068,13 @@ const createMathTexToMathML = ({
         }
         if (nextLine >= endLine) return false
         const content = state.getLines(startLine + 1, nextLine, state.tShift[startLine], false)
-        pushMathToken(content, startLine, nextLine + 1)
+        pushMathBlockToken(state, content, startLine, nextLine + 1)
         return true
       }
 
       if (isOneLineMathBlock) {
         const content = firstLine.slice(2, -2).trim()
-        pushMathToken(content, startLine, startLine + 1)
+        pushMathBlockToken(state, content, startLine, startLine + 1)
         return true
       }
     })
@@ -1068,7 +1087,7 @@ const createMathTexToMathML = ({
       if (state.src.charCodeAt(start + 1) === DOLLAR_CHAR_CODE) return false
       if (isEscapedCharacter(state.src, start)) return false
       if (isCurrencyLikeInlineDollarStart(state.src, start, max)) return false
-      if (!getInlineMathDelimiterInfo(state.src, start, max).canOpen) return false
+      if (!canOpenInlineMathDelimiter(state.src, start, max)) return false
       const end = findInlineMathEnd(state.src, start, max)
       if (end === -1) return false
 

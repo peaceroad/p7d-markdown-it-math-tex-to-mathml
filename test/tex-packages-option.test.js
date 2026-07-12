@@ -44,7 +44,7 @@ assert.match(
 assert.match(
   defaultLarge,
   /mathsize="1\.095em"/,
-  'Default package set should use MathJax 4.1.2 corrected font-size macro values.'
+  'Default package set should use the corrected font-size macro values introduced in MathJax 4.1.2.'
 )
 assert.match(
   fontsizeV3Large,

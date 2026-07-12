@@ -1,3 +1,4 @@
+import { createRequire } from 'node:module'
 import path from 'node:path'
 import { mathjax } from '@mathjax/src/mjs/mathjax.js'
 import { source } from '@mathjax/src/components/mjs/source.js'
@@ -17,37 +18,20 @@ const texPackageImports = texExtensionNames.map(
   (name) => `@mathjax/src/components/mjs/input/tex/extensions/${name}/${name}.js`
 )
 
-let nodeRequire = null
-let nodeCreateRequire = null
+const nodeRequire = createRequire(import.meta.url)
 let mathjaxRequire = undefined
 let mathjaxCjs = undefined
 let mathjaxCjsRoot = undefined
 let syncSvgMathJaxPrepared = false
-let syncSvgLoadModule = null
-if (typeof process !== 'undefined' && process?.versions?.node) {
-  try {
-    const { createRequire } = await import('node:module')
-    nodeCreateRequire = createRequire
-    nodeRequire = createRequire(import.meta.url)
-  } catch {
-    nodeRequire = null
-    nodeCreateRequire = null
-  }
-}
-
 // Load MathJax v4 TeX extensions so synchronous conversion works the same way
 // it did with the bundled v3 list.
 await Promise.all(texPackageImports.map((specifier) => import(specifier)))
 
 const resolveMathjaxRequire = () => {
   if (mathjaxRequire !== undefined) return mathjaxRequire
-  if (!nodeRequire || !nodeCreateRequire) {
-    mathjaxRequire = null
-    return null
-  }
   try {
     const mathjaxPkg = nodeRequire.resolve('@mathjax/src/package.json')
-    mathjaxRequire = nodeCreateRequire(mathjaxPkg)
+    mathjaxRequire = createRequire(mathjaxPkg)
   } catch {
     mathjaxRequire = null
   }
@@ -67,29 +51,23 @@ const isModuleNotFound = (error, modulePath) => {
   )
 }
 
-const resolveFromNodeOrMathJax = nodeRequire
-  ? (modulePath) => {
-    try {
-      return nodeRequire(modulePath)
-    } catch (error) {
-      if (!isModuleNotFound(error, modulePath)) {
-        throw error
-      }
-      const fallback = resolveMathjaxRequire()
-      if (!fallback) {
-        throw error
-      }
-      return fallback(modulePath)
+const resolveFromNodeOrMathJax = (modulePath) => {
+  try {
+    return nodeRequire(modulePath)
+  } catch (error) {
+    if (!isModuleNotFound(error, modulePath)) {
+      throw error
     }
+    const fallback = resolveMathjaxRequire()
+    if (!fallback) {
+      throw error
+    }
+    return fallback(modulePath)
   }
-  : null
+}
 
 const resolveMathjaxCjsRoot = () => {
   if (mathjaxCjsRoot !== undefined) return mathjaxCjsRoot
-  if (!nodeRequire) {
-    mathjaxCjsRoot = null
-    return null
-  }
   try {
     const mathjaxCjsPath = nodeRequire.resolve('@mathjax/src/cjs/mathjax.js')
     mathjaxCjsRoot = path.dirname(mathjaxCjsPath)
@@ -134,57 +112,53 @@ const collectSynchronousMathJaxLoader = (owner, load, isSynchronous) => {
   )
 }
 
-const setupSynchronousSvgMathJax = resolveFromNodeOrMathJax
-  ? () => {
-    if (syncSvgMathJaxPrepared) return
+const setupSynchronousSvgMathJax = () => {
+  if (syncSvgMathJaxPrepared) return
 
-    if (mathjaxCjs === undefined) {
-      try {
-        mathjaxCjs = resolveFromNodeOrMathJax('@mathjax/src/cjs/mathjax.js')?.mathjax ?? null
-      } catch (error) {
-        if (!isModuleNotFound(error, '@mathjax/src/cjs/mathjax.js')) {
-          throw error
-        }
-        mathjaxCjs = null
+  if (mathjaxCjs === undefined) {
+    try {
+      mathjaxCjs = resolveFromNodeOrMathJax('@mathjax/src/cjs/mathjax.js')?.mathjax ?? null
+    } catch (error) {
+      if (!isModuleNotFound(error, '@mathjax/src/cjs/mathjax.js')) {
+        throw error
       }
+      mathjaxCjs = null
     }
-
-    const existingLoaders = []
-    const mjsLoader = collectSynchronousMathJaxLoader(
-      'MJS',
-      mathjax.asyncLoad,
-      mathjax.asyncIsSynchronous === true
-    )
-    if (mjsLoader) {
-      existingLoaders.push(mjsLoader)
-    }
-    if (mathjaxCjs) {
-      const cjsLoader = collectSynchronousMathJaxLoader(
-        'CJS',
-        mathjaxCjs.asyncLoad,
-        mathjaxCjs.asyncIsSynchronous === true
-      )
-      if (cjsLoader && cjsLoader !== mjsLoader) {
-        existingLoaders.push(cjsLoader)
-      }
-    }
-
-    syncSvgLoadModule = createSynchronousSvgLoader(existingLoaders)
-    mathjax.asyncLoad = syncSvgLoadModule
-    mathjax.asyncIsSynchronous = true
-
-    if (mathjaxCjs) {
-      mathjaxCjs.asyncLoad = syncSvgLoadModule
-      mathjaxCjs.asyncIsSynchronous = true
-    }
-
-    syncSvgMathJaxPrepared = true
   }
-  : null
 
-const resolveSvgFontModule = nodeRequire
-  ? (modulePath) => resolveFromNodeOrMathJax(modulePath)
-  : null
+  const existingLoaders = []
+  const mjsLoader = collectSynchronousMathJaxLoader(
+    'MJS',
+    mathjax.asyncLoad,
+    mathjax.asyncIsSynchronous === true
+  )
+  if (mjsLoader) {
+    existingLoaders.push(mjsLoader)
+  }
+  if (mathjaxCjs) {
+    const cjsLoader = collectSynchronousMathJaxLoader(
+      'CJS',
+      mathjaxCjs.asyncLoad,
+      mathjaxCjs.asyncIsSynchronous === true
+    )
+    if (cjsLoader && cjsLoader !== mjsLoader) {
+      existingLoaders.push(cjsLoader)
+    }
+  }
+
+  const syncSvgLoadModule = createSynchronousSvgLoader(existingLoaders)
+  mathjax.asyncLoad = syncSvgLoadModule
+  mathjax.asyncIsSynchronous = true
+
+  if (mathjaxCjs) {
+    mathjaxCjs.asyncLoad = syncSvgLoadModule
+    mathjaxCjs.asyncIsSynchronous = true
+  }
+
+  syncSvgMathJaxPrepared = true
+}
+
+const resolveSvgFontModule = (modulePath) => resolveFromNodeOrMathJax(modulePath)
 
 const mditMathTexToMathML = createMathTexToMathML({
   texPackages,

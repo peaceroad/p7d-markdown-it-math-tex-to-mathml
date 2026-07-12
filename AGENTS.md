@@ -14,7 +14,7 @@
 - All extensions are imported once at module load so conversions can run synchronously.
 - `bussproofs`, `bboldx`, and `fontsizev3` are explicitly excluded from the default active packages list.
   `bboldx` remaps `\mathbb` to MathJax-private font variants, which degrades native MathML output to plain identifiers when MathJax metadata is stripped.
-  `fontsizev3` is preloaded but inactive by default so MathJax v4.1.2's corrected font-size macro values are used unless callers explicitly opt into the old v3/early-v4 sizing values via `texPackages`.
+  `fontsizev3` is preloaded but inactive by default so the corrected font-size macro values introduced in MathJax v4.1.2 are used unless callers explicitly opt into the old v3/early-v4 sizing values via `texPackages`.
 - Per-`MarkdownIt` installs can override the active TeX package set via `options.texPackages` (array or comma-separated string). `base` is always included automatically.
   Omitting the option keeps the broad default package set; passing `[]` narrows it to `base` only.
   This narrows parser behavior only; the entry still preloads the default extension modules at startup.
@@ -46,6 +46,7 @@
 - It is not a strict MathML Core-only emitter today.
 - `mathmlMode: 'mathjax'` opts out and keeps output closer to MathJax's broader Presentation MathML behavior.
 - `texPackages` controls parser/package availability only; it does not imply that output is restricted to the MathML Core element/attribute subset.
+- Generated MathML/SVG is not sanitized output. Broad TeX packages can preserve author-supplied attributes such as `href`, `style`, and `class`; untrusted input requires an explicit `texPackages` allowlist plus an external MathML/SVG-aware HTML sanitizer applied to the complete rendered HTML. Treat the package allowlist as defense-in-depth, not as a sanitizer.
 
 ### Options and behavior
 
@@ -68,6 +69,7 @@
   - SVG output does not add findings today.
 - `em`, `ex`, `containerWidth` apply to both MathML and SVG conversion.
 - `svgLinebreaks`, `svgFontCache`, `svgFontPath`, `svgFont`, `svgScale` apply only when `useSvg` is true.
+- `svgFontCache` accepts only `'local'` (default) or `'none'`. MathJax's `'global'` mode is rejected because the plugin serializes each SVG independently and does not return MathJax's separate page-level global cache node.
 
 ### Tooling and generated assets
 
@@ -84,13 +86,15 @@
 
 - In Node, `svgFont` may be a string (`newcm`, `stix2`, `pagella`, `termes`, or `@mathjax/...-font`) and is resolved to the corresponding MathJax SVG font class.
   String shorthands fail during plugin setup if the matching font package can't be resolved.
+- Known MathJax SVG font classes passed directly in Node are normalized to the matching CJS class so synchronous dynamic modules update the same class used by the OutputJax.
 - In browsers/bundlers, pass the font class directly; string names are not resolved.
 - Resolution uses `node:module` + `createRequire` to load `@mathjax/mathjax-*-font/js/svg.js` (CJS).
   If the package is not found from the plugin root, it retries with a `createRequire` rooted at `@mathjax/src`.
   This makes the default `newcm` font resolvable via `@mathjax/src`'s dependency without an explicit install.
   Other font packages still need to be installed separately.
 - The Node entry also wires MathJax's synchronous `asyncLoad` bridge (for both MJS output and CJS font packages).
-  When creating an SVG OutputJax, it replays already loaded dynamic font files onto the new font instance and loads any remaining dynamic chunks synchronously.
+  MathJax v4.1.3 loads required dynamic SVG font chunks synchronously on demand when that bridge is active.
+  When creating another SVG OutputJax, the plugin replays already loaded dynamic font files onto the new font instance rather than eagerly loading unrelated chunks.
   This keeps synchronous `md.render()` SVG conversion working when a formula needs glyph ranges beyond the base tables.
   If MathJax already has a synchronous `asyncLoad` bridge, the plugin composes with it.
   If MathJax already has a non-synchronous `asyncLoad` bridge, SVG rendering throws a clear error instead of silently overriding it.

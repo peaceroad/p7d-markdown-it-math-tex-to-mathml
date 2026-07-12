@@ -1,19 +1,34 @@
 import assert from 'assert'
+import { createRequire } from 'node:module'
 import mdit from 'markdown-it'
 
 import mditMathTexToMathML from '../index.js'
 
-const MARKDOWN = 'Inline $\\\\mathscr{ABC}$.\n\n$$\\\\mathscr{ABC}+\\\\mathbb{R}$$\n'
+const require = createRequire(import.meta.url)
+const { MathJaxNewcmFont } = require('@mathjax/mathjax-newcm-font/js/svg.js')
+
+const getDynamicFontFiles = (FontClass) => {
+  const files = [...Object.values(FontClass.dynamicFiles ?? {})]
+  for (const extension of FontClass.dynamicExtensions?.values?.() ?? []) {
+    files.push(...Object.values(extension.files ?? {}))
+  }
+  return files
+}
+
+const DYNAMIC_MARKDOWN = String.raw`Inline $\mathscr{ABC}$.
+
+$$\mathscr{ABC}+\mathbb{R}$$
+`
 
 const normalizeTrailing = (s) => `${s.replace(/[ \t]+$/gm, '').trimEnd()}\n`
 
-const renderSvg = (options) => {
+const renderSvg = (options, markdown = DYNAMIC_MARKDOWN) => {
   const md = mdit({ html: true }).use(mditMathTexToMathML, {
     useSvg: true,
     setMathJaxDataAttrs: false,
     ...options,
   })
-  return normalizeTrailing(md.render(MARKDOWN))
+  return normalizeTrailing(md.render(markdown))
 }
 
 const assertSvgOutput = (html) => {
@@ -23,7 +38,21 @@ const assertSvgOutput = (html) => {
 const renderRepeatedInstances = (options, times = 3) =>
   Array.from({ length: times }, () => renderSvg(options))
 
+const newcmDynamicFiles = getDynamicFontFiles(MathJaxNewcmFont)
+assert.ok(newcmDynamicFiles.length > 0, 'Expected NewCM to expose dynamic font ranges.')
+assert.strictEqual(
+  newcmDynamicFiles.filter((dynamic) => dynamic.promise).length,
+  0,
+  'Dynamic NewCM ranges should be unloaded before the first SVG conversion.'
+)
+
 const defaultSvg = renderSvg({})
+const loadedNewcmFiles = newcmDynamicFiles.filter((dynamic) => dynamic.promise).length
+assert.ok(loadedNewcmFiles > 0, 'SVG conversion should load the dynamic ranges required by the formula.')
+assert.ok(
+  loadedNewcmFiles < newcmDynamicFiles.length,
+  'SVG conversion should not eagerly load unrelated dynamic font ranges.'
+)
 const newcmSvg = renderSvg({ svgFont: 'newcm' })
 const repeatedDefaultSvg = renderRepeatedInstances({})
 const repeatedNewcmSvg = renderRepeatedInstances({ svgFont: 'newcm' })

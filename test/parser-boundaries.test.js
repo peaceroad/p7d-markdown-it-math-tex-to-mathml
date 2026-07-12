@@ -161,6 +161,14 @@ assert.strictEqual(
 )
 
 assert.strictEqual(
+  normalizeTrailing(md.render('$5 $x$')),
+  normalizeTrailing(`<p>$5 <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>x</mi>
+</math></p>`),
+  'An invalid numeric-leading close should not absorb a later inline math span.'
+)
+
+assert.strictEqual(
   normalizeTrailing(md.render(String.raw`$x+\$+y$`)),
   normalizeTrailing(`<p><math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>x</mi>

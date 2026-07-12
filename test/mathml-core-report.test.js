@@ -120,6 +120,20 @@ assert.deepStrictEqual(
   'Expected MathJax merror output to be reported for production diagnostics.'
 )
 
+const resetMd = new MarkdownIt({ html: true }).use(plugin, { mathmlReport: true })
+const parseErrorEnv = {}
+const parseErrorHtml = resetMd.render(String.raw`$\frac{x}{$`, parseErrorEnv)
+assert.ok(parseErrorHtml.includes('<merror'), 'Expected malformed TeX to produce MathJax merror output.')
+assert.ok(
+  parseErrorEnv.mathmlReport.some((entry) => entry.issues.some((issue) => issue.type === 'math-error')),
+  'Expected malformed TeX to be reported before testing parser reset.'
+)
+const recoveredEnv = {}
+const recoveredHtml = resetMd.render('$y$', recoveredEnv)
+assert.ok(recoveredHtml.includes('<mi>y</mi>'), 'A later render should recover after malformed TeX.')
+assert.ok(!recoveredHtml.includes('<merror'), 'TeX parser state should not leak an earlier parse error.')
+assert.deepStrictEqual(recoveredEnv.mathmlReport, [], 'A recovered render should have no stale findings.')
+
 assert.throws(
   () => new MarkdownIt({ html: true }).use(plugin, { mathmlMode: 'strict' }),
   /Unsupported mathmlMode/i,

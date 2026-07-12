@@ -13,7 +13,7 @@ npm install @mathjax/src
 
 This package is ESM. The Node entry uses top-level await to preload MathJax TeX extensions, so run it in an ESM context. For browsers, use the browser entry (`@peaceroad/markdown-it-math-tex-to-mathml/script/math-tex-to-mathml.js`) with a bundler that can resolve `@mathjax/src` and its internal imports.
 
-By default, the plugin preloads MathJax TeX extensions from `@mathjax/src`, excluding `bussproofs` and `bboldx`. `bboldx` is intentionally left out so `\mathbb` does not become a MathJax-private variant that depends on `data-mjx-*` metadata. The `fontsizev3` compatibility package is preloaded for opt-in use, but is excluded from the default active package set so MathJax v4.1.2's corrected font-size macro values are used by default.
+By default, the plugin preloads MathJax TeX extensions from `@mathjax/src`, excluding `bussproofs` and `bboldx`. `bboldx` is intentionally left out so `\mathbb` does not become a MathJax-private variant that depends on `data-mjx-*` metadata. The `fontsizev3` compatibility package is preloaded for opt-in use, but is excluded from the default active package set so the corrected font-size macro values introduced in MathJax v4.1.2 are used by default.
 
 The default package set is intentionally broad for compatibility. If you want stricter TeX support, pass `texPackages` to limit the active MathJax TeX packages for that `MarkdownIt` instance. Note that the entry still preloads the default extension modules at startup so synchronous conversion keeps working; `texPackages` narrows parser behavior, not startup imports.
 
@@ -31,6 +31,12 @@ When `useSvg` is `false`, this plugin emits Presentation MathML in one of two Ma
 - `texPackages` controls TeX parser behavior for a given `MarkdownIt` instance. It does **not** guarantee that the resulting MathML is limited to MathML Core constructs.
 
 For production native MathML output, use `mathmlReport: true` in preview or CI and treat `math-error`, `non-core-element`, `nested-mathsize`, and residual `mathvariant` findings according to your browser-support policy. If visual fidelity must match MathJax layout for broad TeX input, use `useSvg: true` for that surface.
+
+### Security boundary
+
+This plugin converts TeX into MathML or SVG markup; it is not an HTML sanitizer. The broad default TeX package set includes extensions that can preserve author-supplied attributes such as `href`, `style`, and `class`. Setting markdown-it's `html` option to `false` or setting `setMathJaxDataAttrs: false` does not sanitize this plugin's generated markup.
+
+For untrusted Markdown or TeX input, use an explicit `texPackages` allowlist that omits packages you do not need (for example, start with `['base', 'ams']`), and sanitize the final rendered HTML with a sanitizer configured to preserve the MathML or SVG elements and attributes you intentionally support. The allowlist reduces the input surface but is not a sanitizer. Apply the sanitization policy once to the complete rendered HTML so it also covers markup emitted by markdown-it itself and by other plugins.
 
 Additional notes:
 
@@ -137,7 +143,7 @@ const md = mdit({ html: true }).use(mditMathTexToMathML, {
   // https://docs.mathjax.org/en/latest/upgrading/whats-new-4.0/linebreaking.html
   svgLinebreaks: {}, // e.g. { inline: true, width: '100%' }
   // SVG only: font hosting/customisation (see MathJax v4 font docs)
-  svgFontCache: 'local',
+  svgFontCache: 'local', // 'local' or 'none'; MathJax's 'global' mode is not supported
   svgFontPath: '', // e.g. '/fonts/mathjax/newcm'
 })
 ```
@@ -174,14 +180,15 @@ TeX input option:
 
 SVG-only options:
 - `svgFont` (default: `''`): pass a MathJax SVG font class or instance (e.g. `MathJaxStix2Font`) to switch fonts. In Node.js you can also pass a font name string (e.g. `'stix2'` or `'@mathjax/mathjax-stix2-font'`) if the package is installed. When omitted, MathJax v4 defaults to the New Computer Modern SVG font (via `@mathjax/src` mapping `#default-font` to `@mathjax/mathjax-newcm-font`).
-  In the Node entry, the plugin also prepares MathJax's synchronous loader and preloads dynamic SVG font chunks so `md.render()` keeps working for glyph ranges outside the base tables.
+  In Node, known MathJax font classes are normalized to the matching CJS font class so synchronous dynamic chunks are registered on the same class instance used by the SVG OutputJax.
+  In the Node entry, the plugin also prepares MathJax's synchronous loader. MathJax v4.1.3 loads required dynamic SVG font chunks on demand; the plugin replays chunks already loaded by earlier SVG font instances so repeated `MarkdownIt` instances remain synchronous and stable.
   If MathJax already has a synchronous `asyncLoad` bridge, the plugin reuses it and adds its own fallback resolution.
   If MathJax already has a non-synchronous `asyncLoad` bridge, SVG rendering throws a clear error instead of silently overriding it.
   In Node, string shorthands like `'stix2'` require the matching font package to be installed. If the package can't be resolved, plugin setup fails when you call `.use(..., { useSvg: true, svgFont: 'stix2' })`.
   In Node, omitting `svgFont` is treated as the default `newcm` font path. If `@mathjax/mathjax-newcm-font` can't be resolved, plugin setup fails when you call `.use(..., { useSvg: true })`.
 - `svgScale` (default: `1`): scale factor passed to MathJax SVG output.
 - `svgLinebreaks` (default: `{}`): passed through to MathJax when the object has keys. `inline` enables linebreaking for inline math; `width` controls the target linebreaking width (CSS length or percentage). When `width` is a percentage, MathJax uses `containerWidth` to resolve it.
-- `svgFontCache` (default: `local`): pass-through to MathJax's SVG `fontCache` mode.
+- `svgFontCache` (default: `'local'`): controls SVG glyph embedding. Use `'local'` to include per-expression `<defs>` and `<use>` references, or `'none'` to emit paths directly. MathJax's `'global'` mode is not supported because this plugin serializes each converted SVG independently and does not emit a shared page-level glyph cache; unsupported values fail during plugin setup.
 - `svgFontPath` (default: `''`): base URL for MathJax SVG font assets (maps to MathJax's `fontPath`).
 
 #### CSS baseline for MathML output (optional)
