@@ -1,6 +1,6 @@
 {
   "name": "@peaceroad/markdown-it-math-tex-to-mathml",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "description": "convert TeX-formatted math expressions (inline $...$ and block $$...$$) in Markdown to MathML.",
   "homepage": "https://github.com/peaceroad/p7d-markdown-it-math-tex-to-mathml#readme",
   "bugs": {
@@ -43,6 +43,6 @@
   },
   "devDependencies": {
     "@mathjax/mathjax-stix2-font": "^4.1.3",
-    "markdown-it": "^15.0.0"
+    "markdown-it": "^15.0.1"
   }
 }
