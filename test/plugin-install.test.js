@@ -60,4 +60,34 @@ assert.ok(
   'Options should be captured at setup instead of reading later caller mutations.'
 )
 
+const registrationFailureMd = new MarkdownIt({ html: true })
+const originalBlockAfter = registrationFailureMd.block.ruler.after
+registrationFailureMd.block.ruler.after = () => {
+  throw new Error('simulated block-rule registration failure')
+}
+assert.throws(
+  () => registrationFailureMd.use(plugin),
+  /simulated block-rule registration failure/,
+  'Rule-registration failures should remain visible to the caller.'
+)
+registrationFailureMd.block.ruler.after = originalBlockAfter
+registrationFailureMd.use(plugin)
+assert.ok(
+  registrationFailureMd.render('Inline $x$').includes('<math'),
+  'A failed rule registration should not mark the MarkdownIt instance as installed.'
+)
+
+for (const preset of ['default', 'commonmark', 'zero']) {
+  const presetMd = new MarkdownIt(preset).use(plugin, {
+    compactInlineMathML: true,
+    compactBlockMathML: true,
+  })
+  const output = presetMd.render('Inline $x$.\n\n$$y$$')
+  assert.strictEqual(
+    output.match(/<math\b/g)?.length,
+    2,
+    `The ${preset} preset should keep both inline and block math rules available.`
+  )
+}
+
 console.log('Passed plugin install idempotence test.')

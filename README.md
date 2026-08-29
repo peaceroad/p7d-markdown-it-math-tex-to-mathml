@@ -150,7 +150,7 @@ const md = mdit({ html: true }).use(mditMathTexToMathML, {
 
 Options summary:
 
-Options are normalized and unsupported option values are rejected during plugin setup.
+Options are captured and normalized during plugin setup. Closed-set values such as `mathmlMode`, `svgFontCache`, and Node SVG font names are rejected when unsupported; strict boolean flags and numeric metrics otherwise use the documented defaults when their expected value type is not supplied.
 Options marked as MathML-only or SVG-only affect only that output mode.
 
 Applies to both MathML and SVG output:

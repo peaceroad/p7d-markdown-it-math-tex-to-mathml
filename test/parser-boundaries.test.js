@@ -9,6 +9,12 @@ const md = mdit({ html: true }).use(mditMathTexToMathML, {
   setMathJaxDataAttrs: false,
 })
 
+const [blockToken] = md.parse('$$x+y$$', {})
+assert.strictEqual(blockToken.type, 'html_block', 'Block math should use markdown-it\'s HTML block token type.')
+assert.strictEqual(blockToken.block, true, 'StateBlock.push() should mark the block math token as block-level.')
+assert.strictEqual(blockToken.level, 0, 'StateBlock.push() should assign the current block nesting level.')
+assert.deepStrictEqual(blockToken.map, [0, 1], 'Block math should preserve its source-line map.')
+
 assert.strictEqual(
   normalizeTrailing(md.render('$$x+y$$')),
   normalizeTrailing(`<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
@@ -81,6 +87,12 @@ assert.strictEqual(
   normalizeTrailing(md.render('A $x and text')),
   '<p>A $x and text</p>\n',
   'Unclosed inline math should pass through as literal text.'
+)
+
+assert.strictEqual(
+  normalizeTrailing(md.render('$x')),
+  '<p>$x</p>\n',
+  'A two-character trailing candidate cannot contain a closing delimiter and should stay literal.'
 )
 
 assert.strictEqual(

@@ -6,6 +6,7 @@
 
 - This document reflects current behavior in `index.js` (Node entry), `script/math-tex-to-mathml.js` (browser/bundler entry), and `script/math-tex-to-mathml-core.js` (shared implementation).
 - The package is ESM (`type: module`). The Node entry uses top-level `await` to import MathJax TeX extensions; the browser entry uses static imports.
+- markdown-it v15 is the current development/test baseline. The plugin uses the public plugin, ruler, parser-state, token-push, and renderer surfaces; it does not import `markdown-it/lib/*` internals or construct tokens from package-private classes.
 
 ### TeX extensions
 

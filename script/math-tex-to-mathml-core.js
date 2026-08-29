@@ -940,8 +940,6 @@ const createMathTexToMathML = ({
     const svgFontData = useSvg ? resolveSvgFontData(options.svgFont || defaultSvgFont) : null
     const normalizedSvgOptions = useSvg ? normalizeSvgOptions(options) : null
 
-    md[MDIT_INSTALL_STATE] = true
-
     if (mathmlReport) {
       md.core.ruler.before('block', 'mathml_report_reset', (state) => {
         if (!state.env || typeof state.env !== 'object') {
@@ -1028,9 +1026,7 @@ const createMathTexToMathML = ({
       state.line = end
       const token = state.push('html_block', '', 0)
       token.content = markup
-      token.block = true
       token.map = [start, end]
-      token.level = state.level
     }
 
     md.block.ruler.after('blockquote', 'math_block', (state, startLine, endLine, silent) => {
@@ -1082,7 +1078,7 @@ const createMathTexToMathML = ({
     md.inline.ruler.before('text', 'math_inline', (state, silent) => {
       const start = state.pos
       const max = state.posMax
-      if (state.src.charCodeAt(start) !== DOLLAR_CHAR_CODE || start + 2 > max) return false
+      if (state.src.charCodeAt(start) !== DOLLAR_CHAR_CODE || start + 2 >= max) return false
       if (start > 0 && state.src.charCodeAt(start - 1) === DOLLAR_CHAR_CODE) return false
       if (state.src.charCodeAt(start + 1) === DOLLAR_CHAR_CODE) return false
       if (isEscapedCharacter(state.src, start)) return false
@@ -1102,6 +1098,7 @@ const createMathTexToMathML = ({
     })
 
     md.renderer.rules.math_inline = (tokens, idx) => tokens[idx].content
+    md[MDIT_INSTALL_STATE] = true
   }
 
   return mditMathTexToMathML

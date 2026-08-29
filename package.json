@@ -43,6 +43,6 @@
   },
   "devDependencies": {
     "@mathjax/mathjax-stix2-font": "^4.1.3",
-    "markdown-it": "^14.3.0"
+    "markdown-it": "^15.0.0"
   }
 }
